@@ -12,6 +12,10 @@ export default defineNuxtConfig({
     baseURL: process.env.NUXT_APP_BASE_URL ?? '/',
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/bm-avatar.svg' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
       script: [{ src: 'https://mcp.figma.com/mcp/html-to-design/capture.js', async: true }],
     },
   },
