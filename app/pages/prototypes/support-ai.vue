@@ -29,7 +29,7 @@ interface ChatMessage {
 
 const GREETING: ChatMessage = {
   role: 'ai',
-  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.\n\nI can't provide legal, financial, or professional advice.`,
+  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
   learnMore: true,
 }
 
@@ -457,7 +457,8 @@ function applySubState(subId: string) {
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
                   <div class="bg-static-default-low rounded-bm-lg p-4">
-                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}<template v-if="msg.learnMore"> <a href="#" class="underline text-bm-text-hi hover:opacity-75">Learn more</a></template></p>
+                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
+                  <p v-if="msg.learnMore" class="text-sm font-semibold text-bm-text-hi mt-3">I can't provide legal, financial, or professional advice. <a href="#" class="underline hover:opacity-75">Learn more</a></p>
                   <!-- Bullets -->
                   <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
                     <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-2 text-sm text-bm-text-mid">
