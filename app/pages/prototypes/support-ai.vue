@@ -25,6 +25,7 @@ interface ChatMessage {
   learnMore?: boolean
   showContactSupport?: boolean
   isError?: boolean
+  pills?: string[]
 }
 
 const GREETING: ChatMessage = {
@@ -32,6 +33,17 @@ const GREETING: ChatMessage = {
   text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
   learnMore: true,
 }
+
+const GREETING_FUTURE: ChatMessage = {
+  role: 'ai',
+  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
+  learnMore: true,
+  pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
+}
+
+const activeGreeting = computed((): ChatMessage =>
+  activeConcept.value === 2 ? GREETING_FUTURE : GREETING
+)
 
 const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatMessage }> = [
   {
@@ -98,7 +110,7 @@ function retryLastMessage() {
 }
 
 function clearChat() {
-  chatMessages.value = [GREETING]
+  chatMessages.value = [{ ...activeGreeting.value }]
   chatInput.value = ''
   chatLoading.value = false
 }
@@ -146,7 +158,10 @@ const conceptMeta: readonly PrototypeConcept[] = [
         id: 'future-home',
         label: 'Home',
         navItem: 'Home',
-        changes: ['Coming soon — future vision TBD'],
+        changes: ['Support AI opens with pre-populated topic shortcuts'],
+        subStates: [
+          { id: 'future-drawer-greeting', label: 'Drawer — greeting with topics' },
+        ],
       },
     ],
   },
@@ -159,19 +174,27 @@ const {
   activePages,
 } = usePrototypeSidebar(conceptMeta)
 
+watch(activeConcept, () => {
+  drawerOpen.value = false
+  chatMessages.value = [{ ...activeGreeting.value }]
+  chatLoading.value = false
+  chatInput.value = ''
+  activeSubStateId.value = ''
+})
+
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
 
 function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
   drawerOpen.value = false
-  chatMessages.value = [{ ...GREETING }]
+  chatMessages.value = [{ ...activeGreeting.value }]
   chatLoading.value = false
   activeSubStateId.value = ''
 }
 
 function handleReset() {
   drawerOpen.value = false
-  chatMessages.value = [{ ...GREETING }]
+  chatMessages.value = [{ ...activeGreeting.value }]
   chatLoading.value = false
   chatInput.value = ''
   activeSubStateId.value = ''
@@ -190,12 +213,12 @@ function applySubState(subId: string) {
   switch (subId) {
     case 'drawer-greeting':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }]
+      chatMessages.value = [{ ...activeGreeting.value }]
       break
 
     case 'drawer-loading':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }]
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: CRACKED_Q }]
       chatLoading.value = true
       setTimeout(() => {
         chatMessages.value.push({ ...crackedResponse, feedbackGiven: null })
@@ -205,31 +228,36 @@ function applySubState(subId: string) {
 
     case 'drawer-q-and-a':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: null }]
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: null }]
       break
 
     case 'drawer-feedback-up':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'up' }]
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'up' }]
       break
 
     case 'drawer-feedback-down':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'down' }]
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'down' }]
       break
 
     case 'drawer-no-answer':
       drawerOpen.value = true
-      chatMessages.value = [{ ...GREETING }, { role: 'user', text: SUSPENDED_Q }, { ...suspendedResponse }]
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: SUSPENDED_Q }, { ...suspendedResponse }]
       break
 
     case 'drawer-error':
       drawerOpen.value = true
       chatMessages.value = [
-        { ...GREETING },
+        { ...activeGreeting.value },
         { role: 'user', text: CRACKED_Q },
         { role: 'ai', text: 'Something went wrong while processing your request. Please try again.', isError: true },
       ]
+      break
+
+    case 'future-drawer-greeting':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING_FUTURE }]
       break
   }
 }
@@ -482,6 +510,15 @@ function applySubState(subId: string) {
                   <div class="bg-static-default-low rounded-bm-lg p-4">
                   <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
                   <p v-if="msg.learnMore" class="text-sm font-semibold text-bm-text-hi mt-3">I can't provide legal, financial, or professional advice. <a href="#" class="underline hover:opacity-75">Learn more</a></p>
+                  <!-- Topic pills -->
+                  <div v-if="msg.pills?.length" class="flex flex-wrap gap-2 mt-4">
+                    <button
+                      v-for="pill in msg.pills"
+                      :key="pill"
+                      class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                      @click="chatInput = pill"
+                    >{{ pill }}</button>
+                  </div>
                   <!-- Bullets -->
                   <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
                     <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-2 text-sm text-bm-text-mid">
