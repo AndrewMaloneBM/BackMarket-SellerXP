@@ -439,7 +439,7 @@ function applySubState(subId: string) {
             <template v-for="(msg, i) in chatMessages" :key="i">
 
               <!-- User message -->
-              <div v-if="msg.role === 'user'" class="bg-bm-surface rounded-bm-lg p-4">
+              <div v-if="msg.role === 'user'" class="bg-static-default-low rounded-bm-lg p-4">
                 <div class="flex items-center gap-2.5 mb-1.5">
                   <div class="w-8 h-8 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
                     <span class="text-sm font-semibold text-bm-text-mid">{{ CHAT_USER_NAME[0] }}</span>
