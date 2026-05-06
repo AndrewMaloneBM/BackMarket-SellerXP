@@ -4,7 +4,7 @@ import type { PrototypeConcept } from '~/composables/usePrototypeSidebar'
 definePageMeta({ layout: false })
 
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
-const SELLER_NAME = 'Koala Stash'
+const SELLER_NAME = 'TechRenew GmbH'
 const DROPPED_CONCEPTS: number[] = []
 
 const activeNavItem = ref('Home')
