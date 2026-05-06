@@ -44,17 +44,18 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
-    title: 'Support AI',
-    description: 'Exploring how to bring AI-powered seller support into the Back Office. Building on the existing Support AI entry point to help sellers get answers without leaving their workflow.',
-    problemStatement: 'Sellers abandon tasks when they can\'t find answers fast enough.',
+    title: 'Bring AI into the seller Back Office to reduce support friction and help sellers perform better',
+    description: 'Support AI is Back Market\'s first seller-facing AI capability, embedded directly in the BO. It answers policy and operational questions by searching the Seller Support Center, reduces inbound support volume, and lays the foundation for personalised, action-based assistance in future iterations.',
+    problemStatement: 'Sellers spend time searching for answers that already exist — AI can surface them instantly, without leaving the Back Office.',
     author: 'Andrew Malone',
-    date: 'May 2026',
+    date: 'April 2026',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Entry point + Chat', pages: ['Home'] },
     ],
-    scope: 'Seller back-office',
-    goal: 'Reduce seller support drop-off',
+    scope: 'Back Office, all pages',
+    goal: 'Reduce support volume + improve seller self-service',
+    impact: 'Lower support costs, faster seller resolution',
     link: '/prototypes/support-ai',
     accent: '#6B5CE7',
   },
