@@ -969,7 +969,7 @@ function applySubState(subId: string) {
         <header class="border-b border-bm-border">
           <div class="flex items-center px-8 h-14 gap-4">
             <img src="/bm-logo.svg" alt="Back Market" class="h-8 w-auto select-none" />
-            <span class="ml-4 text-sm text-bm-text-mid flex items-center gap-1.5">Hello <span class="inline-block w-24 h-3.5 bg-bm-gray-200 rounded animate-pulse"></span></span>
+            <span class="ml-4 text-sm text-bm-text-mid">Hello <strong class="font-semibold text-bm-text-hi">{{ SELLER_NAME }}</strong></span>
             <div class="ml-auto flex items-center gap-2">
               <button @click="drawerOpen = true" class="inline-flex items-center gap-1.5 bg-bm-text-hi text-white text-sm font-medium px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -1009,7 +1009,7 @@ function applySubState(subId: string) {
 
             <!-- Page heading -->
             <div class="flex items-center justify-between mb-6">
-              <div class="w-52 h-7 bg-bm-gray-200 rounded animate-pulse"></div>
+              <h1 class="text-2xl font-heading-secondary font-semibold text-bm-text-hi">Hello, {{ SELLER_NAME }}!</h1>
               <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-bm-text-hi bg-white hover:bg-bm-gray-100 rounded-bm border border-bm-border transition-colors">
                 Euro
                 <svg class="w-4 h-4 text-bm-text-muted" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
@@ -1028,14 +1028,14 @@ function applySubState(subId: string) {
                   </div>
                   <span class="flex items-center gap-1">
                     <svg class="w-3.5 h-3.5 text-bm-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" /></svg>
-                    <span class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse inline-block"></span>
+                    <span class="w-20 h-3 bg-bm-gray-200 rounded inline-block"></span>
                   </span>
                 </div>
                 <ul class="divide-y divide-bm-border">
                   <li v-for="(w, i) in ['w-36', 'w-28', 'w-32', 'w-24', 'w-28', 'w-32']" :key="i" class="flex items-center justify-between py-2.5">
-                    <div :class="['h-3.5 bg-bm-gray-200 rounded animate-pulse', w]"></div>
+                    <div :class="['h-3.5 bg-bm-gray-200 rounded', w]"></div>
                     <div class="flex items-center gap-2">
-                      <div class="w-6 h-3.5 bg-bm-gray-200 rounded animate-pulse"></div>
+                      <div class="w-6 h-3.5 bg-bm-gray-200 rounded"></div>
                       <svg class="w-4 h-4 text-bm-gray-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </div>
                   </li>
@@ -1059,12 +1059,12 @@ function applySubState(subId: string) {
                 </div>
                 <div class="grid grid-cols-3 gap-3">
                   <div v-for="i in 3" :key="i" class="bg-bm-surface rounded-bm p-3">
-                    <div class="w-28 h-3 bg-bm-gray-200 rounded animate-pulse mb-3"></div>
+                    <div class="w-28 h-3 bg-bm-gray-200 rounded mb-3"></div>
                     <div class="flex items-center gap-2 mb-2">
-                      <div class="w-20 h-5 bg-bm-gray-200 rounded animate-pulse"></div>
-                      <div class="w-10 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
+                      <div class="w-20 h-5 bg-bm-gray-200 rounded"></div>
+                      <div class="w-10 h-3 bg-bm-gray-200 rounded"></div>
                     </div>
-                    <div class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
+                    <div class="w-20 h-3 bg-bm-gray-200 rounded"></div>
                   </div>
                 </div>
               </div>
@@ -1086,14 +1086,14 @@ function applySubState(subId: string) {
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                   <div class="bg-bm-surface rounded-bm p-3">
-                    <div class="w-24 h-3 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
-                    <div class="w-14 h-7 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
-                    <div class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
+                    <div class="w-24 h-3 bg-bm-gray-200 rounded mb-2"></div>
+                    <div class="w-14 h-7 bg-bm-gray-200 rounded mb-2"></div>
+                    <div class="w-20 h-3 bg-bm-gray-200 rounded"></div>
                   </div>
                   <div class="bg-bm-surface rounded-bm p-3">
-                    <div class="w-32 h-3 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
-                    <div class="w-12 h-7 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
-                    <div class="w-16 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
+                    <div class="w-32 h-3 bg-bm-gray-200 rounded mb-2"></div>
+                    <div class="w-12 h-7 bg-bm-gray-200 rounded mb-2"></div>
+                    <div class="w-16 h-3 bg-bm-gray-200 rounded"></div>
                   </div>
                 </div>
               </div>
@@ -1115,9 +1115,9 @@ function applySubState(subId: string) {
                 </div>
                 <div class="grid grid-cols-3 gap-3">
                   <div v-for="(w, i) in [['w-14', 'w-28', 'w-24'], ['w-24', 'w-24', 'w-20'], ['w-28', 'w-16', 'w-14']]" :key="i" class="bg-bm-surface rounded-bm p-3">
-                    <div :class="['h-3 bg-bm-gray-200 rounded animate-pulse mb-2', w[0]]"></div>
-                    <div :class="['h-5 bg-bm-gray-200 rounded animate-pulse mb-2', w[1]]"></div>
-                    <div :class="['h-3 bg-bm-gray-200 rounded animate-pulse', w[2]]"></div>
+                    <div :class="['h-3 bg-bm-gray-200 rounded mb-2', w[0]]"></div>
+                    <div :class="['h-5 bg-bm-gray-200 rounded mb-2', w[1]]"></div>
+                    <div :class="['h-3 bg-bm-gray-200 rounded', w[2]]"></div>
                   </div>
                 </div>
               </div>
