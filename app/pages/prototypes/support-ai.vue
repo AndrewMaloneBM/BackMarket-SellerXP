@@ -33,7 +33,6 @@ interface ChatMessage {
   isError?: boolean
   pills?: string[]
   showWhatsNew?: boolean
-  backToFeed?: boolean
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
@@ -340,7 +339,7 @@ const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
 const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   'feature-backfunds-money': {
     role: 'ai',
-    backToFeed: true,
+
     text: `BackFunds lets you get paid every day instead of waiting D+7 — and it's now one tap away from your Money tab.\n\nWith €18,740 sitting in pending payouts right now, activating BackFunds could free up that cash up to 6 days earlier.`,
     bullets: [
       'Go to your Money tab and find the BackFunds card in the wallet section',
@@ -351,7 +350,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   },
   'feature-bulk-csv': {
     role: 'ai',
-    backToFeed: true,
+
     text: `You can now add multiple listings at once by uploading a spreadsheet — no more creating them one by one.\n\nWith 12 unlisted devices in your catalogue right now, this is the fastest way to get them live and recover that GMV.`,
     bullets: [
       'Go to Listings, then open Import',
@@ -362,7 +361,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   },
   'feature-tier-dashboard': {
     role: 'ai',
-    backToFeed: true,
+
     text: `There's now a full dashboard showing your payout tier, every metric that affects it, and exactly what to improve to move up.\n\nYou're currently on Tier 2 — one metric away from Tier 1. The dashboard makes it obvious what's holding you back.`,
     bullets: [
       'Go to Money and open the Payout Tier card',
@@ -373,7 +372,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   },
   'feature-backbox-alerts': {
     role: 'ai',
-    backToFeed: true,
+
     text: `Support AI now automatically flags BackBox demand spikes that match devices already in your inventory but not yet listed.\n\nTechRenew GmbH has 12 unlisted iPhone 14 Pros right now — this feature means you'll know about buyer demand before the opportunity passes.`,
     bullets: [
       'Alerts appear automatically in the Support AI drawer when a strong match is found',
@@ -384,7 +383,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   },
   'feature-quality-score': {
     role: 'ai',
-    backToFeed: true,
+
     text: `The quality section now shows a full breakdown of which listings are affecting your score and the specific reason for each flag — not just a single summary number.\n\nYour iPhone 13 (64GB) Good listing has been flagged 3 times this month. This breakdown makes it easy to find and fix the issue before it affects your placement.`,
     bullets: [
       'Go to Listings and open the Quality tab',
@@ -395,7 +394,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   },
   'feature-evri': {
     role: 'ai',
-    backToFeed: true,
+
     text: `Evri is now an approved carrier for UK shipments, giving you a more cost-effective option for lighter parcels.\n\nIf TechRenew GmbH ships regularly to UK buyers, switching parcels under 2 kg to Evri can meaningfully reduce your cost per order.`,
     bullets: [
       'Open any UK order and click "Generate label"',
@@ -485,11 +484,6 @@ function goBackFromFeed() {
   activePillTopic.value = null
 }
 
-function goBackToReleaseFeed() {
-  chatMessages.value = [{ ...GREETING_WHATS_NEW }]
-  activePillTopic.value = null
-  activeReleaseFeed.value = true
-}
 
 async function sendMessage() {
   const text = chatInput.value.trim()
@@ -1169,10 +1163,7 @@ function applySubState(subId: string) {
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
                   <div class="bg-static-default-low rounded-bm-lg p-4">
-                  <button v-if="msg.backToFeed" class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3" @click="goBackToReleaseFeed()">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                    Back to What's new
-                  </button>
+
                   <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
                   <p v-if="msg.learnMore" class="text-sm font-semibold text-bm-text-hi mt-3">I can't provide legal, financial, or professional advice. <a href="#" class="underline hover:opacity-75">Learn more</a></p>
                   <!-- Topic / question pills -->
