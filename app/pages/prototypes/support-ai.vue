@@ -338,9 +338,8 @@ const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
   {
     date: 'May 2026',
     pills: [
-      { label: 'BackFunds activation from Money tab', action: 'feature-backfunds-money' },
-      { label: 'Bulk listing via CSV upload', action: 'feature-bulk-csv' },
-      { label: 'New payout tier dashboard', action: 'feature-tier-dashboard' },
+      { label: '🚀 BM Accelerator for E.U. Sellers', action: 'feature-accelerator' },
+      { label: '🔄 Express Replacement — now live', action: 'feature-express' },
     ],
   },
   {
@@ -354,39 +353,62 @@ const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
 ]
 
 
+const ACCELERATOR_ELIGIBLE: ChatMessage = {
+  role: 'ai',
+  text: `The Accelerator is available to high-performing sellers in France and Spain with strong sales history in eligible categories.\n\nYour SSM can confirm whether your account qualifies and which categories are included in your offer.`,
+  basedOn: 'BM Accelerator eligibility criteria',
+  ctaButton: { label: 'Contact my SSM →', navItem: 'Seller Support' },
+}
+
+const ACCELERATOR_SSM: ChatMessage = {
+  role: 'ai',
+  text: `Your SSM is your direct point of contact for the Accelerator programme. They can confirm your targets, walk you through the terms, and get you set up.`,
+  ctaButton: { label: 'Contact my SSM →', navItem: 'Seller Support' },
+}
+
+const EXPRESS_ROUTING: ChatMessage = {
+  role: 'ai',
+  text: `When a customer chooses Express Replacement, Back Market selects the replacement seller based on quality score — not price.\n\nThis means the better your listings, grading accuracy, and shipping performance, the more likely you are to receive replacement orders.\n\nMaintaining a strong quality score is the best way to benefit from Express Replacement.`,
+  basedOn: 'Express Replacement quality routing criteria',
+  ctaButton: { label: 'View my quality score →', navItem: 'Listings' },
+}
+
+const EXPRESS_LEARN: ChatMessage = {
+  role: 'ai',
+  text: `Full details about Express Replacement are available in the Seller Support Center, including how orders appear, how returns are handled, and how to make the most of quality routing.`,
+  ctaButton: { label: 'Go to Seller Support Center →', navItem: 'Seller Support' },
+}
+
 const FEATURE_RESPONSES: Record<string, ChatMessage> = {
-  'feature-backfunds-money': {
+  'feature-accelerator': {
     role: 'ai',
-
-    text: `BackFunds lets you get paid every day instead of waiting D+7 — and it's now one tap away from your Money tab.\n\nWith €18,740 sitting in pending payouts right now, activating BackFunds could free up that cash up to 6 days earlier.`,
+    text: `The BM Accelerator is Back Market's premium partnership programme for high-performing sellers in France and Spain.\n\nHere's what it offers:`,
     bullets: [
-      'Go to your Money tab and find the BackFunds card in the wallet section',
-      'Review your daily rate — no upfront fees, only charged on the amount you advance',
-      'Tap "Activate" and confirm — it takes under 2 minutes to go live',
+      'Commission reduction — earn a percentage-point reduction on eligible category sales from May through July',
+      'Growth target — we'll work together to achieve +X% growth over Q1 across 3 months',
+      'Extension opportunity — if targets are met, the offer extends through August to October',
     ],
-    ctaButton: { label: 'Go to Money →', navItem: 'Money' },
+    note: 'To get started, speak to your Seller Success Manager who can confirm your eligibility and set your targets.',
+    basedOn: 'BM Accelerator programme, seller eligibility criteria',
+    responsePills: [
+      { label: 'Am I eligible?', action: 'accelerator-eligible' },
+      { label: 'Speak to my SSM →', action: 'accelerator-ssm' },
+    ],
   },
-  'feature-bulk-csv': {
+  'feature-express': {
     role: 'ai',
-
-    text: `You can now add multiple listings at once by uploading a spreadsheet — no more creating them one by one.\n\nWith 12 unlisted devices in your catalogue right now, this is the fastest way to get them live and recover that GMV.`,
+    text: `Express Replacement is Back Market's new Ship-First service — and it's already live.\n\nWhen a customer has a quality issue, they receive a replacement device immediately, before returning the original. No waiting. No complicated claims.\n\nHere's what it means for you as a seller:`,
     bullets: [
-      'Go to Listings, then open Import',
-      'Download the CSV template and fill in model, grade, price, and stock for each device',
-      'Upload the file — listings go live automatically after a quick quality check',
+      'Incremental revenue — replacement orders are new orders that would otherwise be lost to refunds',
+      'Quality rewards — replacements are routed to the highest quality seller on a listing, not just the buybox winner',
+      'No extra work — a replacement order appears as a standard new order in your Back Office',
     ],
-    ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
-  },
-  'feature-tier-dashboard': {
-    role: 'ai',
-
-    text: `There's now a full dashboard showing your payout tier, every metric that affects it, and exactly what to improve to move up.\n\nYou're currently on Tier 2 — one metric away from Tier 1. The dashboard makes it obvious what's holding you back.`,
-    bullets: [
-      'Go to Money and open the Payout Tier card',
-      'Review your metrics — green means on track, amber means needs attention',
-      'Click "How do I improve this?" next to any amber metric for personalised tips',
+    note: 'Express Replacement is live in France and the UK, and launching in Germany and Spain in mid-May 2026.',
+    basedOn: 'Express Replacement programme, seller quality routing',
+    responsePills: [
+      { label: 'How does quality routing work?', action: 'express-routing' },
+      { label: 'Learn more →', action: 'express-learn' },
     ],
-    ctaButton: { label: 'Go to Money →', navItem: 'Money' },
   },
   'feature-backbox-alerts': {
     role: 'ai',
@@ -496,6 +518,24 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...BACKBOX_DEAL })
     chatLoading.value = false
+  } else if (action === 'accelerator-eligible') {
+    chatMessages.value.push({ role: 'user', text: 'Am I eligible?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...ACCELERATOR_ELIGIBLE })
+    chatLoading.value = false
+  } else if (action === 'accelerator-ssm') {
+    chatMessages.value.push({ role: 'user', text: 'Speak to my SSM →' })
+    chatMessages.value.push({ ...ACCELERATOR_SSM })
+  } else if (action === 'express-routing') {
+    chatMessages.value.push({ role: 'user', text: 'How does quality routing work?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...EXPRESS_ROUTING })
+    chatLoading.value = false
+  } else if (action === 'express-learn') {
+    chatMessages.value.push({ role: 'user', text: 'Learn more →' })
+    chatMessages.value.push({ ...EXPRESS_LEARN })
   }
 }
 
