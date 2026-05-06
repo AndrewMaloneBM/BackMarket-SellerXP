@@ -409,8 +409,8 @@ function setActivePage(id: string) {
               </div>
               <div class="flex-1">
                 <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
-                <div class="bg-static-default-low rounded-bm-lg p-4 flex items-center gap-2 text-sm text-bm-text-muted">
-                  <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
+                <div class="flex items-center gap-2 text-sm text-bm-text-muted">
+                  <svg class="w-4 h-4 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
                   Reading up...
                 </div>
               </div>
