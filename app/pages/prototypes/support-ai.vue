@@ -301,37 +301,37 @@ const QUALITY_CONSEQUENCES: ChatMessage = {
 
 const BACKBOX_PROMO: ChatMessage = {
   role: 'ai',
-  text: `📦 You have a BackBox opportunity right now.\n\nThere's high demand for iPhone 14 Pro (128GB) in your region. You have 12 devices that match this criteria sitting in your catalogue unlisted.\n\nSellers who acted on similar opportunities last month saw an average +18% GMV uplift within 2 weeks.`,
+  text: `📦 I found a sales opportunity in your catalogue.\n\nBuyer demand for iPhone 14 Pro 128GB is high in your region. You have 12 matching devices in your catalogue that are not currently active.\n\nYou could activate this stock in a few ways: list the devices, explore BackBox opportunities, or create a Deal to move them faster.`,
+  basedOn: 'catalogue data, regional demand, active listings',
   responsePills: [
-    { label: 'Show me the devices', action: 'backbox-devices' },
-    { label: 'How does BackBox work?', action: 'backbox-how' },
+    { label: 'Show matching devices', action: 'backbox-devices' },
+    { label: 'Explore BackBox', action: 'backbox-explore' },
+    { label: 'Create a Deal', action: 'backbox-deal' },
   ],
 }
 
 const BACKBOX_DEVICES: ChatMessage = {
   role: 'ai',
-  text: `Here are the 3 most relevant unlisted devices from your catalogue:`,
+  text: `Here are the 3 strongest matches from your catalogue:`,
   bullets: [
-    'iPhone 14 Pro 128GB — Space Black — Excellent — Unlisted',
-    'iPhone 14 Pro 128GB — Deep Purple — Excellent — Unlisted',
-    'iPhone 14 Pro 128GB — Silver — Good — Unlisted',
+    'iPhone 14 Pro 128GB — Space Black — Excellent — unlisted',
+    'iPhone 14 Pro 128GB — Deep Purple — Excellent — unlisted',
+    'iPhone 14 Pro 128GB — Silver — Good — unlisted',
   ],
-  ctaButton: { label: 'Go to Opportunities →', navItem: 'Opportunities' },
-  showFeedback: true,
-  feedbackGiven: null,
+  note: 'These devices match current buyer demand and could be activated quickly.',
+  ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
 }
 
-const BACKBOX_HOW: ChatMessage = {
+const BACKBOX_EXPLORE: ChatMessage = {
   role: 'ai',
-  text: `Here's how BackBox works:`,
-  bullets: [
-    'Demand matching — Back Market analyses real-time buyer demand in your region and matches it against your unlisted catalogue.',
-    'Opportunity alerts — when a strong match is found, Support AI notifies you directly so you can act fast.',
-    'Easy activation — list the matched devices with one click using pre-filled product data from the Back Market catalogue.',
-  ],
-  ctaButton: { label: 'Explore BackBox →', navItem: 'Opportunities' },
-  showFeedback: true,
-  feedbackGiven: null,
+  text: `BackBox can help you sell eligible devices directly to Back Market at a guaranteed price.\n\nFor these iPhone 14 Pro devices, BackBox may be a good option if you want a faster sale without managing the full listing flow.\n\nYou can review eligible devices and available offers in Opportunities.`,
+  ctaButton: { label: 'Go to Opportunities →', navItem: 'Opportunities' },
+}
+
+const BACKBOX_DEAL: ChatMessage = {
+  role: 'ai',
+  text: `You could create a Deal for these iPhone 14 Pro devices to increase visibility and move stock faster.\n\nBased on similar listings in your region, a 5–8% discount could make these devices more competitive while protecting margin.\n\nStart with the 12 matching devices, then choose the discount level you're comfortable with.`,
+  ctaButton: { label: 'Create a Deal →', navItem: 'Opportunities' },
 }
 
 const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
@@ -479,16 +479,22 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatMessages.value.push({ ...QUALITY_CONSEQUENCES })
     chatLoading.value = false
   } else if (action === 'backbox-devices') {
-    chatMessages.value.push({ role: 'user', text: 'Show me the devices' })
+    chatMessages.value.push({ role: 'user', text: 'Show matching devices' })
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...BACKBOX_DEVICES })
     chatLoading.value = false
-  } else if (action === 'backbox-how') {
-    chatMessages.value.push({ role: 'user', text: 'How does BackBox work?' })
+  } else if (action === 'backbox-explore') {
+    chatMessages.value.push({ role: 'user', text: 'Explore BackBox' })
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
-    chatMessages.value.push({ ...BACKBOX_HOW })
+    chatMessages.value.push({ ...BACKBOX_EXPLORE })
+    chatLoading.value = false
+  } else if (action === 'backbox-deal') {
+    chatMessages.value.push({ role: 'user', text: 'Create a Deal' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...BACKBOX_DEAL })
     chatLoading.value = false
   }
 }
@@ -671,13 +677,14 @@ const conceptMeta: readonly PrototypeConcept[] = [
       },
       {
         id: 'future-backbox',
-        label: 'Drawer — BackBox opportunity',
+        label: 'Drawer — Sales opportunity',
         navItem: 'Home',
-        changes: ['Support AI proactively surfaces a BackBox demand-matching opportunity'],
+        changes: ['Support AI proactively surfaces a sales opportunity based on catalogue data and regional demand'],
         subStates: [
           { id: 'future-backbox-promo',   label: 'Proactive message' },
-          { id: 'future-backbox-devices', label: 'Follow-up — show devices' },
-          { id: 'future-backbox-how',     label: 'Follow-up — how it works' },
+          { id: 'future-backbox-devices', label: 'Follow-up — show matching devices' },
+          { id: 'future-backbox-explore', label: 'Follow-up — explore BackBox' },
+          { id: 'future-backbox-deal',    label: 'Follow-up — create a deal' },
         ],
       },
       {
@@ -964,18 +971,28 @@ function applySubState(subId: string) {
       chatMessages.value = [
         { ...activeGreeting.value },
         { ...BACKBOX_PROMO, responsePillsUsed: true },
-        { role: 'user', text: 'Show me the devices' },
+        { role: 'user', text: 'Show matching devices' },
         { ...BACKBOX_DEVICES },
       ]
       break
 
-    case 'future-backbox-how':
+    case 'future-backbox-explore':
       drawerOpen.value = true
       chatMessages.value = [
         { ...activeGreeting.value },
         { ...BACKBOX_PROMO, responsePillsUsed: true },
-        { role: 'user', text: 'How does BackBox work?' },
-        { ...BACKBOX_HOW },
+        { role: 'user', text: 'Explore BackBox' },
+        { ...BACKBOX_EXPLORE },
+      ]
+      break
+
+    case 'future-backbox-deal':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...BACKBOX_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Create a Deal' },
+        { ...BACKBOX_DEAL },
       ]
       break
 
