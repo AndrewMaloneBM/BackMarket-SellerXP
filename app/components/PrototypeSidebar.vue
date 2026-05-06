@@ -167,8 +167,21 @@ watch(expandedPageIds, () => nextTick(() => {
         <!-- Share mode explainer -->
         <p v-if="shareMode" class="text-[11px] text-gray-500 leading-relaxed">Switch between concepts using the numbers below, then use the pages list to navigate screens. Use <span class="text-gray-300">Before / After</span> to toggle the current design against the existing experience.</p>
 
-        <!-- Concept switcher -->
-        <div>
+        <!-- Concept switcher — named labels mode (hideConceptDetails) -->
+        <div v-if="hideConceptDetails" class="space-y-1.5">
+          <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-2">Concept</p>
+          <button
+            v-for="(concept, i) in concepts"
+            :key="i"
+            :class="['w-full text-left px-3 py-2 rounded text-xs transition-colors', activeConcept === i + 1 ? 'bg-white text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800']"
+            @click="emit('update:activeConcept', i + 1)"
+          >
+            {{ concept.name }}
+          </button>
+        </div>
+
+        <!-- Concept switcher — standard numbered mode -->
+        <div v-else>
           <div class="flex items-center gap-2 mb-2">
             <p class="text-[10px] text-gray-600 uppercase tracking-widest mr-auto">Concept</p>
             <div class="flex items-center gap-1 text-[10px]">

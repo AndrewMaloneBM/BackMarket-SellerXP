@@ -109,7 +109,7 @@ function giveFeedback(msg: ChatMessage, vote: 'up' | 'down') {
 
 const conceptMeta: readonly PrototypeConcept[] = [
   {
-    name: 'Entry point + Chat',
+    name: 'In development',
     prdFeature: 'Support AI',
     prdMetric: 'Sellers find answers without leaving the back office.',
     pros: ['Persistent entry point — always one click away from any page'],
@@ -135,6 +135,21 @@ const conceptMeta: readonly PrototypeConcept[] = [
       },
     ],
   },
+  {
+    name: 'Where we want to be',
+    prdFeature: 'Support AI — Future vision',
+    prdMetric: 'Sellers resolve issues end-to-end without contacting support.',
+    pros: ['Deeper integration with seller workflows', 'Proactive suggestions based on seller context'],
+    cons: ['Requires more back-end data access', 'Higher implementation complexity'],
+    pages: [
+      {
+        id: 'future-home',
+        label: 'Home',
+        navItem: 'Home',
+        changes: ['Coming soon — future vision TBD'],
+      },
+    ],
+  },
 ]
 
 const {
@@ -151,6 +166,14 @@ function setActivePage(id: string) {
   drawerOpen.value = false
   chatMessages.value = [{ ...GREETING }]
   chatLoading.value = false
+  activeSubStateId.value = ''
+}
+
+function handleReset() {
+  drawerOpen.value = false
+  chatMessages.value = [{ ...GREETING }]
+  chatLoading.value = false
+  chatInput.value = ''
   activeSubStateId.value = ''
 }
 
@@ -231,7 +254,7 @@ function applySubState(subId: string) {
       @update:sidebar-open="sidebarOpen = $event"
       @update:active-page-id="setActivePage"
       @set-sub-state="(_, sub) => applySubState(sub)"
-      @reset="() => {}"
+      @reset="handleReset"
     />
 
     <!-- Main -->
