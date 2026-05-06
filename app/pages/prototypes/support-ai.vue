@@ -148,10 +148,11 @@ const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatM
 
 const BACKFUNDS_PROMO: ChatMessage = {
   role: 'ai',
-  text: `💡 You're eligible for BackFunds.\n\nBackFunds lets you get paid daily instead of waiting up to 7 days. Based on your account, you qualify right now — most sellers see a meaningful improvement to their cash flow within the first month.\n\nWant me to walk you through how it works?`,
+  text: `💡 You're eligible for BackFunds.\n\nYou have €18,740 pending — with BackFunds you could access that today instead of waiting until Nov 14. Most sellers activate in under 2 minutes.`,
   responsePills: [
     { label: 'Yes, tell me more', action: 'backfunds-yes' },
     { label: 'Not right now', action: 'backfunds-no' },
+    { label: 'What are the fees?', action: 'backfunds-fees' },
   ],
 }
 
@@ -166,26 +167,34 @@ const BACKFUNDS_FOLLOWUP: ChatMessage = {
   ctaButton: { label: 'Go to BackFunds →' },
 }
 
+const BACKFUNDS_FEES: ChatMessage = {
+  role: 'ai',
+  text: `BackFunds charges a small daily rate only on the amount you advance — there are no upfront or fixed fees. Full details and current rates are available on the BackFunds page.`,
+  ctaButton: { label: 'See fee details →', navItem: 'Money' },
+}
+
 const PAYOUT_TIER_Q = 'What payout tier am I on?'
 
 const PAYOUT_TIER_RESPONSE: ChatMessage = {
   role: 'ai',
-  text: `You're currently on Tier 2. Here's where you stand:\n\n✅ Order acceptance rate: 97% (target: >95%)\n✅ Shipping on time: 94% (target: >90%)\n⚠️ Cancellation rate: 4.2% (target: <3%)\n\nYou're close to Tier 1. Bringing your cancellation rate below 3% is the only thing holding you back. Tier 1 unlocks faster payouts and priority placement.`,
+  text: `You're currently on Tier 2.\n\nYou meet 2 of 3 requirements for Tier 1:\n\n✅ Order acceptance rate: 97% (target: above 95%)\n✅ Shipping on time: 94% (target: above 90%)\n⚠️ Cancellation rate: 4.2% (target: below 3%)\n\nYour fastest path to Tier 1 is reducing cancellations by 1.2 percentage points.\n\nTier 1 can improve your payout conditions. Exact benefits may depend on your market and account setup.`,
   source: 'Back Market Payout Tier Guidelines',
   responsePills: [
     { label: 'How do I reduce cancellations?', action: 'tier-cancellations' },
     { label: 'What does Tier 1 unlock?', action: 'tier-unlock' },
+    { label: 'View payout tier details →', action: 'tier-details' },
   ],
 }
 
 const PAYOUT_TIER_CANCELLATIONS: ChatMessage = {
   role: 'ai',
-  text: `Here are the most effective ways to bring your cancellation rate down:`,
+  text: `Here's where to start:`,
   bullets: [
-    'Keep your inventory synced — most cancellations happen when a listed item is already out of stock.',
-    'Set realistic processing times — if you need more than 24h, update your dispatch settings.',
-    'Pause low-stock listings — remove items you can\'t reliably fulfil rather than risking a cancel.',
-    'Monitor your order queue daily — catching issues early prevents last-minute cancellations.',
+    'Keep inventory synced — most cancellations happen when listed items are no longer available.',
+    'Pause low-stock listings you can\'t reliably fulfil.',
+    'Review orders daily so issues are caught before the shipping deadline.',
+    'If a product is unavailable, update the listing before the next sale.',
+    'Based on your current metrics, reducing cancellations is the biggest lever to reach Tier 1.',
   ],
   source: 'Back Market Seller Performance Guidelines',
   showFeedback: true,
@@ -194,16 +203,16 @@ const PAYOUT_TIER_CANCELLATIONS: ChatMessage = {
 
 const PAYOUT_TIER_UNLOCK: ChatMessage = {
   role: 'ai',
-  text: `Here's what Tier 1 unlocks for your account:`,
-  bullets: [
-    'Faster payouts — receive your money on a shorter cycle (D+3 instead of D+7).',
-    'Priority placement — your listings rank higher in search and category pages.',
-    'Reduced commission — a small percentage reduction applied to eligible sales.',
-    'Dedicated seller support — faster response times from Back Market\'s seller team.',
-  ],
+  text: `Tier 1 can improve your payout conditions and may give you access to faster payout options, depending on your market and account setup.\n\nThe exact benefits can vary, so you should check the payout tier details page for the full conditions that apply to your account.`,
   source: 'Back Market Payout Tier Guidelines',
-  showFeedback: true,
-  feedbackGiven: null,
+  ctaButton: { label: 'View payout tier details →', navItem: 'Money' },
+}
+
+const PAYOUT_TIER_DETAILS: ChatMessage = {
+  role: 'ai',
+  text: `Here's where you can review the full payout tier conditions and benefits that apply to your account.`,
+  // TODO: Update navItem to the specific payout tier page once it exists in the BO
+  ctaButton: { label: 'Go to payout tier details →', navItem: 'Money' },
 }
 
 const INSIGHT_PROMO: ChatMessage = {
@@ -415,6 +424,15 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...BACKFUNDS_FOLLOWUP })
     chatLoading.value = false
+  } else if (action === 'backfunds-fees') {
+    chatMessages.value.push({ role: 'user', text: 'What are the fees?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...BACKFUNDS_FEES })
+    chatLoading.value = false
+  } else if (action === 'tier-details') {
+    chatMessages.value.push({ role: 'user', text: 'View payout tier details →' })
+    chatMessages.value.push({ ...PAYOUT_TIER_DETAILS })
   } else if (action === 'tier-cancellations') {
     chatMessages.value.push({ role: 'user', text: 'How do I reduce cancellations?' })
     chatLoading.value = true
@@ -607,6 +625,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'future-tier-response',      label: 'Tier response' },
           { id: 'future-tier-cancellations', label: 'Follow-up — reduce cancellations' },
           { id: 'future-tier-unlock',        label: 'Follow-up — Tier 1 benefits' },
+          { id: 'future-tier-details',       label: 'Follow-up — view tier details' },
         ],
       },
       {
@@ -831,6 +850,17 @@ function applySubState(subId: string) {
         { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
         { role: 'user', text: 'What does Tier 1 unlock?' },
         { ...PAYOUT_TIER_UNLOCK },
+      ]
+      break
+
+    case 'future-tier-details':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { role: 'user', text: PAYOUT_TIER_Q },
+        { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
+        { role: 'user', text: 'View payout tier details →' },
+        { ...PAYOUT_TIER_DETAILS },
       ]
       break
 
