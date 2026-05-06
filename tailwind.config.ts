@@ -45,6 +45,12 @@ export default {
         'bm-text-muted':    'hsl(223, 3%, 52%)',   // inactive / muted elements
         'bm-border':        'hsl(225, 15%, 89%)',  // border.static.default.low
         'bm-border-action': 'hsl(223, 3%, 52%)',   // border.action.default.low
+        // Revolve full-name background tokens (for direct class usage e.g. bg-surface-default-mid)
+        'surface-default-mid':  'hsl(225, 40%, 98%)',  // background.surface.default.mid
+        'surface-default-hi':   'hsl(228, 24%, 96%)',  // background.surface.default.hi
+        'static-default-low':   'hsl(0, 0%, 100%)',    // background.static.default.low
+        'static-default-mid':   'hsl(220, 19%, 94%)',  // background.static.default.mid
+        'static-default-hi':    'hsl(225, 15%, 89%)',  // background.static.default.hi
         // Functional
         'bm-danger':  'hsl(351, 84%, 39%)',  // functional.danger.40
         'bm-warning': 'hsl(42, 75%, 27%)',   // functional.warning.40
