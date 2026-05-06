@@ -37,6 +37,8 @@ interface ChatMessage {
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
+  basedOn?: string
+  note?: string
 }
 
 const GREETING: ChatMessage = {
@@ -265,13 +267,13 @@ const INSIGHT_ADD_LISTING: ChatMessage = {
 
 const QUALITY_PROMO: ChatMessage = {
   role: 'ai',
-  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Good listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
+  text: `⚠️ I found a quality issue that needs your attention.\n\nYour iPhone 13 (64GB) — Good listing has been flagged 3 times this month for missing damage disclosure. If unresolved, the listing may be paused or reviewed by the quality team.\n\nHere's what's missing:`,
   bullets: [
-    'Clearly describe the crack or damage in the listing description',
-    'Add at least 2 photos showing the damage',
-    'Confirm the device is fully functional',
+    'Damage description in the listing details',
+    'Photos showing the affected area',
+    'Confirmation that the device is fully functional',
   ],
-  source: 'Back Market Quality Charter — Grading Definitions',
+  basedOn: 'Quality Charter, listing flags, quality score',
   responsePills: [
     { label: 'Go to listing →', action: 'quality-go-listing' },
     { label: "What happens if I don't fix it?", action: 'quality-consequences' },
@@ -280,21 +282,21 @@ const QUALITY_PROMO: ChatMessage = {
 
 const QUALITY_GO_LISTING: ChatMessage = {
   role: 'ai',
-  text: `Here's a direct link to update your listing.`,
+  text: `I'll take you directly to the flagged listing so you can update the missing details and photos.`,
   ctaButton: { label: 'Go to listing →', navItem: 'Listings' },
 }
 
 const QUALITY_CONSEQUENCES: ChatMessage = {
   role: 'ai',
-  text: `Here's what happens if the flagged listing isn't updated:`,
+  text: `If the flagged listing isn't updated:`,
   bullets: [
-    'Quality score impact — repeated flags reduce your overall quality score, which affects your placement in search results.',
-    'Listing suspension — Back Market may suspend the specific listing if violations aren\'t resolved within 7 days of the first flag.',
-    'Account review — if multiple listings are flagged simultaneously, your account may be placed under review, temporarily restricting new listings.',
+    'Quality score impact — repeated flags can lower your quality score and affect listing visibility.',
+    'Listing pause — the listing may be paused until the missing information is added.',
+    'Account review — repeated unresolved flags across multiple listings may trigger a broader quality review.',
   ],
-  source: 'Back Market Quality Charter — Grading Definitions',
-  showFeedback: true,
-  feedbackGiven: null,
+  basedOn: 'Quality Charter, listing flags, quality score',
+  note: 'The fastest fix is to update the listing details and add the missing photos.',
+  ctaButton: { label: 'Go to listing →', navItem: 'Listings' },
 }
 
 const BACKBOX_PROMO: ChatMessage = {
@@ -1309,11 +1311,18 @@ function applySubState(subId: string) {
                       <span>{{ bullet }}</span>
                     </li>
                   </ul>
+                  <!-- Note (closing sentence after bullets) -->
+                  <p v-if="msg.note" class="mt-3 text-sm text-bm-text-mid leading-relaxed">{{ msg.note }}</p>
                   <!-- Source -->
                   <a v-if="msg.source" href="#" class="mt-4 flex items-center gap-1.5 text-sm font-medium text-bm-text-hi underline underline-offset-2 hover:opacity-75 transition-opacity">
                     <span>📄</span>
                     Source: {{ msg.source }}
                   </a>
+                  <!-- Based on (personalised insights) -->
+                  <p v-if="msg.basedOn" class="mt-4 flex items-center gap-1.5 text-sm font-medium text-bm-text-muted">
+                    <span>📄</span>
+                    Based on: {{ msg.basedOn }}
+                  </p>
                   <!-- CTA button -->
                   <div v-if="msg.ctaButton" class="mt-4">
                     <button
