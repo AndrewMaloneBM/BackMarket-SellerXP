@@ -44,6 +44,21 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
+    title: 'Axon — Support AI',
+    description: 'Exploring how to bring AI-powered seller support into the Back Office. Building on the existing Support AI entry point to surface Axon in context — helping sellers get answers without leaving their workflow.',
+    problemStatement: 'Sellers abandon tasks when they can\'t find answers fast enough.',
+    author: 'Andrew Malone',
+    date: 'May 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Entry point + Chat', pages: ['Home'] },
+    ],
+    scope: 'Seller back-office',
+    goal: 'Reduce seller support drop-off',
+    link: '/prototypes/support-ai',
+    accent: '#6B5CE7',
+  },
+  {
     title: 'Increase Sellers BackFunds adoption through a dedicated micro service and self-onboarding experience',
     description: 'BackFunds lets Back Market sellers get paid daily instead of waiting a week, but only 11% of eligible sellers use it — mostly because they don\'t know it exists. This prototype explores four ways to surface the service inside the seller Back Office so discovery and self-onboarding become effortless.',
     problemStatement: 'A service that could pay sellers six days faster is invisible to 89% of the people it\'s built for.',

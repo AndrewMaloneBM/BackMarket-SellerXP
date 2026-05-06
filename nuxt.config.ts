@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: ['/', '/prototypes/money-tab', '/share/backfunds'],
+      routes: ['/', '/prototypes/money-tab', '/prototypes/support-ai', '/share/backfunds'],
     },
   },
 })
