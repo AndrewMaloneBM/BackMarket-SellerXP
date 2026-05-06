@@ -1,1 +1,0 @@
-import{e as c,l as r,D as u,E as a,c as _,G as s,o as i}from"./CanZTIVX.js";const l="bm-internal-2026",d=c({__name:"unlock",async setup(m){let e,t;const o=r(),n=u("hub_access",{maxAge:3600*24*30});return o.query.key===l?(n.value="true",[e,t]=a(()=>s("/")),await e,t()):([e,t]=a(()=>s("/share/backfunds")),await e,t()),(p,k)=>(i(),_("div"))}});export{d as default};
