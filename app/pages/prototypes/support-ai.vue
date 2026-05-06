@@ -24,6 +24,7 @@ interface ChatMessage {
   feedbackGiven?: 'up' | 'down' | null
   learnMore?: boolean
   showContactSupport?: boolean
+  isError?: boolean
 }
 
 const GREETING: ChatMessage = {
@@ -33,6 +34,14 @@ const GREETING: ChatMessage = {
 }
 
 const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatMessage }> = [
+  {
+    match: (t) => /error/i.test(t),
+    response: {
+      role: 'ai',
+      text: 'Something went wrong while processing your request. Please try again.',
+      isError: true,
+    },
+  },
   {
     match: (t) => /suspend/i.test(t),
     response: {
@@ -74,6 +83,18 @@ async function sendMessage() {
     showContactSupport: true,
   })
   chatLoading.value = false
+}
+
+function retryLastMessage() {
+  const errorIdx = chatMessages.value.findLastIndex(m => m.isError)
+  if (errorIdx === -1) return
+  const prev = chatMessages.value[errorIdx - 1]
+  if (prev?.role === 'user') {
+    chatInput.value = prev.text
+    chatMessages.value.splice(errorIdx - 1, 2)
+  } else {
+    chatMessages.value.splice(errorIdx, 1)
+  }
 }
 
 function clearChat() {
@@ -378,6 +399,12 @@ function setActivePage(id: string) {
                     <span>📄</span>
                     Source: {{ msg.source }}
                   </a>
+                  <!-- Try again (error state) -->
+                  <div v-if="msg.isError" class="mt-4">
+                    <button @click="retryLastMessage" class="px-4 py-2 bg-bm-text-hi text-white text-sm font-medium rounded-bm hover:opacity-90 transition-opacity">
+                      Try again
+                    </button>
+                  </div>
                   <!-- Contact support (no-answer state) -->
                   <div v-if="msg.showContactSupport" class="mt-4">
                     <button class="inline-flex items-center gap-2 px-4 py-2 bg-bm-gray-100 hover:bg-bm-gray-200 rounded-full text-sm font-medium text-bm-text-hi border border-bm-border transition-colors">
