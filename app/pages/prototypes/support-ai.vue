@@ -225,6 +225,7 @@ function applySubState(subId: string) {
       :active-page-id="activePageId"
       :active-sub-state-id="activeSubStateId"
       :dropped-concepts="DROPPED_CONCEPTS"
+      hide-concept-details
       @update:active-concept="activeConcept = $event"
       @update:preview-mode="previewMode = $event"
       @update:sidebar-open="sidebarOpen = $event"

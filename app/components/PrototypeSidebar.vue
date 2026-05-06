@@ -11,6 +11,7 @@ const props = defineProps<{
   activeSubStateId?: string
   droppedConcepts?: readonly number[]
   shareMode?: boolean
+  hideConceptDetails?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -284,7 +285,7 @@ watch(expandedPageIds, () => nextTick(() => {
       </div>
 
       <!-- Zone 3: Concept details — internal only -->
-      <div v-if="!shareMode" class="flex-1 overflow-y-auto px-4 py-5 space-y-5 bg-gray-900">
+      <div v-if="!shareMode && !hideConceptDetails" class="flex-1 overflow-y-auto px-4 py-5 space-y-5 bg-gray-900">
 
         <div>
           <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-1.5">Concept {{ activeConcept }}</p>
