@@ -76,7 +76,7 @@ function giveFeedback(msg: ChatMessage, vote: 'up' | 'down') {
 const conceptMeta: readonly PrototypeConcept[] = [
   {
     name: 'Entry point + Chat',
-    prdFeature: 'Support AI — Axon',
+    prdFeature: 'Support AI',
     prdMetric: 'Sellers find answers without leaving the back office.',
     pros: ['Persistent entry point — always one click away from any page'],
     cons: ['Header real estate is limited'],
@@ -87,7 +87,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: [
           '✦ Support AI chip added to the back office header',
-          'Clicking opens the Axon chat drawer from the right',
+          'Clicking opens the Support AI chat drawer from the right',
         ],
       },
     ],
@@ -113,7 +113,7 @@ function setActivePage(id: string) {
 
     <!-- Sidebar -->
     <PrototypeSidebar
-      title="Axon — Support AI"
+      title="Support AI"
       :concepts="conceptMeta"
       :active-concept="activeConcept"
       :preview-mode="previewMode"
@@ -315,7 +315,7 @@ function setActivePage(id: string) {
         <div v-if="drawerOpen" class="absolute inset-0 z-40 bg-black/30" @click="drawerOpen = false" />
       </Transition>
 
-      <!-- Axon chat drawer -->
+      <!-- Support AI chat drawer -->
       <Transition name="drawer">
         <div v-if="drawerOpen" class="absolute right-0 top-0 bottom-0 z-50 w-[600px] bg-white flex flex-col border-l border-bm-border shadow-2xl">
 

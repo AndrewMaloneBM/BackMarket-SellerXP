@@ -44,8 +44,8 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
-    title: 'Axon — Support AI',
-    description: 'Exploring how to bring AI-powered seller support into the Back Office. Building on the existing Support AI entry point to surface Axon in context — helping sellers get answers without leaving their workflow.',
+    title: 'Support AI',
+    description: 'Exploring how to bring AI-powered seller support into the Back Office. Building on the existing Support AI entry point to help sellers get answers without leaving their workflow.',
     problemStatement: 'Sellers abandon tasks when they can\'t find answers fast enough.',
     author: 'Andrew Malone',
     date: 'May 2026',
