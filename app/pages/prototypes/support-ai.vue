@@ -28,7 +28,7 @@ interface ChatMessage {
   pills?: string[]
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
-  ctaButton?: { label: string }
+  ctaButton?: { label: string; navItem?: string }
 }
 
 const GREETING: ChatMessage = {
@@ -191,6 +191,41 @@ const PAYOUT_TIER_UNLOCK: ChatMessage = {
   feedbackGiven: null,
 }
 
+const BACKBOX_PROMO: ChatMessage = {
+  role: 'ai',
+  text: `📦 You have a BackBox opportunity right now.\n\nThere's high demand for iPhone 14 Pro (128GB) in your region. You have 12 devices that match this criteria sitting in your catalogue unlisted.\n\nSellers who acted on similar opportunities last month saw an average +18% GMV uplift within 2 weeks.`,
+  responsePills: [
+    { label: 'Show me the devices', action: 'backbox-devices' },
+    { label: 'How does BackBox work?', action: 'backbox-how' },
+  ],
+}
+
+const BACKBOX_DEVICES: ChatMessage = {
+  role: 'ai',
+  text: `Here are the 3 most relevant unlisted devices from your catalogue:`,
+  bullets: [
+    'iPhone 14 Pro 128GB — Space Black — Grade A — Unlisted',
+    'iPhone 14 Pro 128GB — Deep Purple — Grade A — Unlisted',
+    'iPhone 14 Pro 128GB — Silver — Grade B — Unlisted',
+  ],
+  ctaButton: { label: 'Go to Opportunities →', navItem: 'Opportunities' },
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
+const BACKBOX_HOW: ChatMessage = {
+  role: 'ai',
+  text: `Here's how BackBox works:`,
+  bullets: [
+    'Demand matching — Back Market analyses real-time buyer demand in your region and matches it against your unlisted catalogue.',
+    'Opportunity alerts — when a strong match is found, Support AI notifies you directly so you can act fast.',
+    'Easy activation — list the matched devices with one click using pre-filled product data from the Back Market catalogue.',
+  ],
+  ctaButton: { label: 'Explore BackBox →', navItem: 'Opportunities' },
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
 const chatMessages = ref<ChatMessage[]>([GREETING])
 
 async function handleResponsePill(msg: ChatMessage, action: string) {
@@ -212,6 +247,18 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...PAYOUT_TIER_UNLOCK })
+    chatLoading.value = false
+  } else if (action === 'backbox-devices') {
+    chatMessages.value.push({ role: 'user', text: 'Show me the devices' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...BACKBOX_DEVICES })
+    chatLoading.value = false
+  } else if (action === 'backbox-how') {
+    chatMessages.value.push({ role: 'user', text: 'How does BackBox work?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...BACKBOX_HOW })
     chatLoading.value = false
   }
 }
@@ -340,6 +387,17 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'future-tier-unlock',        label: 'Follow-up — Tier 1 benefits' },
         ],
       },
+      {
+        id: 'future-backbox',
+        label: 'Drawer — BackBox opportunity',
+        navItem: 'Home',
+        changes: ['Support AI proactively surfaces a BackBox demand-matching opportunity'],
+        subStates: [
+          { id: 'future-backbox-promo',   label: 'BackBox — opportunity' },
+          { id: 'future-backbox-devices', label: 'Follow-up — show devices' },
+          { id: 'future-backbox-how',     label: 'Follow-up — how it works' },
+        ],
+      },
     ],
   },
 ]
@@ -370,6 +428,9 @@ async function setActivePage(id: string) {
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+  } else if (id === 'future-backbox') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...activeGreeting.value }, { ...BACKBOX_PROMO }]
   } else if (id === 'future-payout-tier') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: PAYOUT_TIER_Q }]
@@ -502,6 +563,31 @@ function applySubState(subId: string) {
         { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
         { role: 'user', text: 'What does Tier 1 unlock?' },
         { ...PAYOUT_TIER_UNLOCK },
+      ]
+      break
+
+    case 'future-backbox-promo':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { ...BACKBOX_PROMO }]
+      break
+
+    case 'future-backbox-devices':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...BACKBOX_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Show me the devices' },
+        { ...BACKBOX_DEVICES },
+      ]
+      break
+
+    case 'future-backbox-how':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...BACKBOX_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'How does BackBox work?' },
+        { ...BACKBOX_HOW },
       ]
       break
   }
@@ -807,7 +893,7 @@ function applySubState(subId: string) {
                   <div v-if="msg.ctaButton" class="mt-4">
                     <button
                       class="inline-flex items-center gap-2 px-4 py-2 bg-bm-text-hi text-white text-sm font-medium rounded-bm hover:opacity-90 transition-opacity"
-                      @click="activeNavItem = 'Money'; drawerOpen = false"
+                      @click="activeNavItem = msg.ctaButton!.navItem ?? 'Money'; drawerOpen = false"
                     >{{ msg.ctaButton.label }}</button>
                   </div>
                   <!-- Response pills (Yes / No confirmations) -->
