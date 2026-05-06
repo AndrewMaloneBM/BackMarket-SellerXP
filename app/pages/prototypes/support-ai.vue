@@ -5,7 +5,7 @@ definePageMeta({ layout: false })
 
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 const SELLER_NAME = 'TechRenew GmbH'
-const CHAT_USER_NAME = 'John Smith'
+const CHAT_USER_NAME = 'TechRenew GmbH'
 const DROPPED_CONCEPTS: number[] = []
 
 const activeNavItem = ref('Home')
