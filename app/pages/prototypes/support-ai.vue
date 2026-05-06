@@ -182,7 +182,7 @@ const BACKFUNDS_FOLLOWUP: ChatMessage = {
     'No upfront fees — BackFunds charges a small daily rate only on the amount you advance.',
     'Instant eligibility — if your account is in good standing, you can activate it right now.',
   ],
-  ctaButton: { label: 'Go to BackFunds →' },
+  ctaButton: { label: 'Go to BackFunds →', navItem: 'Money' },
 }
 
 const BACKFUNDS_FEES: ChatMessage = {
@@ -236,7 +236,7 @@ const PAYOUT_TIER_DETAILS: ChatMessage = {
 const INSIGHT_PROMO: ChatMessage = {
   role: 'ai',
   text: `📉 Your GMV is down 12% this week.\n\nThe main driver is a drop in active iPhone listings. You currently have 8 active iPhone listings, down from 14 last week.\n\nBased on buyer demand in your region, adding 5 iPhone 13 or iPhone 14 listings could help recover the gap.`,
-  source: 'Sale Insights, active listings, regional demand',
+  basedOn: 'Sale Insights, active listings, regional demand',
   responsePills: [
     { label: 'Why did my listings drop?', action: 'insight-drop' },
     { label: 'Which models should I prioritise?', action: 'insight-models' },
@@ -603,6 +603,7 @@ function retryLastMessage() {
   if (prev?.role === 'user') {
     chatInput.value = prev.text
     chatMessages.value.splice(errorIdx - 1, 2)
+    sendMessage()
   } else {
     chatMessages.value.splice(errorIdx, 1)
   }
