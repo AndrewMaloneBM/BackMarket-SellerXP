@@ -26,6 +26,9 @@ interface ChatMessage {
   showContactSupport?: boolean
   isError?: boolean
   pills?: string[]
+  responsePills?: Array<{ label: string; action: string }>
+  responsePillsUsed?: boolean
+  ctaButton?: { label: string }
 }
 
 const GREETING: ChatMessage = {
@@ -128,7 +131,38 @@ const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatM
   },
 ]
 
+const BACKFUNDS_PROMO: ChatMessage = {
+  role: 'ai',
+  text: `💡 You're eligible for BackFunds.\n\nBackFunds lets you get paid daily instead of waiting up to 7 days. Based on your account, you qualify right now — most sellers see a meaningful improvement to their cash flow within the first month.\n\nWant me to walk you through how it works?`,
+  responsePills: [
+    { label: 'Yes, tell me more', action: 'backfunds-yes' },
+    { label: 'Not right now', action: 'backfunds-no' },
+  ],
+}
+
+const BACKFUNDS_FOLLOWUP: ChatMessage = {
+  role: 'ai',
+  text: `Here's how BackFunds works:`,
+  bullets: [
+    'Get paid daily — instead of waiting D+7, your payouts are processed every day.',
+    'No upfront fees — BackFunds charges a small daily rate only on the amount you advance.',
+    'Instant eligibility — if your account is in good standing, you can activate it right now.',
+  ],
+  ctaButton: { label: 'Go to BackFunds →' },
+}
+
 const chatMessages = ref<ChatMessage[]>([GREETING])
+
+async function handleResponsePill(msg: ChatMessage, action: string) {
+  msg.responsePillsUsed = true
+  if (action === 'backfunds-yes') {
+    chatMessages.value.push({ role: 'user', text: 'Yes, tell me more' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...BACKFUNDS_FOLLOWUP })
+    chatLoading.value = false
+  }
+}
 
 async function sendMessage() {
   const text = chatInput.value.trim()
@@ -232,6 +266,16 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'future-drawer-greeting', label: 'Drawer — greeting with topics' },
         ],
       },
+      {
+        id: 'future-backfunds',
+        label: 'Drawer — BackFunds',
+        navItem: 'Home',
+        changes: ['Support AI proactively surfaces BackFunds eligibility in the chat'],
+        subStates: [
+          { id: 'future-backfunds-promo',  label: 'BackFunds — promo' },
+          { id: 'future-backfunds-detail', label: 'BackFunds — detail' },
+        ],
+      },
     ],
   },
 ]
@@ -256,11 +300,16 @@ const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?
 
 function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
-  drawerOpen.value = false
-  chatMessages.value = [{ ...activeGreeting.value }]
   chatLoading.value = false
   activeSubStateId.value = ''
   activePillTopic.value = null
+  if (id === 'future-backfunds') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+  } else {
+    drawerOpen.value = false
+    chatMessages.value = [{ ...activeGreeting.value }]
+  }
 }
 
 function handleReset() {
@@ -331,6 +380,21 @@ function applySubState(subId: string) {
     case 'future-drawer-greeting':
       drawerOpen.value = true
       chatMessages.value = [{ ...GREETING_FUTURE }]
+      break
+
+    case 'future-backfunds-promo':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+      break
+
+    case 'future-backfunds-detail':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...BACKFUNDS_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Yes, tell me more' },
+        { ...BACKFUNDS_FOLLOWUP },
+      ]
       break
   }
 }
@@ -631,6 +695,22 @@ function applySubState(subId: string) {
                     <span>📄</span>
                     Source: {{ msg.source }}
                   </a>
+                  <!-- CTA button -->
+                  <div v-if="msg.ctaButton" class="mt-4">
+                    <button
+                      class="inline-flex items-center gap-2 px-4 py-2 bg-bm-text-hi text-white text-sm font-medium rounded-bm hover:opacity-90 transition-opacity"
+                      @click="activeNavItem = 'Money'; drawerOpen = false"
+                    >{{ msg.ctaButton.label }}</button>
+                  </div>
+                  <!-- Response pills (Yes / No confirmations) -->
+                  <div v-if="msg.responsePills?.length && !msg.responsePillsUsed" class="flex flex-wrap gap-2 mt-4">
+                    <button
+                      v-for="pill in msg.responsePills"
+                      :key="pill.label"
+                      class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                      @click="handleResponsePill(msg, pill.action)"
+                    >{{ pill.label }}</button>
+                  </div>
                   <!-- Try again (error state) -->
                   <div v-if="msg.isError" class="mt-4">
                     <button @click="retryLastMessage" class="px-4 py-2 bg-bm-text-hi text-white text-sm font-medium rounded-bm hover:opacity-90 transition-opacity">
