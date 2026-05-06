@@ -5,21 +5,18 @@ definePageMeta({ layout: false })
 
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 const SELLER_NAME = 'Koala Stash'
+const DROPPED_CONCEPTS: number[] = []
 
 const activeNavItem = ref('Home')
+const activeSubStateId = ref('')
 
 const conceptMeta: readonly PrototypeConcept[] = [
   {
     name: 'Entry point + Chat',
     prdFeature: 'Support AI — Axon',
-    prdMetric: 'Sellers find answers without leaving the back office. Reduce support ticket volume.',
-    pros: [
-      'Persistent entry point in the header — always one click away regardless of page',
-      'Contextual chat keeps seller in their workflow',
-    ],
-    cons: [
-      'Header real estate is limited — button must compete with other actions',
-    ],
+    prdMetric: 'Sellers find answers without leaving the back office.',
+    pros: ['Persistent entry point — always one click away from any page'],
+    cons: ['Header real estate is limited'],
     pages: [
       {
         id: 'home',
@@ -36,27 +33,16 @@ const conceptMeta: readonly PrototypeConcept[] = [
 
 const {
   sidebarOpen,
-  activeConcept,
-  activePageId,
-  activeSubStateId,
-  expandedPageIds,
-  currentConcept,
   previewMode,
-  showDroppedModal,
-  showResetTooltip,
-  pageTreeEl,
-  pageTreeHasMore,
-  checkPageTreeScroll,
-  navigateTo,
-  navigateToSubState,
-  toggleExpanded,
-  onResetHover,
-  onResetLeave,
-  resetDismissedUi,
+  activeConcept,
+  activePages,
 } = usePrototypeSidebar(conceptMeta)
 
-const DROPPED_CONCEPTS: number[] = []
-const DROPPED_DATE = ''
+const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
+
+function setActivePage(id: string) {
+  activePages.value[activeConcept.value - 1] = id
+}
 </script>
 
 <template>
@@ -64,46 +50,32 @@ const DROPPED_DATE = ''
 
     <!-- Sidebar -->
     <PrototypeSidebar
-      v-model:sidebarOpen="sidebarOpen"
-      :concept-meta="conceptMeta"
+      title="Axon — Support AI"
+      :concepts="conceptMeta"
       :active-concept="activeConcept"
+      :preview-mode="previewMode"
+      :sidebar-open="sidebarOpen"
       :active-page-id="activePageId"
       :active-sub-state-id="activeSubStateId"
-      :expanded-page-ids="expandedPageIds"
-      :current-concept="currentConcept"
-      :preview-mode="previewMode"
-      :show-dropped-modal="showDroppedModal"
-      :show-reset-tooltip="showResetTooltip"
-      :page-tree-el="pageTreeEl"
-      :page-tree-has-more="pageTreeHasMore"
       :dropped-concepts="DROPPED_CONCEPTS"
-      :dropped-date="DROPPED_DATE"
-      title="Axon — Support AI"
-      @update:activeConcept="activeConcept = $event"
-      @update:previewMode="previewMode = $event"
-      @navigateTo="navigateTo"
-      @navigateToSubState="navigateToSubState"
-      @toggleExpanded="toggleExpanded"
-      @checkPageTreeScroll="checkPageTreeScroll"
-      @resetDismissedUi="resetDismissedUi"
-      @onResetHover="onResetHover"
-      @onResetLeave="onResetLeave"
+      @update:active-concept="activeConcept = $event"
+      @update:preview-mode="previewMode = $event"
+      @update:sidebar-open="sidebarOpen = $event"
+      @update:active-page-id="setActivePage"
+      @set-sub-state="(_, sub) => activeSubStateId = sub"
+      @reset="() => {}"
     />
 
     <!-- Main -->
     <div class="flex-1 flex flex-col overflow-hidden">
 
-      <!-- BM Shell: header + nav -->
+      <!-- Header -->
       <div class="sticky top-0 z-30 bg-bm-surface flex-shrink-0">
-
-        <!-- Header -->
         <header class="border-b border-bm-border">
           <div class="flex items-center px-8 h-14 gap-4">
             <img src="/bm-logo.svg" alt="Back Market" class="h-8 w-auto select-none" />
             <span class="ml-4 text-sm text-bm-text-mid">Hello <strong class="font-semibold text-bm-text-hi">{{ SELLER_NAME }}</strong></span>
-
             <div class="ml-auto flex items-center gap-2">
-              <!-- Support AI chip -->
               <button class="inline-flex items-center gap-1.5 bg-bm-text-hi text-white text-sm font-medium px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11l-1.5-3.5L3 6l3.5-1.5L8 1z"/>
@@ -111,14 +83,10 @@ const DROPPED_DATE = ''
                 </svg>
                 Support AI
               </button>
-
-              <!-- Language -->
               <button class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-bm-text-hi bg-bm-gray-100 hover:bg-bm-gray-200 rounded-bm transition-colors">
                 EN
                 <svg class="w-4 h-4 text-bm-text-muted" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
               </button>
-
-              <!-- Profile -->
               <button class="w-8 h-8 rounded-full bg-bm-gray-100 border border-bm-border flex items-center justify-center hover:bg-bm-gray-200 transition-colors">
                 <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
               </button>
@@ -147,7 +115,7 @@ const DROPPED_DATE = ''
             <!-- Page heading -->
             <div class="flex items-center justify-between mb-6">
               <h1 class="text-2xl font-heading-secondary font-semibold text-bm-text-hi">Hello, {{ SELLER_NAME }}!</h1>
-              <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-bm-text-hi bg-bm-gray-100 hover:bg-bm-gray-200 rounded-bm border border-bm-border transition-colors">
+              <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-bm-text-hi bg-white hover:bg-bm-gray-100 rounded-bm border border-bm-border transition-colors">
                 Euro
                 <svg class="w-4 h-4 text-bm-text-muted" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
               </button>
@@ -168,7 +136,7 @@ const DROPPED_DATE = ''
                     Tuesday, 7 Nov
                   </span>
                 </div>
-                <ul class="space-y-0 divide-y divide-bm-border">
+                <ul class="divide-y divide-bm-border">
                   <li v-for="task in [
                     { label: 'Orders to process', count: 126 },
                     { label: 'Cancelled orders', count: 26 },
@@ -203,20 +171,16 @@ const DROPPED_DATE = ''
                 </div>
                 <div class="grid grid-cols-3 gap-3">
                   <div v-for="metric in [
-                    { label: 'Orders shipped', value: '100,000', change: '+9.5%', sub: '99,500', period: 'Nov 1–8, 2025', prevPeriod: 'Oct 25–31, 2025' },
-                    { label: 'Revenue from shipped orders', value: '10,000 €', change: '+9.5%', sub: '9,100 €', period: 'Nov 1–8, 2025', prevPeriod: 'Oct 25–31, 2025' },
-                    { label: 'Total refunds (shipping incl.)', value: '10,000 €', change: '+9.5%', sub: '9,100 €', period: 'Nov 1–8, 2025', prevPeriod: 'Oct 25–31, 2025' },
+                    { label: 'Orders shipped', value: '100,000', change: '+9.5%', period: 'Nov 1–8, 2025' },
+                    { label: 'Revenue from shipped orders', value: '10,000 €', change: '+9.5%', period: 'Nov 1–8, 2025' },
+                    { label: 'Total refunds (shipping incl.)', value: '10,000 €', change: '+9.5%', period: 'Nov 1–8, 2025' },
                   ]" :key="metric.label" class="bg-bm-surface rounded-bm p-3">
                     <p class="text-xs text-bm-text-muted mb-2">{{ metric.label }}</p>
                     <div class="flex items-baseline gap-2 mb-1">
                       <span class="text-lg font-semibold text-bm-text-hi">{{ metric.value }}</span>
                       <span class="text-xs text-bm-success font-medium">↑ {{ metric.change }}</span>
-                      <span class="text-xs text-bm-text-muted ml-auto">{{ metric.period }}</span>
                     </div>
-                    <div class="flex items-baseline gap-2 text-xs text-bm-text-muted">
-                      <span>{{ metric.sub }}</span>
-                      <span class="ml-auto">{{ metric.prevPeriod }}</span>
-                    </div>
+                    <p class="text-xs text-bm-text-muted">{{ metric.period }}</p>
                   </div>
                 </div>
               </div>
@@ -243,7 +207,7 @@ const DROPPED_DATE = ''
                     <p class="text-xs text-bm-text-muted mt-1">shipped <span class="font-medium text-bm-text-hi">771</span></p>
                   </div>
                   <div class="bg-bm-surface rounded-bm p-3">
-                    <p class="text-xs text-bm-text-muted mb-1">Orders that require action</p>
+                    <p class="text-xs text-bm-text-muted mb-1">Orders requiring action</p>
                     <p class="text-2xl font-semibold text-bm-text-hi">610</p>
                     <p class="text-xs text-bm-text-muted mt-1">to reply <span class="font-medium text-bm-text-hi">413</span></p>
                   </div>
