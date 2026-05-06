@@ -422,7 +422,7 @@ function giveFeedback(msg: ChatMessage, vote: 'up' | 'down') {
 
 const conceptMeta: readonly PrototypeConcept[] = [
   {
-    name: 'In development',
+    name: '🚧 In development',
     prdFeature: 'Support AI',
     prdMetric: 'Sellers find answers without leaving the back office.',
     pros: ['Persistent entry point — always one click away from any page'],
@@ -449,7 +449,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
     ],
   },
   {
-    name: 'Where we want to be',
+    name: '🌟 Where we want to be',
     prdFeature: 'Support AI — Future vision',
     prdMetric: 'Sellers resolve issues end-to-end without contacting support.',
     pros: ['Deeper integration with seller workflows', 'Proactive suggestions based on seller context'],
