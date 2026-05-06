@@ -441,7 +441,7 @@ function applySubState(subId: string) {
               <div v-if="msg.role === 'user'" class="bg-bm-surface rounded-bm-lg p-4">
                 <div class="flex items-center gap-2.5 mb-1.5">
                   <div class="w-8 h-8 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
+                    <span class="text-sm font-semibold text-bm-text-mid">{{ CHAT_USER_NAME[0] }}</span>
                   </div>
                   <span class="text-sm font-semibold text-bm-text-hi">{{ CHAT_USER_NAME }}</span>
                 </div>
