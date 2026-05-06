@@ -320,7 +320,7 @@ function setActivePage(id: string) {
 
       <!-- Support AI chat drawer -->
       <Transition name="drawer">
-        <div v-if="drawerOpen" class="absolute right-0 top-0 bottom-0 z-50 w-[600px] bg-surface-default-mid flex flex-col border-l border-bm-border shadow-2xl">
+        <div v-if="drawerOpen" class="absolute right-0 top-0 bottom-0 z-50 w-[65vw] bg-surface-default-mid flex flex-col border-l border-bm-border shadow-2xl">
 
           <!-- Drawer header -->
           <div class="flex items-center px-6 py-4 border-b border-bm-border flex-shrink-0">
