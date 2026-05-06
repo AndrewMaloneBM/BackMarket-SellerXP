@@ -32,6 +32,7 @@ interface ChatMessage {
   isError?: boolean
   pills?: string[]
   showWhatsNew?: boolean
+  backToFeed?: boolean
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
@@ -344,31 +345,68 @@ const WHATS_NEW_AI_RESPONSE: ChatMessage = {
 const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   'feature-backfunds-money': {
     role: 'ai',
-    text: `BackFunds can now be activated directly from the Money tab without leaving the Back Office. Head to Money and look for the BackFunds card — review your terms and activate in one click.`,
+    backToFeed: true,
+    text: `BackFunds lets you get paid every day instead of waiting D+7 — and it's now one tap away from your Money tab.\n\nWith €18,740 sitting in pending payouts right now, activating BackFunds could free up that cash up to 6 days earlier.`,
+    bullets: [
+      'Go to your Money tab and find the BackFunds card in the wallet section',
+      'Review your daily rate — no upfront fees, only charged on the amount you advance',
+      'Tap "Activate" and confirm — it takes under 2 minutes to go live',
+    ],
     ctaButton: { label: 'Go to Money →', navItem: 'Money' },
   },
   'feature-bulk-csv': {
     role: 'ai',
-    text: `You can now upload multiple listings at once using a CSV file. Go to Listings → Import, download the pre-filled template, fill in your inventory, and upload.`,
+    backToFeed: true,
+    text: `You can now add multiple listings at once by uploading a spreadsheet — no more creating them one by one.\n\nWith 12 unlisted devices in your catalogue right now, this is the fastest way to get them live and recover that GMV.`,
+    bullets: [
+      'Go to Listings, then open Import',
+      'Download the CSV template and fill in model, grade, price, and stock for each device',
+      'Upload the file — listings go live automatically after a quick quality check',
+    ],
     ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
   },
   'feature-tier-dashboard': {
     role: 'ai',
-    text: `There's now a dedicated payout tier dashboard in the Money section. You can see your current tier, all performance metrics, and exactly what you need to do to reach the next tier.`,
+    backToFeed: true,
+    text: `There's now a full dashboard showing your payout tier, every metric that affects it, and exactly what to improve to move up.\n\nYou're currently on Tier 2 — one metric away from Tier 1. The dashboard makes it obvious what's holding you back.`,
+    bullets: [
+      'Go to Money and open the Payout Tier card',
+      'Review your metrics — green means on track, amber means needs attention',
+      'Click "How do I improve this?" next to any amber metric for personalised tips',
+    ],
     ctaButton: { label: 'Go to Money →', navItem: 'Money' },
   },
   'feature-backbox-alerts': {
     role: 'ai',
-    text: `Support AI now surfaces BackBox demand-matching opportunities proactively. When there's high buyer demand for devices sitting unlisted in your catalogue, you'll see an alert in the chat drawer automatically.`,
+    backToFeed: true,
+    text: `Support AI now automatically flags BackBox demand spikes that match devices already in your inventory but not yet listed.\n\nTechRenew GmbH has 12 unlisted iPhone 14 Pros right now — this feature means you'll know about buyer demand before the opportunity passes.`,
+    bullets: [
+      'Alerts appear automatically in the Support AI drawer when a strong match is found',
+      'Tap "Show me the devices" to review the matched inventory',
+      'List them directly from the alert — product data is pre-filled from the Back Market catalogue',
+    ],
+    ctaButton: { label: 'Go to Opportunities →', navItem: 'Opportunities' },
   },
   'feature-quality-score': {
     role: 'ai',
-    text: `The quality score breakdown now shows exactly which listings are contributing to your score — and why. You can filter by grade and see the impact of each flagged listing.`,
+    backToFeed: true,
+    text: `The quality section now shows a full breakdown of which listings are affecting your score and the specific reason for each flag — not just a single summary number.\n\nYour iPhone 13 (64GB) Good listing has been flagged 3 times this month. This breakdown makes it easy to find and fix the issue before it affects your placement.`,
+    bullets: [
+      'Go to Listings and open the Quality tab',
+      'Filter by "Flagged" to see all listings with active issues',
+      'Click any listing to see the exact violation and the steps to resolve it',
+    ],
     ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
   },
   'feature-evri': {
     role: 'ai',
-    text: `Evri has been added as an approved carrier for UK shipments. Select Evri when generating shipping labels from the Orders section. Rates are competitive for parcels under 2 kg.`,
+    backToFeed: true,
+    text: `Evri is now an approved carrier for UK shipments, giving you a more cost-effective option for lighter parcels.\n\nIf TechRenew GmbH ships regularly to UK buyers, switching parcels under 2 kg to Evri can meaningfully reduce your cost per order.`,
+    bullets: [
+      'Open any UK order and click "Generate label"',
+      'Select Evri from the carrier dropdown — it appears alongside your existing carriers',
+      'Print and attach the label as normal; tracking updates are included automatically',
+    ],
     ctaButton: { label: 'Go to Orders →', navItem: 'Orders' },
   },
 }
@@ -453,6 +491,15 @@ async function handleReleasePill(label: string, action: string) {
 
 function goBackFromFeed() {
   chatMessages.value = [{ ...GREETING_WHATS_NEW }]
+  activePillTopic.value = null
+}
+
+function goBackToReleaseFeed() {
+  chatMessages.value = [
+    { ...GREETING_WHATS_NEW },
+    { role: 'user', text: "What's new in the Back Office" },
+    { ...WHATS_NEW_AI_RESPONSE },
+  ]
   activePillTopic.value = null
 }
 
@@ -1147,6 +1194,10 @@ function applySubState(subId: string) {
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
                   <div class="bg-static-default-low rounded-bm-lg p-4">
+                  <button v-if="msg.backToFeed" class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3" @click="goBackToReleaseFeed()">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    Back to What's new
+                  </button>
                   <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
                   <p v-if="msg.learnMore" class="text-sm font-semibold text-bm-text-hi mt-3">I can't provide legal, financial, or professional advice. <a href="#" class="underline hover:opacity-75">Learn more</a></p>
                   <!-- Topic / question pills -->
