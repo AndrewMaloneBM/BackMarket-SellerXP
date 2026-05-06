@@ -969,7 +969,7 @@ function applySubState(subId: string) {
         <header class="border-b border-bm-border">
           <div class="flex items-center px-8 h-14 gap-4">
             <img src="/bm-logo.svg" alt="Back Market" class="h-8 w-auto select-none" />
-            <span class="ml-4 text-sm text-bm-text-mid">Hello <strong class="font-semibold text-bm-text-hi">{{ SELLER_NAME }}</strong></span>
+            <span class="ml-4 text-sm text-bm-text-mid flex items-center gap-1.5">Hello <span class="inline-block w-24 h-3.5 bg-bm-gray-200 rounded animate-pulse"></span></span>
             <div class="ml-auto flex items-center gap-2">
               <button @click="drawerOpen = true" class="inline-flex items-center gap-1.5 bg-bm-text-hi text-white text-sm font-medium px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
@@ -1009,7 +1009,7 @@ function applySubState(subId: string) {
 
             <!-- Page heading -->
             <div class="flex items-center justify-between mb-6">
-              <h1 class="text-2xl font-heading-secondary font-semibold text-bm-text-hi">Hello, {{ SELLER_NAME }}!</h1>
+              <div class="w-52 h-7 bg-bm-gray-200 rounded animate-pulse"></div>
               <button class="flex items-center gap-1 px-3 py-1.5 text-sm text-bm-text-hi bg-white hover:bg-bm-gray-100 rounded-bm border border-bm-border transition-colors">
                 Euro
                 <svg class="w-4 h-4 text-bm-text-muted" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg>
@@ -1026,24 +1026,17 @@ function applySubState(subId: string) {
                     <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
                     Task list
                   </div>
-                  <span class="text-xs text-bm-text-muted flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" /></svg>
-                    Tuesday, 7 Nov
+                  <span class="flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-bm-gray-200" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" /></svg>
+                    <span class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse inline-block"></span>
                   </span>
                 </div>
                 <ul class="divide-y divide-bm-border">
-                  <li v-for="task in [
-                    { label: 'Orders to process', count: 126 },
-                    { label: 'Cancelled orders', count: 26 },
-                    { label: 'Returns to process', count: 19 },
-                    { label: 'After sales tasks', count: 13 },
-                    { label: 'Trade-in tasks', count: 22 },
-                    { label: 'Matched products', count: 10 },
-                  ]" :key="task.label" class="flex items-center justify-between py-2.5 text-sm">
-                    <span class="text-bm-text-mid">{{ task.label }}</span>
-                    <div class="flex items-center gap-2 text-bm-text-muted">
-                      <span class="font-medium text-bm-text-hi">{{ task.count }}</span>
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                  <li v-for="(w, i) in ['w-36', 'w-28', 'w-32', 'w-24', 'w-28', 'w-32']" :key="i" class="flex items-center justify-between py-2.5">
+                    <div :class="['h-3.5 bg-bm-gray-200 rounded animate-pulse', w]"></div>
+                    <div class="flex items-center gap-2">
+                      <div class="w-6 h-3.5 bg-bm-gray-200 rounded animate-pulse"></div>
+                      <svg class="w-4 h-4 text-bm-gray-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
                     </div>
                   </li>
                 </ul>
@@ -1065,17 +1058,13 @@ function applySubState(subId: string) {
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
-                  <div v-for="metric in [
-                    { label: 'Orders shipped', value: '100,000', change: '+9.5%', period: 'Nov 1–8, 2025' },
-                    { label: 'Revenue from shipped orders', value: '10,000 €', change: '+9.5%', period: 'Nov 1–8, 2025' },
-                    { label: 'Total refunds (shipping incl.)', value: '10,000 €', change: '+9.5%', period: 'Nov 1–8, 2025' },
-                  ]" :key="metric.label" class="bg-bm-surface rounded-bm p-3">
-                    <p class="text-xs text-bm-text-muted mb-2">{{ metric.label }}</p>
-                    <div class="flex items-baseline gap-2 mb-1">
-                      <span class="text-lg font-semibold text-bm-text-hi">{{ metric.value }}</span>
-                      <span class="text-xs text-bm-success font-medium">↑ {{ metric.change }}</span>
+                  <div v-for="i in 3" :key="i" class="bg-bm-surface rounded-bm p-3">
+                    <div class="w-28 h-3 bg-bm-gray-200 rounded animate-pulse mb-3"></div>
+                    <div class="flex items-center gap-2 mb-2">
+                      <div class="w-20 h-5 bg-bm-gray-200 rounded animate-pulse"></div>
+                      <div class="w-10 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
                     </div>
-                    <p class="text-xs text-bm-text-muted">{{ metric.period }}</p>
+                    <div class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
                   </div>
                 </div>
               </div>
@@ -1097,14 +1086,14 @@ function applySubState(subId: string) {
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                   <div class="bg-bm-surface rounded-bm p-3">
-                    <p class="text-xs text-bm-text-muted mb-1">Orders received</p>
-                    <p class="text-2xl font-semibold text-bm-text-hi">1,158</p>
-                    <p class="text-xs text-bm-text-muted mt-1">shipped <span class="font-medium text-bm-text-hi">771</span></p>
+                    <div class="w-24 h-3 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
+                    <div class="w-14 h-7 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
+                    <div class="w-20 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
                   </div>
                   <div class="bg-bm-surface rounded-bm p-3">
-                    <p class="text-xs text-bm-text-muted mb-1">Orders requiring action</p>
-                    <p class="text-2xl font-semibold text-bm-text-hi">610</p>
-                    <p class="text-xs text-bm-text-muted mt-1">to reply <span class="font-medium text-bm-text-hi">413</span></p>
+                    <div class="w-32 h-3 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
+                    <div class="w-12 h-7 bg-bm-gray-200 rounded animate-pulse mb-2"></div>
+                    <div class="w-16 h-3 bg-bm-gray-200 rounded animate-pulse"></div>
                   </div>
                 </div>
               </div>
@@ -1125,14 +1114,10 @@ function applySubState(subId: string) {
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-3">
-                  <div v-for="wallet in [
-                    { label: 'Balance', value: '€24,310.50', sub: 'Available to withdraw' },
-                    { label: 'Pending payout', value: '€18,740.00', sub: 'Expected D+7' },
-                    { label: 'Next payout date', value: 'Nov 14', sub: 'In 7 days' },
-                  ]" :key="wallet.label" class="bg-bm-surface rounded-bm p-3">
-                    <p class="text-xs text-bm-text-muted mb-2">{{ wallet.label }}</p>
-                    <p class="text-xl font-semibold text-bm-text-hi">{{ wallet.value }}</p>
-                    <p class="text-xs text-bm-text-muted mt-1">{{ wallet.sub }}</p>
+                  <div v-for="(w, i) in [['w-14', 'w-28', 'w-24'], ['w-24', 'w-24', 'w-20'], ['w-28', 'w-16', 'w-14']]" :key="i" class="bg-bm-surface rounded-bm p-3">
+                    <div :class="['h-3 bg-bm-gray-200 rounded animate-pulse mb-2', w[0]]"></div>
+                    <div :class="['h-5 bg-bm-gray-200 rounded animate-pulse mb-2', w[1]]"></div>
+                    <div :class="['h-3 bg-bm-gray-200 rounded animate-pulse', w[2]]"></div>
                   </div>
                 </div>
               </div>
