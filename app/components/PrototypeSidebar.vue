@@ -169,7 +169,15 @@ watch(expandedPageIds, () => nextTick(() => {
 
         <!-- Concept switcher — named labels mode (hideConceptDetails) -->
         <div v-if="hideConceptDetails" class="space-y-1.5">
-          <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-2">Concept</p>
+          <div class="flex items-center mb-2">
+            <p class="text-[10px] text-gray-600 uppercase tracking-widest mr-auto">Concept</p>
+            <div class="relative" @mouseenter="onResetHover" @mouseleave="onResetLeave">
+              <button @click="emit('reset')" class="p-1 rounded text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+              </button>
+              <div v-if="showResetTooltip" class="absolute right-0 top-6 z-20 bg-gray-700 text-white text-[11px] rounded px-2 py-1 whitespace-nowrap shadow-lg">Reset dismissed UI</div>
+            </div>
+          </div>
           <button
             v-for="(concept, i) in concepts"
             :key="i"
