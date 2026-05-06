@@ -41,6 +41,47 @@ const GREETING_FUTURE: ChatMessage = {
   pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
 }
 
+const TOPIC_QUESTIONS: Record<string, string[]> = {
+  'Payments & Payouts': [
+    'When will I receive my payout?',
+    'Why is my payout lower than expected?',
+    'How do I change my bank details?',
+    'What is a deferred payout?',
+    'Why was my payout blocked?',
+    'How do payout tiers work?',
+  ],
+  'My Orders': [
+    'How do I process a new order?',
+    'What happens if I miss the shipping deadline?',
+    'How do I cancel an order?',
+    "A buyer hasn't received their order — what do I do?",
+    'What is the order acceptance delay?',
+  ],
+  'Returns & Refunds': [
+    'How do I handle a return request?',
+    "What is Back Market's return window?",
+    'Who pays for return shipping?',
+    'Can I refuse a return?',
+    'What happens after I receive a returned item?',
+  ],
+  'Quality Standards': [
+    'What are the grading definitions?',
+    'What happens if my listing is flagged?',
+    'How do I grade a device with a cracked screen?',
+    'What counts as Grade A vs Grade B?',
+    'What is the quality score?',
+  ],
+  'Shipping': [
+    'What are the shipping deadlines?',
+    'Which carriers are approved?',
+    'What do I do if a package is lost?',
+    'How do I print a shipping label?',
+    'What is the required packaging standard?',
+  ],
+}
+
+const activePillTopic = ref<string | null>(null)
+
 const activeGreeting = computed((): ChatMessage =>
   activeConcept.value === 2 ? GREETING_FUTURE : GREETING
 )
@@ -113,6 +154,26 @@ function clearChat() {
   chatMessages.value = [{ ...activeGreeting.value }]
   chatInput.value = ''
   chatLoading.value = false
+  activePillTopic.value = null
+}
+
+async function sendPillQuestion(question: string) {
+  activePillTopic.value = null
+  chatMessages.value.push({ role: 'user', text: question })
+  chatLoading.value = true
+  await new Promise(r => setTimeout(r, 1500))
+  chatMessages.value.push({
+    role: 'ai',
+    text: `Here's what I found in the Seller Support Center for your question.`,
+    bullets: [
+      'This is a placeholder answer that would be retrieved from the relevant support article.',
+      'In production, Support AI would surface the most relevant content and link directly to it.',
+    ],
+    source: 'Seller Support Center',
+    showFeedback: true,
+    feedbackGiven: null,
+  })
+  chatLoading.value = false
 }
 
 function giveFeedback(msg: ChatMessage, vote: 'up' | 'down') {
@@ -180,6 +241,7 @@ watch(activeConcept, () => {
   chatLoading.value = false
   chatInput.value = ''
   activeSubStateId.value = ''
+  activePillTopic.value = null
 })
 
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
@@ -190,6 +252,7 @@ function setActivePage(id: string) {
   chatMessages.value = [{ ...activeGreeting.value }]
   chatLoading.value = false
   activeSubStateId.value = ''
+  activePillTopic.value = null
 }
 
 function handleReset() {
@@ -198,6 +261,7 @@ function handleReset() {
   chatLoading.value = false
   chatInput.value = ''
   activeSubStateId.value = ''
+  activePillTopic.value = null
 }
 
 const CRACKED_Q = 'What grade do I need to give a phone that has a cracked screen?'
@@ -206,6 +270,7 @@ const SUSPENDED_Q = 'My account has been suspended and I have 200 orders to proc
 function applySubState(subId: string) {
   activeSubStateId.value = subId
   chatLoading.value = false
+  activePillTopic.value = null
 
   const crackedResponse = SCRIPTED_RESPONSES.find(s => s.match(CRACKED_Q))!.response
   const suspendedResponse = SCRIPTED_RESPONSES.find(s => s.match(SUSPENDED_Q))!.response
@@ -510,14 +575,38 @@ function applySubState(subId: string) {
                   <div class="bg-static-default-low rounded-bm-lg p-4">
                   <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
                   <p v-if="msg.learnMore" class="text-sm font-semibold text-bm-text-hi mt-3">I can't provide legal, financial, or professional advice. <a href="#" class="underline hover:opacity-75">Learn more</a></p>
-                  <!-- Topic pills -->
-                  <div v-if="msg.pills?.length" class="flex flex-wrap gap-2 mt-4">
-                    <button
-                      v-for="pill in msg.pills"
-                      :key="pill"
-                      class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
-                      @click="chatInput = pill"
-                    >{{ pill }}</button>
+                  <!-- Topic / question pills -->
+                  <div v-if="msg.pills?.length" class="mt-4">
+
+                    <!-- Level 2: question pills for selected topic -->
+                    <template v-if="activePillTopic">
+                      <button
+                        class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3"
+                        @click="activePillTopic = null"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                        Back
+                      </button>
+                      <div class="flex flex-wrap gap-2">
+                        <button
+                          v-for="q in TOPIC_QUESTIONS[activePillTopic]"
+                          :key="q"
+                          class="h-auto py-1.5 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors text-left"
+                          @click="sendPillQuestion(q)"
+                        >{{ q }}</button>
+                      </div>
+                    </template>
+
+                    <!-- Level 1: topic pills -->
+                    <div v-else class="flex flex-wrap gap-2">
+                      <button
+                        v-for="pill in msg.pills"
+                        :key="pill"
+                        class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                        @click="activePillTopic = pill"
+                      >{{ pill }}</button>
+                    </div>
+
                   </div>
                   <!-- Bullets -->
                   <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
