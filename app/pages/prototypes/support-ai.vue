@@ -5,6 +5,7 @@ definePageMeta({ layout: false })
 
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 const SELLER_NAME = 'TechRenew GmbH'
+const CHAT_USER_NAME = 'John Smith'
 const DROPPED_CONCEPTS: number[] = []
 
 const activeNavItem = ref('Home')
@@ -21,11 +22,13 @@ interface ChatMessage {
   source?: string
   showFeedback?: boolean
   feedbackGiven?: 'up' | 'down' | null
+  learnMore?: boolean
 }
 
 const GREETING: ChatMessage = {
   role: 'ai',
   text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.\n\nI can't provide legal, financial, or professional advice.`,
+  learnMore: true,
 }
 
 const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatMessage }> = [
@@ -339,7 +342,7 @@ function setActivePage(id: string) {
                   <div class="w-8 h-8 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
                   </div>
-                  <span class="text-sm font-semibold text-bm-text-hi">{{ SELLER_NAME }}</span>
+                  <span class="text-sm font-semibold text-bm-text-hi">{{ CHAT_USER_NAME }}</span>
                 </div>
                 <p class="text-sm text-bm-text-mid leading-relaxed pl-10">{{ msg.text }}</p>
               </div>
@@ -352,7 +355,7 @@ function setActivePage(id: string) {
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
                   <div class="bg-static-default-low rounded-bm-lg p-4">
-                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
+                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}<template v-if="msg.learnMore"> <a href="#" class="underline text-bm-text-hi hover:opacity-75">Learn more</a></template></p>
                   <!-- Bullets -->
                   <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
                     <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-2 text-sm text-bm-text-mid">
