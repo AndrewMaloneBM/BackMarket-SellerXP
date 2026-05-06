@@ -123,6 +123,15 @@ const conceptMeta: readonly PrototypeConcept[] = [
           '✦ Support AI chip added to the back office header',
           'Clicking opens the Support AI chat drawer from the right',
         ],
+        subStates: [
+          { id: 'drawer-greeting',      label: 'Drawer — greeting' },
+          { id: 'drawer-loading',       label: 'Drawer — loading' },
+          { id: 'drawer-q-and-a',       label: 'Drawer — Q&A response' },
+          { id: 'drawer-feedback-up',   label: 'Drawer — positive feedback' },
+          { id: 'drawer-feedback-down', label: 'Drawer — negative feedback' },
+          { id: 'drawer-no-answer',     label: 'Drawer — no answer' },
+          { id: 'drawer-error',         label: 'Drawer — error state' },
+        ],
       },
     ],
   },
@@ -139,6 +148,67 @@ const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?
 
 function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
+  drawerOpen.value = false
+  chatMessages.value = [{ ...GREETING }]
+  chatLoading.value = false
+  activeSubStateId.value = ''
+}
+
+const CRACKED_Q = 'What grade do I need to give a phone that has a cracked screen?'
+const SUSPENDED_Q = 'My account has been suspended and I have 200 orders to process today.'
+
+function applySubState(subId: string) {
+  activeSubStateId.value = subId
+  chatLoading.value = false
+
+  const crackedResponse = SCRIPTED_RESPONSES.find(s => s.match(CRACKED_Q))!.response
+  const suspendedResponse = SCRIPTED_RESPONSES.find(s => s.match(SUSPENDED_Q))!.response
+
+  switch (subId) {
+    case 'drawer-greeting':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }]
+      break
+
+    case 'drawer-loading':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }]
+      chatLoading.value = true
+      setTimeout(() => {
+        chatMessages.value.push({ ...crackedResponse, feedbackGiven: null })
+        chatLoading.value = false
+      }, 1500)
+      break
+
+    case 'drawer-q-and-a':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: null }]
+      break
+
+    case 'drawer-feedback-up':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'up' }]
+      break
+
+    case 'drawer-feedback-down':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }, { role: 'user', text: CRACKED_Q }, { ...crackedResponse, feedbackGiven: 'down' }]
+      break
+
+    case 'drawer-no-answer':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING }, { role: 'user', text: SUSPENDED_Q }, { ...suspendedResponse }]
+      break
+
+    case 'drawer-error':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...GREETING },
+        { role: 'user', text: CRACKED_Q },
+        { role: 'ai', text: 'Something went wrong while processing your request. Please try again.', isError: true },
+      ]
+      break
+  }
 }
 </script>
 
@@ -159,7 +229,7 @@ function setActivePage(id: string) {
       @update:preview-mode="previewMode = $event"
       @update:sidebar-open="sidebarOpen = $event"
       @update:active-page-id="setActivePage"
-      @set-sub-state="(_, sub) => activeSubStateId = sub"
+      @set-sub-state="(_, sub) => applySubState(sub)"
       @reset="() => {}"
     />
 
