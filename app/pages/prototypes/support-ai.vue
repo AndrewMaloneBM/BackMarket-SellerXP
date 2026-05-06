@@ -191,6 +191,47 @@ const PAYOUT_TIER_UNLOCK: ChatMessage = {
   feedbackGiven: null,
 }
 
+const INSIGHT_PROMO: ChatMessage = {
+  role: 'ai',
+  text: `📉 Your GMV is down 12% this week.\n\nThe drop is mainly driven by a reduction in iPhone listings — you currently have 8 active iPhone listings, down from 14 last week.\n\nBased on current demand in your region, adding 5 iPhone 13 or iPhone 14 listings this week could close the gap. These models are in the top 3 most searched devices by buyers right now.`,
+  responsePills: [
+    { label: 'Which models should I prioritise?', action: 'insight-models' },
+    { label: 'Why did my listings drop?', action: 'insight-drop' },
+    { label: 'Help me add a listing', action: 'insight-add-listing' },
+  ],
+}
+
+const INSIGHT_MODELS: ChatMessage = {
+  role: 'ai',
+  text: `Here are the top 3 models to prioritise based on current demand in your region:`,
+  bullets: [
+    'iPhone 14 (128GB) — High demand, avg. sale price €420, low competition right now.',
+    'iPhone 13 (128GB) — Very high search volume, avg. sale price €320, moderate competition.',
+    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Grade B.',
+  ],
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
+const INSIGHT_DROP: ChatMessage = {
+  role: 'ai',
+  text: `There are a few common reasons your active listing count may have dropped:`,
+  bullets: [
+    'Expired listings — listings with no activity for 90 days are automatically archived.',
+    'Quality flags — listings flagged for missing or incorrect information may have been suspended.',
+    'Manual removal — check your listing history in case listings were removed by your team.',
+  ],
+  ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
+const INSIGHT_ADD_LISTING: ChatMessage = {
+  role: 'ai',
+  text: `Head to Listings to add your new devices directly.`,
+  ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
+}
+
 const QUALITY_PROMO: ChatMessage = {
   role: 'ai',
   text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Grade B listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
@@ -282,6 +323,21 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...PAYOUT_TIER_UNLOCK })
     chatLoading.value = false
+  } else if (action === 'insight-models') {
+    chatMessages.value.push({ role: 'user', text: 'Which models should I prioritise?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...INSIGHT_MODELS })
+    chatLoading.value = false
+  } else if (action === 'insight-drop') {
+    chatMessages.value.push({ role: 'user', text: 'Why did my listings drop?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...INSIGHT_DROP })
+    chatLoading.value = false
+  } else if (action === 'insight-add-listing') {
+    chatMessages.value.push({ role: 'user', text: 'Help me add a listing' })
+    chatMessages.value.push({ ...INSIGHT_ADD_LISTING })
   } else if (action === 'quality-go-listing') {
     chatMessages.value.push({ role: 'user', text: 'Go to listing →' })
     chatMessages.value.push({ ...QUALITY_GO_LISTING })
@@ -431,6 +487,18 @@ const conceptMeta: readonly PrototypeConcept[] = [
         ],
       },
       {
+        id: 'future-insight',
+        label: 'Drawer — Business insight',
+        navItem: 'Home',
+        changes: ['Support AI proactively surfaces a personalised GMV insight with actionable recommendations'],
+        subStates: [
+          { id: 'future-insight-promo',       label: 'Business insight' },
+          { id: 'future-insight-models',      label: 'Follow-up — prioritise models' },
+          { id: 'future-insight-drop',        label: 'Follow-up — listing drop reasons' },
+          { id: 'future-insight-add-listing', label: 'Follow-up — add a listing' },
+        ],
+      },
+      {
         id: 'future-quality',
         label: 'Drawer — Quality performance',
         navItem: 'Home',
@@ -482,6 +550,9 @@ async function setActivePage(id: string) {
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+  } else if (id === 'future-insight') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...activeGreeting.value }, { ...INSIGHT_PROMO }]
   } else if (id === 'future-quality') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...QUALITY_PROMO }]
@@ -620,6 +691,41 @@ function applySubState(subId: string) {
         { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
         { role: 'user', text: 'What does Tier 1 unlock?' },
         { ...PAYOUT_TIER_UNLOCK },
+      ]
+      break
+
+    case 'future-insight-promo':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { ...INSIGHT_PROMO }]
+      break
+
+    case 'future-insight-models':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...INSIGHT_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Which models should I prioritise?' },
+        { ...INSIGHT_MODELS },
+      ]
+      break
+
+    case 'future-insight-drop':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...INSIGHT_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Why did my listings drop?' },
+        { ...INSIGHT_DROP },
+      ]
+      break
+
+    case 'future-insight-add-listing':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...INSIGHT_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Help me add a listing' },
+        { ...INSIGHT_ADD_LISTING },
       ]
       break
 
