@@ -23,6 +23,7 @@ interface ChatMessage {
   showFeedback?: boolean
   feedbackGiven?: 'up' | 'down' | null
   learnMore?: boolean
+  showContactSupport?: boolean
 }
 
 const GREETING: ChatMessage = {
@@ -32,6 +33,14 @@ const GREETING: ChatMessage = {
 }
 
 const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatMessage }> = [
+  {
+    match: (t) => /suspend/i.test(t),
+    response: {
+      role: 'ai',
+      text: `I'm sorry to hear that. Account suspension with pending orders is urgent and needs immediate attention from our support team. This isn't something I can resolve directly, but they can help you right away.`,
+      showContactSupport: true,
+    },
+  },
   {
     match: (t) => /grade|cracked|screen|damaged/i.test(t),
     response: {
@@ -61,7 +70,8 @@ async function sendMessage() {
   const scripted = SCRIPTED_RESPONSES.find(s => s.match(text))
   chatMessages.value.push(scripted ? { ...scripted.response } : {
     role: 'ai',
-    text: 'I found some relevant information in the Seller Support Center. Let me know if you need more details on any of these points.',
+    text: `I wasn't able to find a relevant answer for that in the Seller Support Center. Our support team will be able to help you directly.`,
+    showContactSupport: true,
   })
   chatLoading.value = false
 }
@@ -368,6 +378,14 @@ function setActivePage(id: string) {
                     <span>📄</span>
                     Source: {{ msg.source }}
                   </a>
+                  <!-- Contact support (no-answer state) -->
+                  <div v-if="msg.showContactSupport" class="mt-4">
+                    <button class="inline-flex items-center gap-2 px-4 py-2 bg-bm-gray-100 hover:bg-bm-gray-200 rounded-full text-sm font-medium text-bm-text-hi border border-bm-border transition-colors">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
+                      Contact support
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                  </div>
                   <!-- Feedback -->
                   <div v-if="msg.showFeedback" class="mt-4 space-y-3">
                     <div class="flex items-center gap-2">
