@@ -82,6 +82,14 @@ const TOPIC_QUESTIONS: Record<string, string[]> = {
 
 const activePillTopic = ref<string | null>(null)
 
+const TOPIC_PILL_ICONS: Record<string, string> = {
+  'Payments & Payouts': `<path fill-rule="evenodd" d="M8.75 10.5a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0M12 8.75a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5" clip-rule="evenodd" fill="currentColor"/><path fill-rule="evenodd" d="M21.75 5.5a1.25 1.25 0 0 0-1.25-1.25h-17A1.25 1.25 0 0 0 2.25 5.5v10a1.25 1.25 0 0 0 1.25 1.25h17a1.25 1.25 0 0 0 1.25-1.25v-10m-4.17.25H6.42a3.505 3.505 0 0 1-2.67 2.67v4.16a3.505 3.505 0 0 1 2.67 2.67h11.16a3.505 3.505 0 0 1 2.67-2.67V8.42a3.505 3.505 0 0 1-2.67-2.67" clip-rule="evenodd" fill="currentColor"/><path d="M5 18.25a.75.75 0 0 0 0 1.5h14a.75.75 0 0 0 0-1.5H5" fill="currentColor"/>`,
+  'My Orders': `<path fill-rule="evenodd" d="M3.5 4.25A1.25 1.25 0 0 0 2.25 5.5v13a1.25 1.25 0 0 0 1.25 1.25h17a1.25 1.25 0 0 0 1.25-1.25v-13a1.25 1.25 0 0 0-1.25-1.25h-17m.25 14V5.75H10v5.765a.3.3 0 0 0 .434.268l1.432-.716a.3.3 0 0 1 .268 0l1.432.716A.3.3 0 0 0 14 11.515V5.75h6.25v12.5H3.75" clip-rule="evenodd" fill="currentColor"/>`,
+  'Returns & Refunds': `<path d="M2.25 12A9.75 9.75 0 0 1 12 2.25a9.72 9.72 0 0 1 6.75 2.714V3a.75.75 0 0 1 1.5 0v3.5A1.25 1.25 0 0 1 19 7.75h-3a.75.75 0 0 1 0-1.5h1.916l-.043-.044A8.25 8.25 0 1 0 12 20.25 8.25 8.25 0 0 0 20.25 12a.75.75 0 0 1 1.5 0c0 5.385-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12" fill="currentColor"/><path d="M12 11.5c2.21 0 4-.672 4-1.5s-1.79-1.5-4-1.5S8 9.172 8 10s1.79 1.5 4 1.5" fill="currentColor"/><path d="M15.092 11.763C14.264 12.073 13.17 12.25 12 12.25c-1.17 0-2.264-.177-3.092-.487a4.305 4.305 0 0 1-.644-.3C8.094 11.63 8 11.811 8 12c0 .829 1.79 1.5 4 1.5s4-.671 4-1.5c0-.19-.093-.37-.264-.537a4.307 4.307 0 0 1-.644.3" fill="currentColor"/><path d="M12 14.25c1.17 0 2.264-.177 3.092-.487a4.307 4.307 0 0 0 .644-.3C15.906 13.63 16 13.811 16 14c0 .829-1.79 1.5-4 1.5S8 14.83 8 14c0-.19.093-.37.264-.537a4.305 4.305 0 0 0 .644.3C9.736 14.073 10.83 14.25 12 14.25" fill="currentColor"/>`,
+  'Quality Standards': `<path d="M17.53 8.54a.75.75 0 0 0-1.06-1.061L11 12.949l-2.47-2.47a.75.75 0 0 0-1.06 1.06l2.646 2.647a1.25 1.25 0 0 0 1.768 0l5.646-5.647" fill="currentColor"/><path fill-rule="evenodd" d="M4.5 2.759a1.25 1.25 0 0 0-1.25 1.25V8.73c0 9.392 7.29 12.1 8.395 12.455a1.147 1.147 0 0 0 .71 0C13.46 20.83 20.75 18.122 20.75 8.73V4.01a1.25 1.25 0 0 0-1.25-1.25h-15m.25 5.97V4.26h14.5v4.47c0 8.106-6.024 10.573-7.25 10.992-1.226-.419-7.25-2.886-7.25-10.992" clip-rule="evenodd" fill="currentColor"/>`,
+  'Shipping': `<path fill-rule="evenodd" d="M2.25 6A1.25 1.25 0 0 1 3.5 4.75h10a1.25 1.25 0 0 1 1.225 1h2.966a1.25 1.25 0 0 1 1.118.691l1.655 3.31H20.5A1.25 1.25 0 0 1 21.75 11v5a1.25 1.25 0 0 1-1.25 1.25h-.854a2.751 2.751 0 0 1-5.292 0h-3.707a2.751 2.751 0 0 1-5.293 0H3.5A1.25 1.25 0 0 1 2.25 16V6m12.5 8.919a2.751 2.751 0 0 1 4.897.832h.603v-4.5l-5.5-.001v3.669m0-5.169v-2.5h2.787l1.25 2.5H14.75m-1.5 6h-2.604a2.751 2.751 0 0 0-5.292 0H3.75v-9.5h9.5v9.5m-6.5.75a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0m9 0a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0" clip-rule="evenodd" fill="currentColor"/>`,
+}
+
 const activeGreeting = computed((): ChatMessage =>
   activeConcept.value === 2 ? GREETING_FUTURE : GREETING
 )
@@ -602,9 +610,12 @@ function applySubState(subId: string) {
                       <button
                         v-for="pill in msg.pills"
                         :key="pill"
-                        class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                        class="inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
                         @click="activePillTopic = pill"
-                      >{{ pill }}</button>
+                      >
+                        <svg v-if="TOPIC_PILL_ICONS[pill]" class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" v-html="TOPIC_PILL_ICONS[pill]" />
+                        {{ pill }}
+                      </button>
                     </div>
 
                   </div>
