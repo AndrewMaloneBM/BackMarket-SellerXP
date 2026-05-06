@@ -207,7 +207,7 @@ const INSIGHT_MODELS: ChatMessage = {
   bullets: [
     'iPhone 14 (128GB) — High demand, avg. sale price €420, low competition right now.',
     'iPhone 13 (128GB) — Very high search volume, avg. sale price €320, moderate competition.',
-    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Good condition.',
+    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Good.',
   ],
   showFeedback: true,
   feedbackGiven: null,
@@ -234,7 +234,7 @@ const INSIGHT_ADD_LISTING: ChatMessage = {
 
 const QUALITY_PROMO: ChatMessage = {
   role: 'ai',
-  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Good condition listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
+  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Good listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
   bullets: [
     'Clearly describe the crack or damage in the listing description',
     'Add at least 2 photos showing the damage',
@@ -581,7 +581,7 @@ function handleReset() {
   activePillTopic.value = null
 }
 
-const CRACKED_Q = 'What condition should I use for a phone with a cracked screen?'
+const CRACKED_Q = 'What grade should I use for a phone with a cracked screen?'
 const SUSPENDED_Q = 'My account has been suspended and I have 200 orders to process today.'
 
 function applySubState(subId: string) {
