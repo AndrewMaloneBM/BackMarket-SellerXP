@@ -480,7 +480,6 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI surfaces personalised payout tier data from the seller\'s account'],
         subStates: [
-          { id: 'future-tier-loading',       label: 'Loading' },
           { id: 'future-tier-response',      label: 'Tier response' },
           { id: 'future-tier-cancellations', label: 'Follow-up — reduce cancellations' },
           { id: 'future-tier-unlock',        label: 'Follow-up — Tier 1 benefits' },
