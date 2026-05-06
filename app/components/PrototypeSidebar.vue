@@ -160,7 +160,7 @@ watch(expandedPageIds, () => nextTick(() => {
       <!-- Zone 2: Controls -->
       <div
         ref="zone2El"
-        :class="['px-4 py-4 space-y-4 relative', shareMode ? 'flex-1 overflow-y-auto' : 'flex-shrink-0 border-b border-gray-800']"
+        :class="['px-4 py-4 space-y-4 relative', shareMode ? 'flex-1 overflow-y-auto' : hideConceptDetails ? 'flex-1 overflow-y-auto' : 'flex-shrink-0 border-b border-gray-800']"
         @scroll="checkScroll(zone2El, v => zone2HasMore = v)"
       >
 
