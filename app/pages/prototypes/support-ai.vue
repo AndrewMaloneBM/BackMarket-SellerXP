@@ -457,11 +457,11 @@ const conceptMeta: readonly PrototypeConcept[] = [
     pages: [
       {
         id: 'future-home',
-        label: 'Home',
+        label: 'Drawer — Greeting',
         navItem: 'Home',
         changes: ['Support AI opens with pre-populated topic shortcuts'],
         subStates: [
-          { id: 'future-drawer-greeting', label: 'Drawer — greeting with topics' },
+          { id: 'future-drawer-greeting', label: 'Greeting with topics' },
         ],
       },
       {
@@ -470,8 +470,8 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI proactively surfaces BackFunds eligibility in the chat'],
         subStates: [
-          { id: 'future-backfunds-promo',  label: 'BackFunds — promo' },
-          { id: 'future-backfunds-detail', label: 'BackFunds — detail' },
+          { id: 'future-backfunds-promo',  label: 'Proactive message' },
+          { id: 'future-backfunds-detail', label: 'Follow-up — tell me more' },
         ],
       },
       {
@@ -491,9 +491,9 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI proactively surfaces a personalised GMV insight with actionable recommendations'],
         subStates: [
-          { id: 'future-insight-promo',       label: 'Business insight' },
+          { id: 'future-insight-promo',       label: 'Proactive message' },
           { id: 'future-insight-models',      label: 'Follow-up — prioritise models' },
-          { id: 'future-insight-drop',        label: 'Follow-up — listing drop reasons' },
+          { id: 'future-insight-drop',        label: 'Follow-up — why listings dropped' },
           { id: 'future-insight-add-listing', label: 'Follow-up — add a listing' },
         ],
       },
@@ -503,7 +503,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI proactively flags a quality issue on a specific listing'],
         subStates: [
-          { id: 'future-quality-promo',        label: 'Quality — flagged listing' },
+          { id: 'future-quality-promo',        label: 'Proactive message' },
           { id: 'future-quality-listing',      label: 'Follow-up — go to listing' },
           { id: 'future-quality-consequences', label: 'Follow-up — consequences' },
         ],
@@ -514,7 +514,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI proactively surfaces a BackBox demand-matching opportunity'],
         subStates: [
-          { id: 'future-backbox-promo',   label: 'BackBox — opportunity' },
+          { id: 'future-backbox-promo',   label: 'Proactive message' },
           { id: 'future-backbox-devices', label: 'Follow-up — show devices' },
           { id: 'future-backbox-how',     label: 'Follow-up — how it works' },
         ],
