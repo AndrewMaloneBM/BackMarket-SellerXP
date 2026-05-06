@@ -151,6 +151,46 @@ const BACKFUNDS_FOLLOWUP: ChatMessage = {
   ctaButton: { label: 'Go to BackFunds →' },
 }
 
+const PAYOUT_TIER_Q = 'What payout tier am I on?'
+
+const PAYOUT_TIER_RESPONSE: ChatMessage = {
+  role: 'ai',
+  text: `You're currently on Tier 2. Here's where you stand:\n\n✅ Order acceptance rate: 97% (target: >95%)\n✅ Shipping on time: 94% (target: >90%)\n⚠️ Cancellation rate: 4.2% (target: <3%)\n\nYou're close to Tier 1. Bringing your cancellation rate below 3% is the only thing holding you back. Tier 1 unlocks faster payouts and priority placement.`,
+  source: 'Back Market Payout Tier Guidelines',
+  responsePills: [
+    { label: 'How do I reduce cancellations?', action: 'tier-cancellations' },
+    { label: 'What does Tier 1 unlock?', action: 'tier-unlock' },
+  ],
+}
+
+const PAYOUT_TIER_CANCELLATIONS: ChatMessage = {
+  role: 'ai',
+  text: `Here are the most effective ways to bring your cancellation rate down:`,
+  bullets: [
+    'Keep your inventory synced — most cancellations happen when a listed item is already out of stock.',
+    'Set realistic processing times — if you need more than 24h, update your dispatch settings.',
+    'Pause low-stock listings — remove items you can\'t reliably fulfil rather than risking a cancel.',
+    'Monitor your order queue daily — catching issues early prevents last-minute cancellations.',
+  ],
+  source: 'Back Market Seller Performance Guidelines',
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
+const PAYOUT_TIER_UNLOCK: ChatMessage = {
+  role: 'ai',
+  text: `Here's what Tier 1 unlocks for your account:`,
+  bullets: [
+    'Faster payouts — receive your money on a shorter cycle (D+3 instead of D+7).',
+    'Priority placement — your listings rank higher in search and category pages.',
+    'Reduced commission — a small percentage reduction applied to eligible sales.',
+    'Dedicated seller support — faster response times from Back Market\'s seller team.',
+  ],
+  source: 'Back Market Payout Tier Guidelines',
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
 const chatMessages = ref<ChatMessage[]>([GREETING])
 
 async function handleResponsePill(msg: ChatMessage, action: string) {
@@ -160,6 +200,18 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...BACKFUNDS_FOLLOWUP })
+    chatLoading.value = false
+  } else if (action === 'tier-cancellations') {
+    chatMessages.value.push({ role: 'user', text: 'How do I reduce cancellations?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...PAYOUT_TIER_CANCELLATIONS })
+    chatLoading.value = false
+  } else if (action === 'tier-unlock') {
+    chatMessages.value.push({ role: 'user', text: 'What does Tier 1 unlock?' })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...PAYOUT_TIER_UNLOCK })
     chatLoading.value = false
   }
 }
@@ -276,6 +328,18 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'future-backfunds-detail', label: 'BackFunds — detail' },
         ],
       },
+      {
+        id: 'future-payout-tier',
+        label: 'Drawer — Payout tier',
+        navItem: 'Home',
+        changes: ['Support AI surfaces personalised payout tier data from the seller\'s account'],
+        subStates: [
+          { id: 'future-tier-loading',       label: 'Loading' },
+          { id: 'future-tier-response',      label: 'Tier response' },
+          { id: 'future-tier-cancellations', label: 'Follow-up — reduce cancellations' },
+          { id: 'future-tier-unlock',        label: 'Follow-up — Tier 1 benefits' },
+        ],
+      },
     ],
   },
 ]
@@ -298,7 +362,7 @@ watch(activeConcept, () => {
 
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
 
-function setActivePage(id: string) {
+async function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
   chatLoading.value = false
   activeSubStateId.value = ''
@@ -306,6 +370,13 @@ function setActivePage(id: string) {
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+  } else if (id === 'future-payout-tier') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: PAYOUT_TIER_Q }]
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...PAYOUT_TIER_RESPONSE })
+    chatLoading.value = false
   } else {
     drawerOpen.value = false
     chatMessages.value = [{ ...activeGreeting.value }]
@@ -394,6 +465,43 @@ function applySubState(subId: string) {
         { ...BACKFUNDS_PROMO, responsePillsUsed: true },
         { role: 'user', text: 'Yes, tell me more' },
         { ...BACKFUNDS_FOLLOWUP },
+      ]
+      break
+
+    case 'future-tier-loading':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: PAYOUT_TIER_Q }]
+      chatLoading.value = true
+      setTimeout(() => {
+        chatMessages.value.push({ ...PAYOUT_TIER_RESPONSE })
+        chatLoading.value = false
+      }, 1500)
+      break
+
+    case 'future-tier-response':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: PAYOUT_TIER_Q }, { ...PAYOUT_TIER_RESPONSE }]
+      break
+
+    case 'future-tier-cancellations':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { role: 'user', text: PAYOUT_TIER_Q },
+        { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
+        { role: 'user', text: 'How do I reduce cancellations?' },
+        { ...PAYOUT_TIER_CANCELLATIONS },
+      ]
+      break
+
+    case 'future-tier-unlock':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { role: 'user', text: PAYOUT_TIER_Q },
+        { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
+        { role: 'user', text: 'What does Tier 1 unlock?' },
+        { ...PAYOUT_TIER_UNLOCK },
       ]
       break
   }
