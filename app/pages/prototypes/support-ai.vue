@@ -14,6 +14,7 @@ const activeSubStateId = ref('')
 const drawerOpen = ref(false)
 const chatInput = ref('')
 const chatLoading = ref(false)
+const activeReleaseFeed = ref(false)
 
 interface ReleaseFeedGroup {
   date: string
@@ -36,7 +37,6 @@ interface ChatMessage {
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
-  releaseFeed?: ReleaseFeedGroup[]
 }
 
 const GREETING: ChatMessage = {
@@ -336,11 +336,6 @@ const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
   },
 ]
 
-const WHATS_NEW_AI_RESPONSE: ChatMessage = {
-  role: 'ai',
-  text: `Here's what's been updated in the Back Office recently.`,
-  releaseFeed: WHATS_NEW_FEED,
-}
 
 const FEATURE_RESPONSES: Record<string, ChatMessage> = {
   'feature-backfunds-money': {
@@ -472,12 +467,8 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
   }
 }
 
-async function handleWhatsNewPill() {
-  chatMessages.value.push({ role: 'user', text: "What's new in the Back Office" })
-  chatLoading.value = true
-  await new Promise(r => setTimeout(r, 1500))
-  chatMessages.value.push({ ...WHATS_NEW_AI_RESPONSE })
-  chatLoading.value = false
+function handleWhatsNewPill() {
+  activeReleaseFeed.value = true
 }
 
 async function handleReleasePill(label: string, action: string) {
@@ -490,17 +481,14 @@ async function handleReleasePill(label: string, action: string) {
 }
 
 function goBackFromFeed() {
-  chatMessages.value = [{ ...GREETING_WHATS_NEW }]
+  activeReleaseFeed.value = false
   activePillTopic.value = null
 }
 
 function goBackToReleaseFeed() {
-  chatMessages.value = [
-    { ...GREETING_WHATS_NEW },
-    { role: 'user', text: "What's new in the Back Office" },
-    { ...WHATS_NEW_AI_RESPONSE },
-  ]
+  chatMessages.value = [{ ...GREETING_WHATS_NEW }]
   activePillTopic.value = null
+  activeReleaseFeed.value = true
 }
 
 async function sendMessage() {
@@ -536,6 +524,7 @@ function clearChat() {
   chatInput.value = ''
   chatLoading.value = false
   activePillTopic.value = null
+  activeReleaseFeed.value = false
 }
 
 async function sendPillQuestion(question: string) {
@@ -688,6 +677,7 @@ watch(activeConcept, () => {
   chatInput.value = ''
   activeSubStateId.value = ''
   activePillTopic.value = null
+  activeReleaseFeed.value = false
 })
 
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
@@ -697,6 +687,7 @@ async function setActivePage(id: string) {
   chatLoading.value = false
   activeSubStateId.value = ''
   activePillTopic.value = null
+  activeReleaseFeed.value = false
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
@@ -732,6 +723,7 @@ function handleReset() {
   chatInput.value = ''
   activeSubStateId.value = ''
   activePillTopic.value = null
+  activeReleaseFeed.value = false
 }
 
 const CRACKED_Q = 'What grade should I use for a phone with a cracked screen?'
@@ -741,6 +733,7 @@ function applySubState(subId: string) {
   activeSubStateId.value = subId
   chatLoading.value = false
   activePillTopic.value = null
+  activeReleaseFeed.value = false
 
   const crackedResponse = SCRIPTED_RESPONSES.find(s => s.match(CRACKED_Q))!.response
   const suspendedResponse = SCRIPTED_RESPONSES.find(s => s.match(SUSPENDED_Q))!.response
@@ -939,11 +932,8 @@ function applySubState(subId: string) {
 
     case 'future-whats-new-feed':
       drawerOpen.value = true
-      chatMessages.value = [
-        { ...GREETING_WHATS_NEW },
-        { role: 'user', text: "What's new in the Back Office" },
-        { ...WHATS_NEW_AI_RESPONSE },
-      ]
+      chatMessages.value = [{ ...GREETING_WHATS_NEW }]
+      activeReleaseFeed.value = true
       break
   }
 }
@@ -1237,11 +1227,35 @@ function applySubState(subId: string) {
                       </div>
                       <!-- What's new section -->
                       <div v-if="msg.showWhatsNew" class="mt-4 pt-4 border-t border-bm-border">
-                        <p class="text-xs font-medium text-bm-text-muted mb-2">✨ What's new</p>
-                        <button
-                          class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
-                          @click="handleWhatsNewPill()"
-                        >What's new in the Back Office</button>
+                        <!-- Feed expanded inline -->
+                        <template v-if="activeReleaseFeed">
+                          <button
+                            class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3"
+                            @click="goBackFromFeed()"
+                          >
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            Back
+                          </button>
+                          <div v-for="group in WHATS_NEW_FEED" :key="group.date" class="mb-4 last:mb-0">
+                            <p class="text-xs font-semibold text-bm-text-muted uppercase tracking-wide mb-2">{{ group.date }}</p>
+                            <div class="flex flex-wrap gap-2">
+                              <button
+                                v-for="pill in group.pills"
+                                :key="pill.label"
+                                class="h-auto py-1.5 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors text-left"
+                                @click="handleReleasePill(pill.label, pill.action)"
+                              >{{ pill.label }}</button>
+                            </div>
+                          </div>
+                        </template>
+                        <!-- Feed collapsed: show single pill -->
+                        <template v-else>
+                          <p class="text-xs font-medium text-bm-text-muted mb-2">✨ What's new</p>
+                          <button
+                            class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                            @click="handleWhatsNewPill()"
+                          >What's new in the Back Office</button>
+                        </template>
                       </div>
                     </div>
 
@@ -1273,27 +1287,6 @@ function applySubState(subId: string) {
                       class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
                       @click="handleResponsePill(msg, pill.action)"
                     >{{ pill.label }}</button>
-                  </div>
-                  <!-- Release feed -->
-                  <div v-if="msg.releaseFeed?.length" class="mt-4">
-                    <button
-                      class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3"
-                      @click="goBackFromFeed()"
-                    >
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                      Back
-                    </button>
-                    <div v-for="group in msg.releaseFeed" :key="group.date" class="mb-4 last:mb-0">
-                      <p class="text-xs font-semibold text-bm-text-muted uppercase tracking-wide mb-2">{{ group.date }}</p>
-                      <div class="flex flex-wrap gap-2">
-                        <button
-                          v-for="pill in group.pills"
-                          :key="pill.label"
-                          class="h-auto py-1.5 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors text-left"
-                          @click="handleReleasePill(pill.label, pill.action)"
-                        >{{ pill.label }}</button>
-                      </div>
-                    </div>
                   </div>
                   <!-- Try again (error state) -->
                   <div v-if="msg.isError" class="mt-4">
