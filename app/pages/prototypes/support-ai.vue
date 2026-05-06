@@ -15,6 +15,11 @@ const drawerOpen = ref(false)
 const chatInput = ref('')
 const chatLoading = ref(false)
 
+interface ReleaseFeedGroup {
+  date: string
+  pills: Array<{ label: string; action: string }>
+}
+
 interface ChatMessage {
   role: 'ai' | 'user'
   text: string
@@ -26,9 +31,11 @@ interface ChatMessage {
   showContactSupport?: boolean
   isError?: boolean
   pills?: string[]
+  showWhatsNew?: boolean
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
+  releaseFeed?: ReleaseFeedGroup[]
 }
 
 const GREETING: ChatMessage = {
@@ -42,6 +49,14 @@ const GREETING_FUTURE: ChatMessage = {
   text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
   learnMore: true,
   pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
+}
+
+const GREETING_WHATS_NEW: ChatMessage = {
+  role: 'ai',
+  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
+  learnMore: true,
+  pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
+  showWhatsNew: true,
 }
 
 const TOPIC_QUESTIONS: Record<string, string[]> = {
@@ -301,6 +316,63 @@ const BACKBOX_HOW: ChatMessage = {
   feedbackGiven: null,
 }
 
+const WHATS_NEW_FEED: ReleaseFeedGroup[] = [
+  {
+    date: 'May 2026',
+    pills: [
+      { label: 'BackFunds activation from Money tab', action: 'feature-backfunds-money' },
+      { label: 'Bulk listing via CSV upload', action: 'feature-bulk-csv' },
+      { label: 'New payout tier dashboard', action: 'feature-tier-dashboard' },
+    ],
+  },
+  {
+    date: 'April 2026',
+    pills: [
+      { label: 'BackBox opportunity alerts in Support AI', action: 'feature-backbox-alerts' },
+      { label: 'Quality score breakdown', action: 'feature-quality-score' },
+      { label: 'New shipping carrier: Evri', action: 'feature-evri' },
+    ],
+  },
+]
+
+const WHATS_NEW_AI_RESPONSE: ChatMessage = {
+  role: 'ai',
+  text: `Here's what's been updated in the Back Office recently.`,
+  releaseFeed: WHATS_NEW_FEED,
+}
+
+const FEATURE_RESPONSES: Record<string, ChatMessage> = {
+  'feature-backfunds-money': {
+    role: 'ai',
+    text: `BackFunds can now be activated directly from the Money tab without leaving the Back Office. Head to Money and look for the BackFunds card — review your terms and activate in one click.`,
+    ctaButton: { label: 'Go to Money →', navItem: 'Money' },
+  },
+  'feature-bulk-csv': {
+    role: 'ai',
+    text: `You can now upload multiple listings at once using a CSV file. Go to Listings → Import, download the pre-filled template, fill in your inventory, and upload.`,
+    ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
+  },
+  'feature-tier-dashboard': {
+    role: 'ai',
+    text: `There's now a dedicated payout tier dashboard in the Money section. You can see your current tier, all performance metrics, and exactly what you need to do to reach the next tier.`,
+    ctaButton: { label: 'Go to Money →', navItem: 'Money' },
+  },
+  'feature-backbox-alerts': {
+    role: 'ai',
+    text: `Support AI now surfaces BackBox demand-matching opportunities proactively. When there's high buyer demand for devices sitting unlisted in your catalogue, you'll see an alert in the chat drawer automatically.`,
+  },
+  'feature-quality-score': {
+    role: 'ai',
+    text: `The quality score breakdown now shows exactly which listings are contributing to your score — and why. You can filter by grade and see the impact of each flagged listing.`,
+    ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
+  },
+  'feature-evri': {
+    role: 'ai',
+    text: `Evri has been added as an approved carrier for UK shipments. Select Evri when generating shipping labels from the Orders section. Rates are competitive for parcels under 2 kg.`,
+    ctaButton: { label: 'Go to Orders →', navItem: 'Orders' },
+  },
+}
+
 const chatMessages = ref<ChatMessage[]>([GREETING])
 
 async function handleResponsePill(msg: ChatMessage, action: string) {
@@ -360,6 +432,28 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatMessages.value.push({ ...BACKBOX_HOW })
     chatLoading.value = false
   }
+}
+
+async function handleWhatsNewPill() {
+  chatMessages.value.push({ role: 'user', text: "What's new in the Back Office" })
+  chatLoading.value = true
+  await new Promise(r => setTimeout(r, 1500))
+  chatMessages.value.push({ ...WHATS_NEW_AI_RESPONSE })
+  chatLoading.value = false
+}
+
+async function handleReleasePill(label: string, action: string) {
+  chatMessages.value.push({ role: 'user', text: label })
+  chatLoading.value = true
+  await new Promise(r => setTimeout(r, 1500))
+  const response = FEATURE_RESPONSES[action]
+  if (response) chatMessages.value.push({ ...response })
+  chatLoading.value = false
+}
+
+function goBackFromFeed() {
+  chatMessages.value = [{ ...GREETING_WHATS_NEW }]
+  activePillTopic.value = null
 }
 
 async function sendMessage() {
@@ -519,6 +613,16 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'future-backbox-how',     label: 'Follow-up — how it works' },
         ],
       },
+      {
+        id: 'future-whats-new',
+        label: "Drawer — What's new",
+        navItem: 'Home',
+        changes: ["Support AI surfaces a release feed of recent Back Office updates"],
+        subStates: [
+          { id: 'future-whats-new-greeting', label: "Greeting with What's new" },
+          { id: 'future-whats-new-feed',     label: "What's new feed" },
+        ],
+      },
     ],
   },
 ]
@@ -565,6 +669,9 @@ async function setActivePage(id: string) {
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...PAYOUT_TIER_RESPONSE })
     chatLoading.value = false
+  } else if (id === 'future-whats-new') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...GREETING_WHATS_NEW }]
   } else {
     drawerOpen.value = false
     chatMessages.value = [{ ...activeGreeting.value }]
@@ -775,6 +882,20 @@ function applySubState(subId: string) {
         { ...BACKBOX_PROMO, responsePillsUsed: true },
         { role: 'user', text: 'How does BackBox work?' },
         { ...BACKBOX_HOW },
+      ]
+      break
+
+    case 'future-whats-new-greeting':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING_WHATS_NEW }]
+      break
+
+    case 'future-whats-new-feed':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...GREETING_WHATS_NEW },
+        { role: 'user', text: "What's new in the Back Office" },
+        { ...WHATS_NEW_AI_RESPONSE },
       ]
       break
   }
@@ -1051,16 +1172,26 @@ function applySubState(subId: string) {
                     </template>
 
                     <!-- Level 1: topic pills -->
-                    <div v-else class="flex flex-wrap gap-2">
-                      <button
-                        v-for="pill in msg.pills"
-                        :key="pill"
-                        class="inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
-                        @click="activePillTopic = pill"
-                      >
-                        <svg v-if="TOPIC_PILL_ICONS[pill]" class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" v-html="TOPIC_PILL_ICONS[pill]" />
-                        {{ pill }}
-                      </button>
+                    <div v-else>
+                      <div class="flex flex-wrap gap-2">
+                        <button
+                          v-for="pill in msg.pills"
+                          :key="pill"
+                          class="inline-flex items-center gap-1.5 h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                          @click="activePillTopic = pill"
+                        >
+                          <svg v-if="TOPIC_PILL_ICONS[pill]" class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" v-html="TOPIC_PILL_ICONS[pill]" />
+                          {{ pill }}
+                        </button>
+                      </div>
+                      <!-- What's new section -->
+                      <div v-if="msg.showWhatsNew" class="mt-4 pt-4 border-t border-bm-border">
+                        <p class="text-xs font-medium text-bm-text-muted mb-2">✨ What's new</p>
+                        <button
+                          class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                          @click="handleWhatsNewPill()"
+                        >What's new in the Back Office</button>
+                      </div>
                     </div>
 
                   </div>
@@ -1091,6 +1222,27 @@ function applySubState(subId: string) {
                       class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
                       @click="handleResponsePill(msg, pill.action)"
                     >{{ pill.label }}</button>
+                  </div>
+                  <!-- Release feed -->
+                  <div v-if="msg.releaseFeed?.length" class="mt-4">
+                    <button
+                      class="flex items-center gap-1 text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors mb-3"
+                      @click="goBackFromFeed()"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                      Back
+                    </button>
+                    <div v-for="group in msg.releaseFeed" :key="group.date" class="mb-4 last:mb-0">
+                      <p class="text-xs font-semibold text-bm-text-muted uppercase tracking-wide mb-2">{{ group.date }}</p>
+                      <div class="flex flex-wrap gap-2">
+                        <button
+                          v-for="pill in group.pills"
+                          :key="pill.label"
+                          class="h-auto py-1.5 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors text-left"
+                          @click="handleReleasePill(pill.label, pill.action)"
+                        >{{ pill.label }}</button>
+                      </div>
+                    </div>
                   </div>
                   <!-- Try again (error state) -->
                   <div v-if="msg.isError" class="mt-4">
