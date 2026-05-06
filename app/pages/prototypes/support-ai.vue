@@ -33,6 +33,7 @@ interface ChatMessage {
   isError?: boolean
   pills?: string[]
   showWhatsNew?: boolean
+  showInsightTrigger?: boolean
   responsePills?: Array<{ label: string; action: string }>
   responsePillsUsed?: boolean
   ctaButton?: { label: string; navItem?: string }
@@ -57,6 +58,14 @@ const GREETING_WHATS_NEW: ChatMessage = {
   learnMore: true,
   pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
   showWhatsNew: true,
+}
+
+const GREETING_INSIGHT: ChatMessage = {
+  role: 'ai',
+  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.`,
+  learnMore: true,
+  pills: ['Payments & Payouts', 'My Orders', 'Returns & Refunds', 'Quality Standards', 'Shipping'],
+  showInsightTrigger: true,
 }
 
 const TOPIC_QUESTIONS: Record<string, string[]> = {
@@ -217,42 +226,40 @@ const PAYOUT_TIER_DETAILS: ChatMessage = {
 
 const INSIGHT_PROMO: ChatMessage = {
   role: 'ai',
-  text: `📉 Your GMV is down 12% this week.\n\nThe drop is mainly driven by a reduction in iPhone listings — you currently have 8 active iPhone listings, down from 14 last week.\n\nBased on current demand in your region, adding 5 iPhone 13 or iPhone 14 listings this week could close the gap. These models are in the top 3 most searched devices by buyers right now.`,
+  text: `📉 Your GMV is down 12% this week.\n\nThe main driver is a drop in active iPhone listings. You currently have 8 active iPhone listings, down from 14 last week.\n\nBased on buyer demand in your region, adding 5 iPhone 13 or iPhone 14 listings could help recover the gap.`,
+  source: 'Sale Insights, active listings, regional demand',
   responsePills: [
-    { label: 'Which models should I prioritise?', action: 'insight-models' },
     { label: 'Why did my listings drop?', action: 'insight-drop' },
-    { label: 'Help me add a listing', action: 'insight-add-listing' },
+    { label: 'Which models should I prioritise?', action: 'insight-models' },
+    { label: 'Help me add listings', action: 'insight-add-listing' },
   ],
 }
 
 const INSIGHT_MODELS: ChatMessage = {
   role: 'ai',
-  text: `Here are the top 3 models to prioritise based on current demand in your region:`,
+  text: `Here are the top models to prioritise this week based on demand, competition, and your current catalogue:`,
   bullets: [
-    'iPhone 14 (128GB) — High demand, avg. sale price €420, low competition right now.',
-    'iPhone 13 (128GB) — Very high search volume, avg. sale price €320, moderate competition.',
-    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Good.',
+    'iPhone 14 128GB — high demand, low competition, avg. sale price €420',
+    'iPhone 13 128GB — very high search volume, moderate competition, avg. sale price €320',
+    'iPhone 13 Pro 256GB — growing demand, low competition in Good condition, avg. sale price €480',
   ],
-  showFeedback: true,
-  feedbackGiven: null,
+  ctaButton: { label: 'Create listings →', navItem: 'Listings' },
 }
 
 const INSIGHT_DROP: ChatMessage = {
   role: 'ai',
-  text: `There are a few common reasons your active listing count may have dropped:`,
+  text: `Your active iPhone listings dropped from 14 to 8 this week.\n\nThe main causes appear to be:`,
   bullets: [
-    'Expired listings — listings with no activity for 90 days are automatically archived.',
-    'Quality flags — listings flagged for missing or incorrect information may have been suspended.',
-    'Manual removal — check your listing history in case listings were removed by your team.',
+    '3 listings expired after 90 days without activity',
+    '2 listings were paused after missing required product information',
+    '1 listing was removed manually by your team',
   ],
-  ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
-  showFeedback: true,
-  feedbackGiven: null,
+  ctaButton: { label: 'Review paused listings →', navItem: 'Listings' },
 }
 
 const INSIGHT_ADD_LISTING: ChatMessage = {
   role: 'ai',
-  text: `Head to Listings to add your new devices directly.`,
+  text: `I can't create the listing for you yet, but I can take you to the right place.\n\nStart with the 5 iPhone models I recommended — they have the strongest demand in your region right now.`,
   ctaButton: { label: 'Go to Listings →', navItem: 'Listings' },
 }
 
@@ -458,7 +465,7 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatMessages.value.push({ ...INSIGHT_DROP })
     chatLoading.value = false
   } else if (action === 'insight-add-listing') {
-    chatMessages.value.push({ role: 'user', text: 'Help me add a listing' })
+    chatMessages.value.push({ role: 'user', text: 'Help me add listings' })
     chatMessages.value.push({ ...INSIGHT_ADD_LISTING })
   } else if (action === 'quality-go-listing') {
     chatMessages.value.push({ role: 'user', text: 'Go to listing →' })
@@ -486,6 +493,14 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
 
 function handleWhatsNewPill() {
   activeReleaseFeed.value = true
+}
+
+async function handleInsightTrigger() {
+  chatMessages.value.push({ role: 'user', text: 'Show me my business insights' })
+  chatLoading.value = true
+  await new Promise(r => setTimeout(r, 1500))
+  chatMessages.value.push({ ...INSIGHT_PROMO })
+  chatLoading.value = false
 }
 
 async function handleReleasePill(label: string, action: string) {
@@ -634,6 +649,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         navItem: 'Home',
         changes: ['Support AI proactively surfaces a personalised GMV insight with actionable recommendations'],
         subStates: [
+          { id: 'future-insight-greeting',    label: 'Greeting — trigger' },
           { id: 'future-insight-promo',       label: 'Proactive message' },
           { id: 'future-insight-models',      label: 'Follow-up — prioritise models' },
           { id: 'future-insight-drop',        label: 'Follow-up — why listings dropped' },
@@ -706,7 +722,7 @@ async function setActivePage(id: string) {
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
   } else if (id === 'future-insight') {
     drawerOpen.value = true
-    chatMessages.value = [{ ...activeGreeting.value }, { ...INSIGHT_PROMO }]
+    chatMessages.value = [{ ...GREETING_INSIGHT }]
   } else if (id === 'future-quality') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...QUALITY_PROMO }]
@@ -864,15 +880,25 @@ function applySubState(subId: string) {
       ]
       break
 
+    case 'future-insight-greeting':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...GREETING_INSIGHT }]
+      break
+
     case 'future-insight-promo':
       drawerOpen.value = true
-      chatMessages.value = [{ ...activeGreeting.value }, { ...INSIGHT_PROMO }]
+      chatMessages.value = [
+        { ...GREETING_INSIGHT },
+        { role: 'user', text: 'Show me my business insights' },
+        { ...INSIGHT_PROMO },
+      ]
       break
 
     case 'future-insight-models':
       drawerOpen.value = true
       chatMessages.value = [
-        { ...activeGreeting.value },
+        { ...GREETING_INSIGHT },
+        { role: 'user', text: 'Show me my business insights' },
         { ...INSIGHT_PROMO, responsePillsUsed: true },
         { role: 'user', text: 'Which models should I prioritise?' },
         { ...INSIGHT_MODELS },
@@ -882,7 +908,8 @@ function applySubState(subId: string) {
     case 'future-insight-drop':
       drawerOpen.value = true
       chatMessages.value = [
-        { ...activeGreeting.value },
+        { ...GREETING_INSIGHT },
+        { role: 'user', text: 'Show me my business insights' },
         { ...INSIGHT_PROMO, responsePillsUsed: true },
         { role: 'user', text: 'Why did my listings drop?' },
         { ...INSIGHT_DROP },
@@ -892,9 +919,10 @@ function applySubState(subId: string) {
     case 'future-insight-add-listing':
       drawerOpen.value = true
       chatMessages.value = [
-        { ...activeGreeting.value },
+        { ...GREETING_INSIGHT },
+        { role: 'user', text: 'Show me my business insights' },
         { ...INSIGHT_PROMO, responsePillsUsed: true },
-        { role: 'user', text: 'Help me add a listing' },
+        { role: 'user', text: 'Help me add listings' },
         { ...INSIGHT_ADD_LISTING },
       ]
       break
@@ -1230,6 +1258,14 @@ function applySubState(subId: string) {
                           <svg v-if="TOPIC_PILL_ICONS[pill]" class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" v-html="TOPIC_PILL_ICONS[pill]" />
                           {{ pill }}
                         </button>
+                      </div>
+                      <!-- Insight trigger section -->
+                      <div v-if="msg.showInsightTrigger" class="mt-4 pt-4 border-t border-bm-border">
+                        <p class="text-xs font-medium text-bm-text-muted mb-2">📊 Business insights</p>
+                        <button
+                          class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
+                          @click="handleInsightTrigger()"
+                        >Show me my business insights</button>
                       </div>
                       <!-- What's new section -->
                       <div v-if="msg.showWhatsNew" class="mt-4 pt-4 border-t border-bm-border">
