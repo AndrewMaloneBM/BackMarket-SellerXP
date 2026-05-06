@@ -71,7 +71,7 @@ const TOPIC_QUESTIONS: Record<string, string[]> = {
     'What are the grading definitions?',
     'What happens if my listing is flagged?',
     'How do I grade a device with a cracked screen?',
-    'What counts as Grade A vs Grade B?',
+    "What's the difference between Excellent and Good?",
     'What is the quality score?',
   ],
   'Shipping': [
@@ -118,7 +118,7 @@ const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatM
     match: (t) => /grade|cracked|screen|damaged/i.test(t),
     response: {
       role: 'ai',
-      text: `A phone with a cracked screen should be graded D (Damaged) on Back Market.\n\nThe quality charter defines a cracked screen as a visible structural defect that affects the product's appearance beyond normal wear and tear. Even if the screen is still functional, a crack disqualifies the product from grades A, B, and C.\n\nKey points to keep in mind:`,
+      text: `A phone with a cracked screen should be listed as Stallone on Back Market.\n\nThe quality charter defines a cracked screen as a visible structural defect that affects the product's appearance beyond normal wear and tear. Even if the screen is still functional, a crack disqualifies the product from Premium, Excellent, Good, or Fair.\n\nKey points to keep in mind:`,
       bullets: [
         'The crack must be clearly disclosed in the listing description',
         'Photos showing the damage are required',
@@ -207,7 +207,7 @@ const INSIGHT_MODELS: ChatMessage = {
   bullets: [
     'iPhone 14 (128GB) — High demand, avg. sale price €420, low competition right now.',
     'iPhone 13 (128GB) — Very high search volume, avg. sale price €320, moderate competition.',
-    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Grade B.',
+    'iPhone 13 Pro (256GB) — Growing demand, avg. sale price €480, low competition in Good condition.',
   ],
   showFeedback: true,
   feedbackGiven: null,
@@ -234,7 +234,7 @@ const INSIGHT_ADD_LISTING: ChatMessage = {
 
 const QUALITY_PROMO: ChatMessage = {
   role: 'ai',
-  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Grade B listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
+  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Good condition listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
   bullets: [
     'Clearly describe the crack or damage in the listing description',
     'Add at least 2 photos showing the damage',
@@ -279,9 +279,9 @@ const BACKBOX_DEVICES: ChatMessage = {
   role: 'ai',
   text: `Here are the 3 most relevant unlisted devices from your catalogue:`,
   bullets: [
-    'iPhone 14 Pro 128GB — Space Black — Grade A — Unlisted',
-    'iPhone 14 Pro 128GB — Deep Purple — Grade A — Unlisted',
-    'iPhone 14 Pro 128GB — Silver — Grade B — Unlisted',
+    'iPhone 14 Pro 128GB — Space Black — Excellent — Unlisted',
+    'iPhone 14 Pro 128GB — Deep Purple — Excellent — Unlisted',
+    'iPhone 14 Pro 128GB — Silver — Good — Unlisted',
   ],
   ctaButton: { label: 'Go to Opportunities →', navItem: 'Opportunities' },
   showFeedback: true,
@@ -581,7 +581,7 @@ function handleReset() {
   activePillTopic.value = null
 }
 
-const CRACKED_Q = 'What grade do I need to give a phone that has a cracked screen?'
+const CRACKED_Q = 'What condition should I use for a phone with a cracked screen?'
 const SUSPENDED_Q = 'My account has been suspended and I have 200 orders to process today.'
 
 function applySubState(subId: string) {
