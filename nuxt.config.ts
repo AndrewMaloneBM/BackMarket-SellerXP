@@ -17,9 +17,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      // /share/backfunds is an alias defined in money-tab — must be listed
-      // explicitly so nuxt generate produces a pre-rendered HTML file for it.
-      routes: ['/share/backfunds'],
+      routes: ['/', '/prototypes/money-tab', '/share/backfunds'],
     },
   },
 })
