@@ -520,7 +520,7 @@ function applySubState(subId: string) {
             <!-- Loading state -->
             <div v-if="chatLoading" class="flex gap-3">
               <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span class="text-white text-xs font-bold">«</span>
+                <img src="/bm-avatar.svg" class="w-5 h-5 invert" alt="" />
               </div>
               <div class="flex-1">
                 <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
