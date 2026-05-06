@@ -15,6 +15,13 @@ const drawerOpen = ref(false)
 const chatInput = ref('')
 const chatLoading = ref(false)
 const activeReleaseFeed = ref(false)
+const insightTriggered = ref(false)
+const chatContainer = ref<HTMLElement | null>(null)
+
+async function scrollToBottom() {
+  await nextTick()
+  if (chatContainer.value) chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+}
 
 interface ReleaseFeedGroup {
   date: string
@@ -447,9 +454,14 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
 
 const chatMessages = ref<ChatMessage[]>([GREETING])
 
+watch([() => chatMessages.value.length, chatLoading], scrollToBottom)
+
 async function handleResponsePill(msg: ChatMessage, action: string) {
   msg.responsePillsUsed = true
-  if (action === 'backfunds-yes') {
+  if (action === 'backfunds-no') {
+    chatMessages.value.push({ role: 'user', text: 'Not right now' })
+    chatMessages.value.push({ role: 'ai', text: `No problem. You can activate BackFunds any time from your Money tab if you change your mind.` })
+  } else if (action === 'backfunds-yes') {
     chatMessages.value.push({ role: 'user', text: 'Yes, tell me more' })
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
@@ -544,6 +556,7 @@ function handleWhatsNewPill() {
 }
 
 async function handleInsightTrigger() {
+  insightTriggered.value = true
   chatMessages.value.push({ role: 'user', text: 'Show me my business insights' })
   chatLoading.value = true
   await new Promise(r => setTimeout(r, 1500))
@@ -552,6 +565,7 @@ async function handleInsightTrigger() {
 }
 
 async function handleReleasePill(label: string, action: string) {
+  activeReleaseFeed.value = false
   chatMessages.value.push({ role: 'user', text: label })
   chatLoading.value = true
   await new Promise(r => setTimeout(r, 1500))
@@ -600,6 +614,7 @@ function clearChat() {
   chatLoading.value = false
   activePillTopic.value = null
   activeReleaseFeed.value = false
+  insightTriggered.value = false
 }
 
 async function sendPillQuestion(question: string) {
@@ -756,6 +771,7 @@ watch(activeConcept, () => {
   activeSubStateId.value = ''
   activePillTopic.value = null
   activeReleaseFeed.value = false
+  insightTriggered.value = false
 })
 
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
@@ -766,6 +782,7 @@ async function setActivePage(id: string) {
   activeSubStateId.value = ''
   activePillTopic.value = null
   activeReleaseFeed.value = false
+  insightTriggered.value = false
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
@@ -802,6 +819,7 @@ function handleReset() {
   activeSubStateId.value = ''
   activePillTopic.value = null
   activeReleaseFeed.value = false
+  insightTriggered.value = false
 }
 
 const CRACKED_Q = 'What grade should I use for a phone with a cracked screen?'
@@ -812,6 +830,7 @@ function applySubState(subId: string) {
   chatLoading.value = false
   activePillTopic.value = null
   activeReleaseFeed.value = false
+  insightTriggered.value = false
 
   const crackedResponse = SCRIPTED_RESPONSES.find(s => s.match(CRACKED_Q))!.response
   const suspendedResponse = SCRIPTED_RESPONSES.find(s => s.match(SUSPENDED_Q))!.response
@@ -1257,7 +1276,7 @@ function applySubState(subId: string) {
           </div>
 
           <!-- Messages -->
-          <div class="flex-1 overflow-y-auto p-6 space-y-5">
+          <div ref="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-5">
 
             <template v-for="(msg, i) in chatMessages" :key="i">
 
@@ -1319,7 +1338,7 @@ function applySubState(subId: string) {
                         </button>
                       </div>
                       <!-- Insight trigger section -->
-                      <div v-if="msg.showInsightTrigger" class="mt-4 pt-4 border-t border-bm-border">
+                      <div v-if="msg.showInsightTrigger && !insightTriggered" class="mt-4 pt-4 border-t border-bm-border">
                         <p class="text-xs font-medium text-bm-text-muted mb-2">📊 Business insights</p>
                         <button
                           class="h-8 px-3 text-sm rounded-full border border-bm-border-action text-bm-text-hi bg-white hover:bg-bm-gray-100 transition-colors whitespace-nowrap"
@@ -1467,7 +1486,8 @@ function applySubState(subId: string) {
                 v-model="chatInput"
                 type="text"
                 placeholder="Describe your issue"
-                class="flex-1 text-sm px-4 py-2.5 border border-bm-border rounded-bm focus:outline-none focus:border-bm-text-hi bg-static-default-low text-bm-text-hi placeholder-bm-text-muted"
+                :disabled="chatLoading"
+                class="flex-1 text-sm px-4 py-2.5 border border-bm-border rounded-bm focus:outline-none focus:border-bm-text-hi bg-static-default-low text-bm-text-hi placeholder-bm-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
