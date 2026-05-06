@@ -236,7 +236,7 @@ watch(expandedPageIds, () => nextTick(() => {
           <div class="relative">
           <div
             ref="pageTreeEl"
-            :class="['space-y-px pr-0.5', !shareMode && 'max-h-[320px] overflow-y-auto']"
+            :class="['space-y-px pr-0.5', !shareMode && !hideConceptDetails && 'max-h-[320px] overflow-y-auto']"
             @scroll="checkScroll(pageTreeEl, v => pageTreeHasMore = v)"
           >
             <div v-for="page in currentConcept.pages" :key="page.id">
