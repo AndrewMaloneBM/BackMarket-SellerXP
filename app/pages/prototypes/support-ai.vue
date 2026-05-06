@@ -191,6 +191,40 @@ const PAYOUT_TIER_UNLOCK: ChatMessage = {
   feedbackGiven: null,
 }
 
+const QUALITY_PROMO: ChatMessage = {
+  role: 'ai',
+  text: `⚠️ Action needed on one of your listings.\n\nYour iPhone 13 (64GB) — Grade B listing has been flagged 3 times this month for missing damage disclosure. This is putting your quality score at risk and could lead to listing suspension if not resolved.\n\nHere's what needs to be updated:`,
+  bullets: [
+    'Clearly describe the crack or damage in the listing description',
+    'Add at least 2 photos showing the damage',
+    'Confirm the device is fully functional',
+  ],
+  source: 'Back Market Quality Charter — Grading Definitions',
+  responsePills: [
+    { label: 'Go to listing →', action: 'quality-go-listing' },
+    { label: "What happens if I don't fix it?", action: 'quality-consequences' },
+  ],
+}
+
+const QUALITY_GO_LISTING: ChatMessage = {
+  role: 'ai',
+  text: `Here's a direct link to update your listing.`,
+  ctaButton: { label: 'Go to listing →', navItem: 'Listings' },
+}
+
+const QUALITY_CONSEQUENCES: ChatMessage = {
+  role: 'ai',
+  text: `Here's what happens if the flagged listing isn't updated:`,
+  bullets: [
+    'Quality score impact — repeated flags reduce your overall quality score, which affects your placement in search results.',
+    'Listing suspension — Back Market may suspend the specific listing if violations aren\'t resolved within 7 days of the first flag.',
+    'Account review — if multiple listings are flagged simultaneously, your account may be placed under review, temporarily restricting new listings.',
+  ],
+  source: 'Back Market Quality Charter — Grading Definitions',
+  showFeedback: true,
+  feedbackGiven: null,
+}
+
 const BACKBOX_PROMO: ChatMessage = {
   role: 'ai',
   text: `📦 You have a BackBox opportunity right now.\n\nThere's high demand for iPhone 14 Pro (128GB) in your region. You have 12 devices that match this criteria sitting in your catalogue unlisted.\n\nSellers who acted on similar opportunities last month saw an average +18% GMV uplift within 2 weeks.`,
@@ -247,6 +281,15 @@ async function handleResponsePill(msg: ChatMessage, action: string) {
     chatLoading.value = true
     await new Promise(r => setTimeout(r, 1500))
     chatMessages.value.push({ ...PAYOUT_TIER_UNLOCK })
+    chatLoading.value = false
+  } else if (action === 'quality-go-listing') {
+    chatMessages.value.push({ role: 'user', text: 'Go to listing →' })
+    chatMessages.value.push({ ...QUALITY_GO_LISTING })
+  } else if (action === 'quality-consequences') {
+    chatMessages.value.push({ role: 'user', text: "What happens if I don't fix it?" })
+    chatLoading.value = true
+    await new Promise(r => setTimeout(r, 1500))
+    chatMessages.value.push({ ...QUALITY_CONSEQUENCES })
     chatLoading.value = false
   } else if (action === 'backbox-devices') {
     chatMessages.value.push({ role: 'user', text: 'Show me the devices' })
@@ -388,6 +431,17 @@ const conceptMeta: readonly PrototypeConcept[] = [
         ],
       },
       {
+        id: 'future-quality',
+        label: 'Drawer — Quality performance',
+        navItem: 'Home',
+        changes: ['Support AI proactively flags a quality issue on a specific listing'],
+        subStates: [
+          { id: 'future-quality-promo',        label: 'Quality — flagged listing' },
+          { id: 'future-quality-listing',      label: 'Follow-up — go to listing' },
+          { id: 'future-quality-consequences', label: 'Follow-up — consequences' },
+        ],
+      },
+      {
         id: 'future-backbox',
         label: 'Drawer — BackBox opportunity',
         navItem: 'Home',
@@ -428,6 +482,9 @@ async function setActivePage(id: string) {
   if (id === 'future-backfunds') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKFUNDS_PROMO }]
+  } else if (id === 'future-quality') {
+    drawerOpen.value = true
+    chatMessages.value = [{ ...activeGreeting.value }, { ...QUALITY_PROMO }]
   } else if (id === 'future-backbox') {
     drawerOpen.value = true
     chatMessages.value = [{ ...activeGreeting.value }, { ...BACKBOX_PROMO }]
@@ -563,6 +620,31 @@ function applySubState(subId: string) {
         { ...PAYOUT_TIER_RESPONSE, responsePillsUsed: true },
         { role: 'user', text: 'What does Tier 1 unlock?' },
         { ...PAYOUT_TIER_UNLOCK },
+      ]
+      break
+
+    case 'future-quality-promo':
+      drawerOpen.value = true
+      chatMessages.value = [{ ...activeGreeting.value }, { ...QUALITY_PROMO }]
+      break
+
+    case 'future-quality-listing':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...QUALITY_PROMO, responsePillsUsed: true },
+        { role: 'user', text: 'Go to listing →' },
+        { ...QUALITY_GO_LISTING },
+      ]
+      break
+
+    case 'future-quality-consequences':
+      drawerOpen.value = true
+      chatMessages.value = [
+        { ...activeGreeting.value },
+        { ...QUALITY_PROMO, responsePillsUsed: true },
+        { role: 'user', text: "What happens if I don't fix it?" },
+        { ...QUALITY_CONSEQUENCES },
       ]
       break
 
