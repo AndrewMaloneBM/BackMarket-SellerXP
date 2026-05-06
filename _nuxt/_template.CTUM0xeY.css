@@ -1,0 +1,1 @@
+.prototype-hotspot{position:relative}.prototype-hotspot:before{background-color:#0d99ff40;border-radius:0;content:"";inset:0;opacity:0;pointer-events:none;position:absolute;z-index:10}.prototype-hotspots .prototype-hotspot:before{animation:figmaHotspotFlash 1s ease-out forwards}@keyframes figmaHotspotFlash{0%{opacity:0}15%{opacity:1}70%{opacity:1}to{opacity:0}}
