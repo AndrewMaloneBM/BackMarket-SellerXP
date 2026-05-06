@@ -1,7 +1,7 @@
 export default defineAppConfig({
   hub: {
-    teamName: 'Andrew\'s',
-    designerName: 'Andrew Malone',
+    teamName: 'SellerXP',
+    designerName: '',
     slug: 'seller-xp',
   },
 })

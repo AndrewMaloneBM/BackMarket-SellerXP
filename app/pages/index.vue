@@ -87,7 +87,7 @@ onUnmounted(() => {
         <span class="wb-nav-sub">{{ hub.slug }} · prototypes</span>
       </div>
       <div class="wb-nav-right">
-        <span class="wb-nav-name">{{ hub.designerName }}</span>
+        <span v-if="hub.designerName" class="wb-nav-name">{{ hub.designerName }}</span>
       </div>
     </div>
   </nav>
