@@ -17,11 +17,36 @@ const chatLoading = ref(false)
 interface ChatMessage {
   role: 'ai' | 'user'
   text: string
+  bullets?: string[]
+  source?: string
+  showFeedback?: boolean
+  feedbackGiven?: 'up' | 'down' | null
 }
 
-const chatMessages = ref<ChatMessage[]>([
-  { role: 'ai', text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.\n\nI can't provide legal, financial, or professional advice.` },
-])
+const GREETING: ChatMessage = {
+  role: 'ai',
+  text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.\n\nI can't provide legal, financial, or professional advice.`,
+}
+
+const SCRIPTED_RESPONSES: Array<{ match: (t: string) => boolean; response: ChatMessage }> = [
+  {
+    match: (t) => /grade|cracked|screen|damaged/i.test(t),
+    response: {
+      role: 'ai',
+      text: `A phone with a cracked screen should be graded D (Damaged) on Back Market.\n\nThe quality charter defines a cracked screen as a visible structural defect that affects the product's appearance beyond normal wear and tear. Even if the screen is still functional, a crack disqualifies the product from grades A, B, and C.\n\nKey points to keep in mind:`,
+      bullets: [
+        'The crack must be clearly disclosed in the listing description',
+        'Photos showing the damage are required',
+        'The device must still be fully functional to be listed at all',
+      ],
+      source: 'Back Market Quality Charter — Grading Definitions',
+      showFeedback: true,
+      feedbackGiven: null,
+    },
+  },
+]
+
+const chatMessages = ref<ChatMessage[]>([GREETING])
 
 async function sendMessage() {
   const text = chatInput.value.trim()
@@ -30,16 +55,22 @@ async function sendMessage() {
   chatInput.value = ''
   chatLoading.value = true
   await new Promise(r => setTimeout(r, 1500))
-  chatMessages.value.push({ role: 'ai', text: 'I found some relevant information in the Seller Support Center. Let me know if you need more details on any of these points.' })
+  const scripted = SCRIPTED_RESPONSES.find(s => s.match(text))
+  chatMessages.value.push(scripted ? { ...scripted.response } : {
+    role: 'ai',
+    text: 'I found some relevant information in the Seller Support Center. Let me know if you need more details on any of these points.',
+  })
   chatLoading.value = false
 }
 
 function clearChat() {
-  chatMessages.value = [
-    { role: 'ai', text: `Hi, I'm Support AI 👋\n\nGot a question about Back Market's policies, orders, listings, or more? I can help by searching the Seller Support Center for answers.\n\nI can't provide legal, financial, or professional advice.` },
-  ]
+  chatMessages.value = [GREETING]
   chatInput.value = ''
   chatLoading.value = false
+}
+
+function giveFeedback(msg: ChatMessage, vote: 'up' | 'down') {
+  msg.feedbackGiven = vote
 }
 
 const conceptMeta: readonly PrototypeConcept[] = [
@@ -298,36 +329,76 @@ function setActivePage(id: string) {
           </div>
 
           <!-- Messages -->
-          <div class="flex-1 overflow-y-auto p-6 space-y-6">
-            <div v-for="(msg, i) in chatMessages" :key="i" :class="['flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : '']">
+          <div class="flex-1 overflow-y-auto p-6 space-y-5">
 
-              <!-- Avatar -->
-              <div v-if="msg.role === 'ai'" class="w-9 h-9 rounded-full bg-[#1D1F2B] flex items-center justify-center flex-shrink-0">
-                <span class="text-white text-xs font-bold tracking-tighter">«</span>
-              </div>
-              <div v-else class="w-9 h-9 rounded-full bg-bm-gray-200 flex items-center justify-center flex-shrink-0">
-                <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
+            <template v-for="(msg, i) in chatMessages" :key="i">
+
+              <!-- User message -->
+              <div v-if="msg.role === 'user'" class="bg-bm-surface rounded-bm-lg p-4">
+                <div class="flex items-center gap-2.5 mb-1.5">
+                  <div class="w-8 h-8 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
+                  </div>
+                  <span class="text-sm font-semibold text-bm-text-hi">{{ SELLER_NAME }}</span>
+                </div>
+                <p class="text-sm text-bm-text-mid leading-relaxed pl-10">{{ msg.text }}</p>
               </div>
 
-              <div :class="['flex-1 max-w-[440px]', msg.role === 'user' ? 'items-end flex flex-col' : '']">
-                <p class="text-xs font-semibold text-bm-text-hi mb-1.5">{{ msg.role === 'ai' ? 'Support AI' : SELLER_NAME }}</p>
-                <div :class="['text-sm text-bm-text-mid leading-relaxed whitespace-pre-line', msg.role === 'user' ? 'bg-bm-surface rounded-bm-lg px-4 py-3 text-right' : '']">{{ msg.text }}</div>
+              <!-- AI message -->
+              <div v-else class="flex gap-3">
+                <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span class="text-white text-xs font-bold">«</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
+                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
+                  <!-- Bullets -->
+                  <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
+                    <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-2 text-sm text-bm-text-mid">
+                      <span class="text-bm-text-muted mt-0.5 select-none">·</span>
+                      <span>{{ bullet }}</span>
+                    </li>
+                  </ul>
+                  <!-- Source -->
+                  <a v-if="msg.source" href="#" class="mt-4 flex items-center gap-1.5 text-sm font-medium text-bm-text-hi underline underline-offset-2 hover:opacity-75 transition-opacity">
+                    <span>📄</span>
+                    Source: {{ msg.source }}
+                  </a>
+                  <!-- Feedback -->
+                  <div v-if="msg.showFeedback" class="mt-4 flex items-center gap-2">
+                    <span class="text-sm text-bm-text-muted">Was this helpful?</span>
+                    <button
+                      @click="giveFeedback(msg, 'up')"
+                      :class="['w-8 h-8 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'up' ? 'bg-bm-success border-bm-success text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.669A1.989 1.989 0 013.9 18h-.6a1.5 1.5 0 01-1.5-1.5v-6a1.5 1.5 0 011.5-1.5h.6a2 2 0 011.978 1.698c.088.504.13 1.022.13 1.552a11.92 11.92 0 01-.086 1.423L5.904 18.67z"/></svg>
+                    </button>
+                    <button
+                      @click="giveFeedback(msg, 'down')"
+                      :class="['w-8 h-8 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'down' ? 'bg-red-500 border-red-500 text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/></svg>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+
+            </template>
 
             <!-- Loading state -->
             <div v-if="chatLoading" class="flex gap-3">
-              <div class="w-9 h-9 rounded-full bg-[#1D1F2B] flex items-center justify-center flex-shrink-0">
-                <span class="text-white text-xs font-bold tracking-tighter">«</span>
+              <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span class="text-white text-xs font-bold">«</span>
               </div>
               <div>
-                <p class="text-xs font-semibold text-bm-text-hi mb-1.5">Support AI</p>
+                <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
                 <div class="flex items-center gap-2 text-sm text-bm-text-muted">
                   <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
                   Reading up...
                 </div>
               </div>
             </div>
+
           </div>
 
           <!-- Input area -->
