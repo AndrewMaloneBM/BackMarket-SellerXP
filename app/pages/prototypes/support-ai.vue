@@ -392,7 +392,7 @@ const FEATURE_RESPONSES: Record<string, ChatMessage> = {
     text: `The BM Accelerator is Back Market's premium partnership programme for high-performing sellers in France and Spain.\n\nHere's what it offers:`,
     bullets: [
       'Commission reduction — earn a percentage-point reduction on eligible category sales from May through July',
-      'Growth target — we'll work together to achieve +X% growth over Q1 across 3 months',
+      `Growth target — we'll work together to achieve +X% growth over Q1 across 3 months`,
       'Extension opportunity — if targets are met, the offer extends through August to October',
     ],
     note: 'To get started, speak to your Seller Success Manager who can confirm your eligibility and set your targets.',
