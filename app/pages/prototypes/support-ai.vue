@@ -659,7 +659,6 @@ const conceptMeta: readonly PrototypeConcept[] = [
         ],
         subStates: [
           { id: 'drawer-greeting',      label: 'Drawer — greeting' },
-          { id: 'drawer-loading',       label: 'Drawer — loading' },
           { id: 'drawer-q-and-a',       label: 'Drawer — Q&A response' },
           { id: 'drawer-feedback-up',   label: 'Drawer — positive feedback' },
           { id: 'drawer-feedback-down', label: 'Drawer — negative feedback' },
@@ -840,16 +839,6 @@ function applySubState(subId: string) {
     case 'drawer-greeting':
       drawerOpen.value = true
       chatMessages.value = [{ ...activeGreeting.value }]
-      break
-
-    case 'drawer-loading':
-      drawerOpen.value = true
-      chatMessages.value = [{ ...activeGreeting.value }, { role: 'user', text: CRACKED_Q }]
-      chatLoading.value = true
-      setTimeout(() => {
-        chatMessages.value.push({ ...crackedResponse, feedbackGiven: null })
-        chatLoading.value = false
-      }, 1500)
       break
 
     case 'drawer-q-and-a':
