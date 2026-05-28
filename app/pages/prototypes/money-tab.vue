@@ -545,6 +545,27 @@ function confirmStop() {
   showStopConfirm.value = false
   nextTick(() => scrollPageToTop())
 }
+
+// Restart the prototype: drop the seller back to the landing screen as if they
+// just opened the share URL. Only exposed in shareMode (internal users use the
+// sidebar reset).
+function restartPrototype() {
+  activePages.value[1] = 'eligible'
+  conceptTabs.value[1] = 'Payout'
+  c2Paused.value = false
+  c2WasStopped.value = false
+  c2CheckingStatus.value = false
+  showOnboardingModal.value = false
+  showLearnMoreModal.value = false
+  showGrowthSimulator.value = false
+  showPauseConfirm.value = false
+  showResumeConfirm.value = false
+  showStopConfirm.value = false
+  onboardingStep.value = 1
+  consentChecked.value = false
+  pendingAction.value = null
+  nextTick(() => scrollPageToTop())
+}
 // Track per-button "loading" so onboarding step transitions feel real
 const pendingAction = ref<'step-1' | 'step-2' | 'step-3' | 'check-status' | null>(null)
 
@@ -661,6 +682,17 @@ const invoiceColumns = [
     />
 
     <div class="flex-1 relative overflow-hidden">
+    <!-- Floating prototype-reset pill (share mode only — internal users have the sidebar reset). -->
+    <button
+      v-if="shareMode"
+      type="button"
+      class="prototype-hotspot absolute top-4 right-4 z-40 inline-flex items-center gap-2 bg-[#0F1117] text-white text-xs font-semibold rounded-full pl-2.5 pr-3.5 py-1.5 shadow-lg hover:bg-gray-800 transition-colors"
+      @click="restartPrototype"
+    >
+      <span class="bg-amber-300 text-[#0F1117] text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">Test</span>
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><path d="M4 4v6h6M20 20v-6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M20 10A8 8 0 005.6 5.6M4 14a8 8 0 0014.4 4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      Restart prototype
+    </button>
     <div ref="scrollContainerRef" class="absolute inset-0 overflow-y-auto bg-gray-50" @click="flashHotspots">
 
       <!-- ═════════ CONCEPT 1 ═════════ -->
