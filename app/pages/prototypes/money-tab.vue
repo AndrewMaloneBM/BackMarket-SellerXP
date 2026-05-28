@@ -506,14 +506,35 @@ const simNewCycle = computed(() => simStockDays + simSellDays + simShipDays + 1)
 const simCapitalFreed = computed(() => Math.round(simAnnualGmv.value * (simDaysToGetPaid - 1) / 365))
 const simAdditionalRevenue = computed(() => Math.round(simCapitalFreed.value * (365 / (simStockDays + simSellDays + simShipDays)) * (simMargin / 100)))
 
-// Concept 2 — active dashboard mock advances
-const recentAdvances = [
+// Concept 2 — active dashboard mock advances (mature = several weeks of activity)
+const recentAdvancesMature = [
   { date: '22 Apr 2026', type: 'Advance',    amount: 625,  fee: 4, balance: 625 },
   { date: '21 Apr 2026', type: 'Repayment',  amount: -618, fee: 0, balance: 0 },
   { date: '17 Apr 2026', type: 'Advance',    amount: 618,  fee: 4, balance: 0 },
   { date: '16 Apr 2026', type: 'Advance',    amount: 631,  fee: 4, balance: 0 },
   { date: '15 Apr 2026', type: 'Advance',    amount: 598,  fee: 4, balance: 0 },
 ]
+// Fresh state — seller was just approved today, only today's advance has landed
+const recentAdvancesFresh = [
+  { date: 'Today', type: 'Advance', amount: 625, fee: 4, balance: 625 },
+]
+
+// Concept 2 — under-review / active transition + 3-month preview toggle
+const c2CheckingStatus = ref(false)
+const c2MatureView = ref(false)
+// Track per-button "loading" so onboarding step transitions feel real
+const pendingAction = ref<'step-1' | 'step-2' | 'step-3' | 'check-status' | null>(null)
+
+function advanceWithDelay(key: typeof pendingAction.value, action: () => void, ms = 700) {
+  if (pendingAction.value) return
+  pendingAction.value = key
+  setTimeout(() => {
+    action()
+    pendingAction.value = null
+  }, ms)
+}
+
+const recentAdvances = computed(() => c2MatureView.value ? recentAdvancesMature : recentAdvancesFresh)
 
 // Concept 3 — grid card expand/collapse state
 const c3CardExpanded = ref(false)
@@ -1269,11 +1290,33 @@ const invoiceColumns = [
                       <p class="text-xs text-[#5C5E63] mt-0.5">Account setup and first daily advance</p>
                     </div>
                   </div>
+
+                  <div class="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between gap-4">
+                    <p class="text-xs text-[#5C5E63]">Last checked just now</p>
+                    <button
+                      type="button"
+                      :disabled="c2CheckingStatus"
+                      :class="['prototype-hotspot inline-flex items-center gap-2 text-sm font-semibold rounded-bm px-4 py-2 transition-colors border', c2CheckingStatus ? 'border-gray-200 bg-gray-50 text-[#5C5E63] cursor-wait' : 'border-[#0F1117] bg-white text-[#0F1117] hover:bg-gray-50']"
+                      @click="c2CheckingStatus = true; setTimeout(() => { c2CheckingStatus = false; activePages[1] = 'active'; c2MatureView = false }, 1400)"
+                    >
+                      <svg :class="['h-4 w-4', c2CheckingStatus ? 'animate-spin' : '']" viewBox="0 0 24 24" fill="none">
+                        <template v-if="c2CheckingStatus">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" />
+                        </template>
+                        <template v-else>
+                          <path d="M4 4v6h6M20 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          <path d="M20 10A8 8 0 005.6 5.6M4 14a8 8 0 0014.4 4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </template>
+                      </svg>
+                      {{ c2CheckingStatus ? 'Checking with Storfund' : 'Check for updates' }}
+                    </button>
+                  </div>
                 </div>
 
                 <div class="bg-[#F2F3F7] rounded-2xl p-5 mb-5">
                   <p class="text-sm font-semibold text-[#0F1117] mb-2">What to expect</p>
-                  <p class="text-sm text-[#5C5E63] leading-relaxed">Your status here will update automatically — no need to refresh. Storfund will also send email updates at each stage. Once approved, you'll be asked to sign an agreement and confirm your bank account before daily advances begin.</p>
+                  <p class="text-sm text-[#5C5E63] leading-relaxed">Storfund typically responds within 1–2 days. They'll email you at each stage, and your status on this page updates automatically — you can also tap "Check for updates" above to pull the latest. Once approved, your daily advances begin immediately.</p>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-200 p-5">
@@ -1391,6 +1434,32 @@ const invoiceColumns = [
             <!-- ── Active dashboard state ── -->
             <template v-else-if="activePages[1] === 'active'">
               <div class="space-y-5">
+                <!-- Preview banner (mature) -->
+                <div v-if="c2MatureView" class="bg-[#0F1117] text-white rounded-xl px-5 py-3 flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                    <p class="text-sm"><span class="font-semibold">Preview</span> — this is what your dashboard could look like after 3 months on BackFunds.</p>
+                  </div>
+                  <button
+                    type="button"
+                    class="prototype-hotspot text-sm font-semibold text-white underline underline-offset-2 hover:opacity-70 transition-opacity"
+                    @click="c2MatureView = false"
+                  >
+                    Back to today
+                  </button>
+                </div>
+
+                <!-- Welcome banner (fresh) -->
+                <div v-else class="bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-[#0F1117]">You're live on BackFunds</p>
+                    <p class="text-xs text-[#5C5E63] mt-0.5">Your first advance is on its way — landing tomorrow.</p>
+                  </div>
+                </div>
+
                 <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-2xl p-8 relative overflow-hidden">
                   <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-white/5" />
                   <div class="relative flex items-end justify-between gap-6">
@@ -1410,22 +1479,22 @@ const invoiceColumns = [
                 <div class="grid grid-cols-2 gap-4">
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Advanced this month</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ (Math.round(sellerData.estimatedMonthlyAdvance / 30) * 17).toLocaleString() }}</p>
-                    <p class="text-xs text-[#5C5E63] mt-1">17 advances in April</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? (Math.round(sellerData.estimatedMonthlyAdvance / 30) * 17).toLocaleString() : '625' }}</p>
+                    <p class="text-xs text-[#5C5E63] mt-1">{{ c2MatureView ? '17 advances this month' : '1 advance · today' }}</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Fees paid this month</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ Math.round(estimatedMonthlyCost * 0.55).toLocaleString() }}</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? Math.round(estimatedMonthlyCost * 0.55).toLocaleString() : '4' }}</p>
                     <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.dailyFee }}% daily · outstanding balance</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Total advanced since onboarding</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€570,767</p>
-                    <p class="text-xs text-[#5C5E63] mt-1">Since Jan 2026</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? '56,250' : '625' }}</p>
+                    <p class="text-xs text-[#5C5E63] mt-1">{{ c2MatureView ? '3 months on BackFunds' : 'Since today' }}</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Total fees since onboarding</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€2,700</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? '420' : '4' }}</p>
                     <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.dailyFee }}% daily on outstanding</p>
                   </div>
                 </div>
@@ -1469,6 +1538,18 @@ const invoiceColumns = [
                     <button class="prototype-hotspot border border-red-200 bg-white text-sm font-medium text-red-600 px-4 py-2 rounded-bm hover:bg-red-50 transition-colors">Stop BackFunds</button>
                     <button class="prototype-hotspot text-sm font-medium text-[#5C5E63] px-4 py-2 rounded-bm hover:text-[#0F1117] transition-colors underline">Contact Support</button>
                   </div>
+                </div>
+
+                <!-- Prototype-only affordance: skip ahead to mature state -->
+                <div v-if="!c2MatureView" class="flex justify-center pt-2">
+                  <button
+                    type="button"
+                    class="prototype-hotspot inline-flex items-center gap-2 text-sm font-medium text-[#5C5E63] border border-dashed border-gray-300 rounded-full px-4 py-2 hover:bg-gray-50 hover:text-[#0F1117] transition-colors"
+                    @click="c2MatureView = true"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><path d="M4 4l8 8-8 8M12 4l8 8-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    Preview: what this looks like after 3 months
+                  </button>
                 </div>
               </div>
             </template>
@@ -1940,10 +2021,12 @@ const invoiceColumns = [
           <div class="flex justify-end">
             <button
               type="button"
-              class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
-              @click="onboardingStep = 2"
+              :disabled="pendingAction === 'step-1'"
+              :class="['prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors inline-flex items-center gap-2', pendingAction === 'step-1' ? 'opacity-75 cursor-wait' : 'hover:bg-green-800']"
+              @click="advanceWithDelay('step-1', () => onboardingStep = 2)"
             >
-              Continue
+              <svg v-if="pendingAction === 'step-1'" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" /></svg>
+              {{ pendingAction === 'step-1' ? 'Loading' : 'Continue' }}
             </button>
           </div>
         </div>
@@ -1970,10 +2053,12 @@ const invoiceColumns = [
           <div class="flex justify-end">
             <button
               type="button"
-              class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
-              @click="onboardingStep = 3"
+              :disabled="pendingAction === 'step-2'"
+              :class="['prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors inline-flex items-center gap-2', pendingAction === 'step-2' ? 'opacity-75 cursor-wait' : 'hover:bg-green-800']"
+              @click="advanceWithDelay('step-2', () => onboardingStep = 3)"
             >
-              Continue
+              <svg v-if="pendingAction === 'step-2'" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" /></svg>
+              {{ pendingAction === 'step-2' ? 'Loading' : 'Continue' }}
             </button>
           </div>
         </div>
@@ -2005,14 +2090,15 @@ const invoiceColumns = [
           <div class="flex justify-end">
             <button
               type="button"
-              :disabled="!consentChecked"
+              :disabled="!consentChecked || pendingAction === 'step-3'"
               :class="[
-                'prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors',
-                consentChecked ? 'hover:bg-green-800' : 'opacity-50 cursor-not-allowed',
+                'prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors inline-flex items-center gap-2',
+                !consentChecked ? 'opacity-50 cursor-not-allowed' : pendingAction === 'step-3' ? 'opacity-75 cursor-wait' : 'hover:bg-green-800',
               ]"
-              @click="consentChecked && (onboardingStep = 'processing')"
+              @click="consentChecked && advanceWithDelay('step-3', () => onboardingStep = 'processing', 1100)"
             >
-              Submit application
+              <svg v-if="pendingAction === 'step-3'" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" /></svg>
+              {{ pendingAction === 'step-3' ? 'Submitting' : 'Submit application' }}
             </button>
           </div>
         </div>
