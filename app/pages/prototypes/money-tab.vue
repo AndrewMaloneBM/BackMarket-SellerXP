@@ -60,10 +60,8 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'learn-more', label: 'Learn more modal' },
           { id: 'step-1', label: 'Step 1 · Eligibility' },
           { id: 'step-2', label: 'Step 2 · Provider' },
-          { id: 'step-3', label: 'Step 3 · Data sharing' },
-          { id: 'step-4', label: 'Step 4 · KYB redirect' },
-          { id: 'storfund-portal', label: 'Storfund portal' },
-          { id: 'step-confirmed', label: 'Application submitted' },
+          { id: 'step-3', label: 'Step 3 · Data sharing & submit' },
+          { id: 'step-processing', label: 'Application processing' },
         ],
       },
     ],
@@ -100,10 +98,8 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'growth-simulator', label: 'Growth simulator' },
           { id: 'step-1', label: 'Step 1 · Eligibility' },
           { id: 'step-2', label: 'Step 2 · Provider' },
-          { id: 'step-3', label: 'Step 3 · Data sharing' },
-          { id: 'step-4', label: 'Step 4 · KYB redirect' },
-          { id: 'storfund-portal', label: 'Storfund portal (embedded)' },
-          { id: 'step-confirmed', label: 'Application submitted' },
+          { id: 'step-3', label: 'Step 3 · Data sharing & submit' },
+          { id: 'step-processing', label: 'Application processing' },
         ],
       },
       {
@@ -122,7 +118,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         label: 'Application not approved',
         navItem: 'Money',
         changes: [
-          'Shown on Daily payout tab when Storfund webhook returns a denial after KYB review',
+          'Shown on Daily payout tab when Storfund webhook returns a denial after their identity check',
           'Progress tracker shows denial at Storfund review step — activation not reached',
           'Neutral tone — no specific reason given (standard across industry; Storfund controls this)',
           'Seller account impact clearly stated — payouts unaffected',
@@ -174,9 +170,8 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'learn-more', label: 'Learn more modal' },
           { id: 'step-1', label: 'Step 1 · Eligibility' },
           { id: 'step-2', label: 'Step 2 · Provider' },
-          { id: 'step-3', label: 'Step 3 · Data sharing' },
-          { id: 'step-4', label: 'Step 4 · KYB redirect' },
-          { id: 'step-confirmed', label: 'Application submitted' },
+          { id: 'step-3', label: 'Step 3 · Data sharing & submit' },
+          { id: 'step-processing', label: 'Application processing' },
         ],
       },
     ],
@@ -212,9 +207,8 @@ const conceptMeta: readonly PrototypeConcept[] = [
           { id: 'learn-more', label: 'Learn more panel' },
           { id: 'step-1', label: 'Step 1 · Eligibility' },
           { id: 'step-2', label: 'Step 2 · Provider' },
-          { id: 'step-3', label: 'Step 3 · Data sharing' },
-          { id: 'step-4', label: 'Step 4 · KYB redirect' },
-          { id: 'step-confirmed', label: 'Application submitted' },
+          { id: 'step-3', label: 'Step 3 · Data sharing & submit' },
+          { id: 'step-processing', label: 'Application processing' },
         ],
       },
     ],
@@ -231,6 +225,15 @@ const {
   flashHotspots,
 } = usePrototypeSidebar(conceptMeta)
 
+// In share mode (e.g. /share/backfunds), land on the realistic seller scenario:
+// Concept 2 (Dedicated Tab) → Money page → Daily payout sub-tab → Eligible state.
+onMounted(() => {
+  if (!shareMode.value) return
+  activeConcept.value = 2
+  activePages.value[1] = 'eligible'
+  conceptTabs.value[1] = 'Daily payout'
+})
+
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
 
 function setActivePageForConcept(conceptIdx: number, pageId: string) {
@@ -243,8 +246,6 @@ function setActivePage(id: string) {
   // Close any open overlays when navigating to a new top-level page
   showLearnMoreModal.value = false
   showOnboardingModal.value = false
-  showStorfundPortal.value = false
-  showStorfundPortalC2.value = false
   showGrowthSimulator.value = false
   showNudgePanel.value = false
   consentChecked.value = false
@@ -254,8 +255,6 @@ function setActivePage(id: string) {
 watch(activeConcept, (newVal) => {
   showLearnMoreModal.value = false
   showOnboardingModal.value = false
-  showStorfundPortal.value = false
-  showStorfundPortalC2.value = false
   showGrowthSimulator.value = false
   showNudgePanel.value = false
   consentChecked.value = false
@@ -277,8 +276,6 @@ function resetDismissedUi() {
   showNudgePanel.value = false
   showLearnMoreModal.value = false
   showOnboardingModal.value = false
-  showStorfundPortal.value = false
-  showStorfundPortalC2.value = false
   consentChecked.value = false
   c1Applied.value = false
   c3CardExpanded.value = false
@@ -295,12 +292,10 @@ const showDroppedModal = ref(false)
 // Concept 1 — Learn More modal + onboarding stepper state
 const showLearnMoreModal = ref(false)
 const showOnboardingModal = ref(false)
-const onboardingStep = ref<1 | 2 | 3 | 4 | 'confirmed'>(1)
+const onboardingStep = ref<1 | 2 | 3 | 'processing'>(1)
 const consentChecked = ref(false)
 const c1Applied = ref(false)
 const c1Active = ref(false)
-const showStorfundPortal = ref(false)
-const showStorfundPortalC2 = ref(false)
 const showGrowthSimulator = ref(false)
 const c1ActiveSubState = computed(() => {
   const page = activePages.value[0]
@@ -310,15 +305,13 @@ const c1ActiveSubState = computed(() => {
   }
   if (page === 'money') {
     if (c1Active.value) return 'money-active'
-    if (showStorfundPortal.value) return 'storfund-portal'
     if (showGrowthSimulator.value) return 'growth-simulator'
     if (showLearnMoreModal.value) return 'learn-more'
     if (showOnboardingModal.value) {
       if (onboardingStep.value === 1) return 'step-1'
       if (onboardingStep.value === 2) return 'step-2'
       if (onboardingStep.value === 3) return 'step-3'
-      if (onboardingStep.value === 4) return 'step-4'
-      if (onboardingStep.value === 'confirmed') return 'step-confirmed'
+      if (onboardingStep.value === 'processing') return 'step-processing'
     }
     return 'money-landing'
   }
@@ -334,12 +327,10 @@ function openOnboarding() {
   onboardingStep.value = 1
 }
 function closeOnboarding() {
-  if (onboardingStep.value === 'confirmed' && activeConcept.value === 1) {
+  if (onboardingStep.value === 'processing' && activeConcept.value === 1) {
     c1Applied.value = true
   }
   showOnboardingModal.value = false
-  showStorfundPortal.value = false
-  showStorfundPortalC2.value = false
   onboardingStep.value = 1
   consentChecked.value = false
 }
@@ -348,8 +339,6 @@ function onC1SubState(_pageId: string, subStateId: string) {
   // Reset all transient UI first
   showLearnMoreModal.value = false
   showOnboardingModal.value = false
-  showStorfundPortal.value = false
-  showStorfundPortalC2.value = false
   showGrowthSimulator.value = false
   consentChecked.value = false
   c1Applied.value = false
@@ -399,21 +388,10 @@ function onC1SubState(_pageId: string, subStateId: string) {
       showOnboardingModal.value = true
       onboardingStep.value = 3
       break
-    case 'step-4':
+    case 'step-processing':
       setActivePageForConcept(0, 'money')
       showOnboardingModal.value = true
-      onboardingStep.value = 4
-      break
-    case 'storfund-portal':
-      setActivePageForConcept(0, 'money')
-      showOnboardingModal.value = true
-      onboardingStep.value = 4
-      showStorfundPortal.value = true
-      break
-    case 'step-confirmed':
-      setActivePageForConcept(0, 'money')
-      showOnboardingModal.value = true
-      onboardingStep.value = 'confirmed'
+      onboardingStep.value = 'processing'
       break
   }
 }
@@ -421,21 +399,18 @@ function onC1SubState(_pageId: string, subStateId: string) {
 // Concept 2 sub-state tracking
 const c2ActiveSubState = computed(() => {
   if (activePages.value[1] !== 'eligible') return ''
-  if (showStorfundPortalC2.value) return 'storfund-portal'
   if (showGrowthSimulator.value) return 'growth-simulator'
   if (showOnboardingModal.value) {
     if (onboardingStep.value === 1) return 'step-1'
     if (onboardingStep.value === 2) return 'step-2'
     if (onboardingStep.value === 3) return 'step-3'
-    if (onboardingStep.value === 4) return 'step-4'
-    if (onboardingStep.value === 'confirmed') return 'step-confirmed'
+    if (onboardingStep.value === 'processing') return 'step-processing'
   }
   return 'eligible-landing'
 })
 
 function onC2SubState(_pageId: string, subStateId: string) {
   showOnboardingModal.value = false
-  showStorfundPortalC2.value = false
   showGrowthSimulator.value = false
   consentChecked.value = false
   setActivePageForConcept(1, 'eligible')
@@ -445,14 +420,8 @@ function onC2SubState(_pageId: string, subStateId: string) {
     showGrowthSimulator.value = true
     return
   }
-  if (subStateId === 'storfund-portal') {
-    showOnboardingModal.value = true
-    onboardingStep.value = 4
-    showStorfundPortalC2.value = true
-    return
-  }
   showOnboardingModal.value = true
-  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-4': 4, 'step-confirmed': 'confirmed' } as Record<string, 1|2|3|4|'confirmed'>)[subStateId] ?? 1
+  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-processing': 'processing' } as Record<string, 1|2|3|'processing'>)[subStateId] ?? 1
 }
 
 // Concept 3 sub-state tracking
@@ -462,8 +431,7 @@ const c3ActiveSubState = computed(() => {
     if (onboardingStep.value === 1) return 'step-1'
     if (onboardingStep.value === 2) return 'step-2'
     if (onboardingStep.value === 3) return 'step-3'
-    if (onboardingStep.value === 4) return 'step-4'
-    if (onboardingStep.value === 'confirmed') return 'step-confirmed'
+    if (onboardingStep.value === 'processing') return 'step-processing'
   }
   return c3CardExpanded.value ? 'card-expanded' : 'card-collapsed'
 })
@@ -477,7 +445,7 @@ function onC3SubState(_pageId: string, subStateId: string) {
   if (subStateId === 'learn-more') { c3CardExpanded.value = true; showLearnMoreModal.value = true; return }
   if (subStateId === 'card-collapsed') return
   showOnboardingModal.value = true
-  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-4': 4, 'step-confirmed': 'confirmed' } as Record<string, 1|2|3|4|'confirmed'>)[subStateId] ?? 1
+  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-processing': 'processing' } as Record<string, 1|2|3|'processing'>)[subStateId] ?? 1
 }
 
 // Concept 4 sub-state tracking
@@ -487,8 +455,7 @@ const c4ActiveSubState = computed(() => {
     if (onboardingStep.value === 1) return 'step-1'
     if (onboardingStep.value === 2) return 'step-2'
     if (onboardingStep.value === 3) return 'step-3'
-    if (onboardingStep.value === 4) return 'step-4'
-    if (onboardingStep.value === 'confirmed') return 'step-confirmed'
+    if (onboardingStep.value === 'processing') return 'step-processing'
   }
   return showNudge.value ? 'nudge-visible' : 'nudge-dismissed'
 })
@@ -502,7 +469,7 @@ function onC4SubState(_pageId: string, subStateId: string) {
   if (subStateId === 'learn-more') { showNudgePanel.value = true; return }
   if (subStateId === 'nudge-visible') return
   showOnboardingModal.value = true
-  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-4': 4, 'step-confirmed': 'confirmed' } as Record<string, 1|2|3|4|'confirmed'>)[subStateId] ?? 1
+  onboardingStep.value = ({ 'step-1': 1, 'step-2': 2, 'step-3': 3, 'step-processing': 'processing' } as Record<string, 1|2|3|'processing'>)[subStateId] ?? 1
 }
 
 function onSetSubState(pageId: string, subStateId: string) {
@@ -604,6 +571,7 @@ const invoiceColumns = [
   <div :class="['flex h-screen overflow-hidden font-body', showHotspots ? 'prototype-hotspots' : '']">
 
     <PrototypeSidebar
+      v-if="!shareMode"
       title="BackFunds"
       :concepts="conceptMeta"
       :active-concept="activeConcept"
@@ -1274,7 +1242,7 @@ const invoiceColumns = [
                         <p class="text-sm font-semibold text-[#0F1117]">Application submitted</p>
                         <span class="text-xs text-green-600 font-medium">Complete</span>
                       </div>
-                      <p class="text-xs text-[#5C5E63] mt-0.5">Data consent and KYB submitted via Storfund portal</p>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Data consent given · Application sent to Storfund</p>
                     </div>
                   </div>
 
@@ -1355,7 +1323,7 @@ const invoiceColumns = [
                         <p class="text-sm font-semibold text-[#0F1117]">Application submitted</p>
                         <span class="text-xs text-green-600 font-medium">Complete</span>
                       </div>
-                      <p class="text-xs text-[#5C5E63] mt-0.5">Data consent and KYB submitted via Storfund portal</p>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Data consent given · Application sent to Storfund</p>
                     </div>
                   </div>
 
@@ -1645,8 +1613,8 @@ const invoiceColumns = [
               </div>
               <div class="bg-white rounded-2xl border border-gray-200 p-6">
                 <p class="text-4xl font-bold text-green-100 mb-3">02</p>
-                <p class="font-semibold text-[#0F1117] mb-2">Complete KYB verification</p>
-                <p class="text-sm text-[#5C5E63]">Storfund verifies your business identity via their secure portal. You'll typically get a decision within 1–2 days.</p>
+                <p class="font-semibold text-[#0F1117] mb-2">Storfund verifies you</p>
+                <p class="text-sm text-[#5C5E63]">Storfund reaches out directly to verify your business identity. You'll typically get a decision within 1–2 days.</p>
               </div>
               <div class="bg-white rounded-2xl border border-gray-200 p-6">
                 <p class="text-4xl font-bold text-green-100 mb-3">03</p>
@@ -1934,7 +1902,6 @@ const invoiceColumns = [
     <!-- ═════════ CONCEPT 1 — Onboarding stepper modal ═════════ -->
     <div
       v-if="showOnboardingModal"
-      v-show="!showStorfundPortal && !showStorfundPortalC2"
       class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
       @click.self="closeOnboarding"
     >
@@ -2016,8 +1983,8 @@ const invoiceColumns = [
         </div>
 
         <div v-else-if="onboardingStep === 3" class="p-6">
-          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 3 of 4 · Data sharing</p>
-          <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">Authorise data sharing</h2>
+          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 3 of 3 · Data sharing & submit</p>
+          <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">Authorise data sharing & submit</h2>
           <p class="text-sm text-[#5C5E63] mb-4">Back Market and Storfund will need to process your sales data to assess your BackFunds application. Read below to understand how your data will be used and how to withdraw your consent at any time.</p>
 
           <div class="border border-bm-border rounded-bm-lg bg-white h-48 overflow-y-auto p-4 mb-4 text-xs text-[#5C5E63] leading-relaxed space-y-3">
@@ -2047,79 +2014,20 @@ const invoiceColumns = [
                 'prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors',
                 consentChecked ? 'hover:bg-green-800' : 'opacity-50 cursor-not-allowed',
               ]"
-              @click="consentChecked && (onboardingStep = 4)"
+              @click="consentChecked && (onboardingStep = 'processing')"
             >
-              Sign & Continue
+              Submit application
             </button>
           </div>
         </div>
 
-        <div v-else-if="onboardingStep === 4" class="p-6">
-          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 4 of 4 · Identity verification</p>
-          <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">Verify your business with Storfund</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">
-            <template v-if="activeConcept === 2">Storfund's verification opens right here — complete your identity check without leaving Back Market. This typically takes 10 minutes.</template>
-            <template v-else>You'll be redirected to Storfund's secure portal to complete a short business identity check. This typically takes 10 minutes.</template>
-          </p>
-
-          <div class="bg-[#F2F3F7] rounded-bm-lg p-4 mb-4">
-            <p class="text-xs font-semibold text-[#0F1117] mb-3">What to have ready</p>
-            <div class="space-y-2">
-              <div class="flex items-center gap-2.5 text-sm text-[#0F1117]">
-                <span class="w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xs font-semibold text-[#5C5E63] flex-shrink-0">1</span>
-                <span>Company registration number</span>
-              </div>
-              <div class="flex items-center gap-2.5 text-sm text-[#0F1117]">
-                <span class="w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xs font-semibold text-[#5C5E63] flex-shrink-0">2</span>
-                <span>Passport or driving licence</span>
-              </div>
-              <div class="flex items-center gap-2.5 text-sm text-[#0F1117]">
-                <span class="w-5 h-5 rounded-full bg-white border border-gray-200 flex items-center justify-center text-xs font-semibold text-[#5C5E63] flex-shrink-0">3</span>
-                <span>Bank account details</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-amber-50 border border-amber-200 rounded-bm p-4 mb-6 space-y-1.5">
-            <p class="text-xs font-semibold text-amber-800">What happens next</p>
-            <template v-if="activeConcept === 2">
-              <p class="text-xs text-amber-700">Once you submit your verification, Storfund will review your application. You'll typically get a decision within <strong>1–2 days</strong>.</p>
-              <p class="text-xs text-amber-700">Your status will update automatically in the <strong>BackFunds tab</strong> — no need to refresh or check back.</p>
-            </template>
-            <template v-else>
-              <p class="text-xs text-amber-700">After you complete KYB on Storfund, their team will review your application. You'll typically get a decision within <strong>1–2 days</strong>. Your status in Back Market will update automatically — no need to refresh or check back.</p>
-            </template>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <button
-              type="button"
-              class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors flex items-center justify-center gap-2"
-              @click="activeConcept === 2 ? (showStorfundPortalC2 = true) : (showStorfundPortal = true)"
-            >
-              <template v-if="activeConcept === 2">Open Storfund</template>
-              <template v-else>
-                Open Storfund portal
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M14.25 3.5A.75.75 0 0 1 15 2.75h5A1.25 1.25 0 0 1 21.25 4v5a.75.75 0 0 1-1.5 0V5.31l-6.22 6.22a.75.75 0 1 1-1.06-1.06l6.22-6.22H15a.75.75 0 0 1-.75-.75" fill="currentColor"/><path d="M5.75 6.5A.75.75 0 0 1 6.5 5.75H12a.75.75 0 0 0 0-1.5H6.5A2.25 2.25 0 0 0 4.25 6.5v11a2.25 2.25 0 0 0 2.25 2.25h11a2.25 2.25 0 0 0 2.25-2.25V12a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 1-.75.75h-11a.75.75 0 0 1-.75-.75v-11" fill="currentColor"/></svg>
-              </template>
-            </button>
-            <button
-              type="button"
-              class="prototype-hotspot text-sm text-[#5C5E63] hover:text-[#0F1117] transition-colors py-2"
-              @click="closeOnboarding"
-            >
-              I'll do this later
-            </button>
-          </div>
-        </div>
-
-        <div v-else-if="onboardingStep === 'confirmed'" class="p-6 py-8 text-center">
+        <div v-else-if="onboardingStep === 'processing'" class="p-6 py-8 text-center">
           <div class="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <svg class="w-7 h-7 text-amber-600" viewBox="0 0 24 24"><path d="M12.75 6.5a.75.75 0 0 0-1.5 0v5.293a1.25 1.25 0 0 0 .366.884l2.354 2.353a.75.75 0 1 0 1.06-1.06l-2.28-2.28V6.5" fill="currentColor"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25M3.75 12a8.25 8.25 0 1 1 16.5 0 8.25 8.25 0 1 1-16.5 0" clip-rule="evenodd" fill="currentColor"/></svg>
           </div>
-          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Application submitted</h2>
-          <p class="text-sm text-[#5C5E63] mb-2">Your application is with Storfund for review. You'll typically get a decision within 1–2 days.</p>
-          <p class="text-sm text-[#5C5E63] mb-6">Your status will update automatically on your Money page — Storfund will also email you at each stage.</p>
+          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Application processing</h2>
+          <p class="text-sm text-[#5C5E63] mb-2">We've sent your application to Storfund. They'll be in touch shortly to verify your identity — this happens entirely on Storfund's side.</p>
+          <p class="text-sm text-[#5C5E63] mb-6">You'll typically get a decision within 1–2 days. Your status will update automatically on your Money page, and Storfund will email you at each stage.</p>
 
           <div class="mt-2 flex justify-center">
             <button
@@ -2134,219 +2042,6 @@ const invoiceColumns = [
       </div>
     </div>
 
-    <!-- ═════════ CONCEPT 1 — Storfund portal simulation ═════════ -->
-    <div
-      v-if="showStorfundPortal"
-      class="absolute inset-0 z-[60] bg-white flex flex-col font-body overflow-y-auto"
-    >
-      <!-- Storfund header bar -->
-      <div class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between flex-shrink-0">
-        <span class="font-heading-secondary font-bold text-xl tracking-tight text-[#0D2A26]">Storfund</span>
-        <div class="flex items-center gap-1.5 text-xs text-gray-500">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M12 12.25A.75.75 0 0 1 12.75 13v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 12 12.25" fill="currentColor"/><path fill-rule="evenodd" d="M7.75 8.25V7.2c0-2.243 1.967-3.95 4.25-3.95s4.25 1.707 4.25 3.95v1.05h.25a3.25 3.25 0 0 1 3.25 3.25v6a3.25 3.25 0 0 1-3.25 3.25h-9a3.25 3.25 0 0 1-3.25-3.25v-6A3.25 3.25 0 0 1 7.5 8.25h.25m1.5-1.05c0-1.291 1.166-2.45 2.75-2.45s2.75 1.159 2.75 2.45v1.05h-5.5V7.2m7.25 2.55a1.75 1.75 0 0 1 1.75 1.75v6a1.75 1.75 0 0 1-1.75 1.75h-9a1.75 1.75 0 0 1-1.75-1.75v-6A1.75 1.75 0 0 1 7.5 9.75h9" clip-rule="evenodd" fill="currentColor"/></svg>
-          <span>Secure portal</span>
-        </div>
-      </div>
-
-      <!-- Progress indicator -->
-      <div class="bg-[#FAFAF8] border-b border-gray-200 px-8 py-5 flex-shrink-0">
-        <div class="max-w-3xl mx-auto flex items-center gap-4">
-          <div class="flex items-center gap-2.5 flex-1">
-            <div class="w-7 h-7 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0">
-              <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-            </div>
-            <span class="text-sm font-medium text-gray-500">Account info</span>
-          </div>
-          <div class="h-px bg-[#0D7F6E] flex-1" />
-          <div class="flex items-center gap-2.5 flex-1">
-            <div class="w-7 h-7 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0">
-              <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-            </div>
-            <span class="text-sm font-medium text-gray-500">Identity verification</span>
-          </div>
-          <div class="h-px bg-[#0D7F6E] flex-1" />
-          <div class="flex items-center gap-2.5 flex-1">
-            <div class="w-7 h-7 rounded-full border-2 border-[#0D7F6E] bg-white flex items-center justify-center flex-shrink-0">
-              <span class="text-xs font-semibold text-[#0D7F6E]">3</span>
-            </div>
-            <span class="text-sm font-semibold text-[#0F1117]">Review & submit</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main content -->
-      <div class="flex-1 px-8 py-12">
-        <div class="max-w-lg mx-auto">
-          <h1 class="font-heading-secondary font-semibold text-3xl text-[#0F1117] mb-2">Review your application</h1>
-          <p class="text-sm text-gray-600 mb-8">Everything looks good. Check the details below before submitting.</p>
-
-          <div class="space-y-3 mb-8">
-            <div class="bg-white border border-gray-200 rounded-lg p-4 flex items-start justify-between">
-              <div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Business</p>
-                <p class="text-sm font-medium text-[#0F1117]">TechRenew GmbH</p>
-                <p class="text-xs text-gray-500 mt-0.5">Reg. DE123456789 · Berlin, Germany</p>
-              </div>
-              <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-              </div>
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-lg p-4 flex items-start justify-between">
-              <div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Account holder</p>
-                <p class="text-sm font-medium text-[#0F1117]">Hans Mueller</p>
-                <p class="text-xs text-gray-500 mt-0.5">DOB 12/08/1985 · German · Passport verified</p>
-              </div>
-              <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-              </div>
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-lg p-4 flex items-start justify-between">
-              <div>
-                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Data sharing</p>
-                <p class="text-sm font-medium text-[#0F1117]">Authorised</p>
-                <p class="text-xs text-gray-500 mt-0.5">Sales history, GMV and payout data · Back Market</p>
-              </div>
-              <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-xs text-gray-500 mb-6 leading-relaxed">By submitting you agree to Storfund's <a href="#" class="underline">Terms of Service</a> and <a href="#" class="underline">Privacy Policy</a>. Storfund is a regulated provider of embedded finance.</p>
-
-          <button
-            type="button"
-            class="prototype-hotspot w-full bg-[#0D7F6E] hover:bg-[#0A6857] text-white font-semibold rounded-md px-5 py-3 text-sm transition-colors"
-            @click="showStorfundPortal = false; onboardingStep = 'confirmed'"
-          >
-            Submit application
-          </button>
-        </div>
-      </div>
-
-      <!-- Storfund footer -->
-      <div class="border-t border-gray-200 px-8 py-4 flex-shrink-0">
-        <p class="text-xs text-gray-400 text-center">Storfund · Embedded finance · Regulated provider</p>
-      </div>
-    </div>
-
-    <!-- ═════════ CONCEPT 2 — Storfund embedded overlay ═════════ -->
-    <div
-      v-if="showStorfundPortalC2"
-      class="absolute inset-0 z-[60] flex items-center justify-center font-body"
-    >
-      <div class="absolute inset-0 bg-black/60" />
-
-      <div class="relative w-[calc(100%-3rem)] h-[calc(100%-3rem)] bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden">
-        <!-- Widget header -->
-        <div class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between flex-shrink-0">
-          <div class="flex items-center gap-2.5">
-            <span class="font-heading-secondary font-bold text-lg text-[#0D2A26]">Storfund</span>
-            <span class="bg-[#E6F4F1] text-[#0D7F6E] text-xs font-medium px-2 py-0.5 rounded-full">Embedded KYB</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="flex items-center gap-1.5 text-xs text-gray-500">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path d="M12 12.25A.75.75 0 0 1 12.75 13v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 12 12.25" fill="currentColor"/><path fill-rule="evenodd" d="M7.75 8.25V7.2c0-2.243 1.967-3.95 4.25-3.95s4.25 1.707 4.25 3.95v1.05h.25a3.25 3.25 0 0 1 3.25 3.25v6a3.25 3.25 0 0 1-3.25 3.25h-9a3.25 3.25 0 0 1-3.25-3.25v-6A3.25 3.25 0 0 1 7.5 8.25h.25m1.5-1.05c0-1.291 1.166-2.45 2.75-2.45s2.75 1.159 2.75 2.45v1.05h-5.5V7.2m7.25 2.55a1.75 1.75 0 0 1 1.75 1.75v6a1.75 1.75 0 0 1-1.75 1.75h-9a1.75 1.75 0 0 1-1.75-1.75v-6A1.75 1.75 0 0 1 7.5 9.75h9" clip-rule="evenodd" fill="currentColor"/></svg>
-              <span>Secure</span>
-            </div>
-            <button
-              type="button"
-              class="prototype-hotspot text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label="Close"
-              @click="showStorfundPortalC2 = false"
-            >
-              <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L12 10.94l7.47-7.47a.75.75 0 1 1 1.06 1.06L13.06 12l7.47 7.47a.75.75 0 1 1-1.06 1.06L12 13.06l-7.47 7.47a.75.75 0 0 1-1.06-1.06L10.94 12 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd" fill="currentColor"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Progress stepper -->
-        <div class="bg-[#FAFAF8] border-b border-gray-200 px-8 py-5 flex-shrink-0">
-          <div class="max-w-3xl mx-auto flex items-center gap-4">
-            <div class="flex items-center gap-2.5 flex-1">
-              <div class="w-7 h-7 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0">
-                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-              </div>
-              <span class="text-sm font-medium text-gray-500">Account info</span>
-            </div>
-            <div class="h-px bg-[#0D7F6E] flex-1" />
-            <div class="flex items-center gap-2.5 flex-1">
-              <div class="w-7 h-7 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0">
-                <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-              </div>
-              <span class="text-sm font-medium text-gray-500">Identity verification</span>
-            </div>
-            <div class="h-px bg-[#0D7F6E] flex-1" />
-            <div class="flex items-center gap-2.5 flex-1">
-              <div class="w-7 h-7 rounded-full border-2 border-[#0D7F6E] bg-white flex items-center justify-center flex-shrink-0">
-                <span class="text-xs font-semibold text-[#0D7F6E]">3</span>
-              </div>
-              <span class="text-sm font-semibold text-[#0F1117]">Review & submit</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scrollable content -->
-        <div class="overflow-y-auto flex-1 px-8 py-10">
-          <div class="max-w-2xl mx-auto">
-            <h2 class="font-heading-secondary font-semibold text-3xl text-[#0F1117] mb-2">Review your application</h2>
-            <p class="text-sm text-gray-600 mb-8">Everything looks good. Check the details below before submitting.</p>
-
-            <div class="space-y-3 mb-8">
-              <div class="bg-white border border-gray-200 rounded-lg p-5 flex items-start justify-between">
-                <div>
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Business</p>
-                  <p class="text-sm font-medium text-[#0F1117]">TechRenew GmbH</p>
-                  <p class="text-xs text-gray-500 mt-0.5">Reg. DE123456789 · Berlin, Germany</p>
-                </div>
-                <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-                </div>
-              </div>
-
-              <div class="bg-white border border-gray-200 rounded-lg p-5 flex items-start justify-between">
-                <div>
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Account holder</p>
-                  <p class="text-sm font-medium text-[#0F1117]">Hans Mueller</p>
-                  <p class="text-xs text-gray-500 mt-0.5">DOB 12/08/1985 · German · Passport verified</p>
-                </div>
-                <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-                </div>
-              </div>
-
-              <div class="bg-white border border-gray-200 rounded-lg p-5 flex items-start justify-between">
-                <div>
-                  <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Data sharing</p>
-                  <p class="text-sm font-medium text-[#0F1117]">Authorised</p>
-                  <p class="text-xs text-gray-500 mt-0.5">Sales history, GMV and payout data · Back Market</p>
-                </div>
-                <div class="w-5 h-5 rounded-full bg-[#0D7F6E] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg class="w-3 h-3 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed">By submitting you agree to Storfund's <a href="#" class="underline">Terms of Service</a> and <a href="#" class="underline">Privacy Policy</a>. Storfund is a regulated provider of embedded finance.</p>
-
-            <button
-              type="button"
-              class="prototype-hotspot w-full bg-[#0D7F6E] hover:bg-[#0A6857] text-white font-semibold rounded-md px-5 py-3.5 text-sm transition-colors"
-              @click="showStorfundPortalC2 = false; onboardingStep = 'confirmed'"
-            >
-              Submit application
-            </button>
-          </div>
-        </div>
-
-        <div class="border-t border-gray-200 px-6 py-3 flex-shrink-0">
-          <p class="text-xs text-gray-400 text-center">Powered by Storfund · Regulated provider</p>
-        </div>
-      </div>
-    </div>
 
     <!-- ═════════ CONCEPT 2 — Growth simulator modal ═════════ -->
     <div
