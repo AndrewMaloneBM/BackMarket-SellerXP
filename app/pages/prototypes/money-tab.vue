@@ -534,6 +534,18 @@ function advanceWithDelay(key: typeof pendingAction.value, action: () => void, m
   }, ms)
 }
 
+// Prototype-only shortcut: in production, status updates automatically via webhook.
+// For the user test we need an explicit trigger that completes within a single session.
+function simulateApproval() {
+  if (c2CheckingStatus.value) return
+  c2CheckingStatus.value = true
+  setTimeout(() => {
+    activePages.value[1] = 'active'
+    c2MatureView.value = false
+    c2CheckingStatus.value = false
+  }, 5000)
+}
+
 const recentAdvances = computed(() => c2MatureView.value ? recentAdvancesMature : recentAdvancesFresh)
 
 // Concept 3 — grid card expand/collapse state
@@ -1291,32 +1303,35 @@ const invoiceColumns = [
                     </div>
                   </div>
 
-                  <div class="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between gap-4">
-                    <p class="text-xs text-[#5C5E63]">Last checked just now</p>
-                    <button
-                      type="button"
-                      :disabled="c2CheckingStatus"
-                      :class="['prototype-hotspot inline-flex items-center gap-2 text-sm font-semibold rounded-bm px-4 py-2 transition-colors border', c2CheckingStatus ? 'border-gray-200 bg-gray-50 text-[#5C5E63] cursor-wait' : 'border-[#0F1117] bg-white text-[#0F1117] hover:bg-gray-50']"
-                      @click="c2CheckingStatus = true; setTimeout(() => { c2CheckingStatus = false; activePages[1] = 'active'; c2MatureView = false }, 1400)"
-                    >
-                      <svg :class="['h-4 w-4', c2CheckingStatus ? 'animate-spin' : '']" viewBox="0 0 24 24" fill="none">
-                        <template v-if="c2CheckingStatus">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" />
-                        </template>
-                        <template v-else>
-                          <path d="M4 4v6h6M20 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                          <path d="M20 10A8 8 0 005.6 5.6M4 14a8 8 0 0014.4 4.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </template>
-                      </svg>
-                      {{ c2CheckingStatus ? 'Checking with Storfund' : 'Check for updates' }}
-                    </button>
-                  </div>
                 </div>
 
                 <div class="bg-[#F2F3F7] rounded-2xl p-5 mb-5">
                   <p class="text-sm font-semibold text-[#0F1117] mb-2">What to expect</p>
-                  <p class="text-sm text-[#5C5E63] leading-relaxed">Storfund typically responds within 1–2 days. They'll email you at each stage, and your status on this page updates automatically — you can also tap "Check for updates" above to pull the latest. Once approved, your daily advances begin immediately.</p>
+                  <p class="text-sm text-[#5C5E63] leading-relaxed">Storfund typically responds within 1–2 days. They'll email you at each stage, and your status on this page updates automatically — no need to refresh. Once approved, your daily advances begin immediately.</p>
+                </div>
+
+                <!-- Prototype-only affordance: simulate Storfund approving the application -->
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 mb-5">
+                  <div class="flex items-start gap-3">
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Prototype</span>
+                    <div class="flex-1">
+                      <p class="text-sm text-[#0F1117] font-medium mb-1">Simulate Storfund approval</p>
+                      <p class="text-xs text-[#5C5E63] mb-3">In production this happens automatically (Storfund's webhook updates the page once they've decided — typically 1–2 days). Use this button to skip the wait for testing.</p>
+                      <button
+                        type="button"
+                        :disabled="c2CheckingStatus"
+                        :class="['prototype-hotspot inline-flex items-center gap-2 text-sm font-semibold rounded-bm px-4 py-2 transition-colors border-2 border-dashed', c2CheckingStatus ? 'border-gray-300 bg-white text-[#5C5E63] cursor-wait' : 'border-[#0F1117] bg-white text-[#0F1117] hover:bg-gray-50']"
+                        @click="simulateApproval"
+                      >
+                        <svg v-if="c2CheckingStatus" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" />
+                        </svg>
+                        <svg v-else class="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
+                        {{ c2CheckingStatus ? 'Approving in 5s…' : 'Skip to approved' }}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-gray-200 p-5">
