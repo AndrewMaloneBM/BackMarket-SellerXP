@@ -327,13 +327,15 @@ function openOnboarding() {
   onboardingStep.value = 1
 }
 function closeOnboarding() {
-  if (onboardingStep.value === 'processing') {
+  const wasSubmit = onboardingStep.value === 'processing'
+  if (wasSubmit) {
     if (activeConcept.value === 1) c1Applied.value = true
     if (activeConcept.value === 2) activePages.value[1] = 'under-review'
   }
   showOnboardingModal.value = false
   onboardingStep.value = 1
   consentChecked.value = false
+  if (wasSubmit) nextTick(() => scrollPageToTop())
 }
 
 function onC1SubState(_pageId: string, subStateId: string) {
@@ -506,24 +508,27 @@ const simNewCycle = computed(() => simStockDays + simSellDays + simShipDays + 1)
 const simCapitalFreed = computed(() => Math.round(simAnnualGmv.value * (simDaysToGetPaid - 1) / 365))
 const simAdditionalRevenue = computed(() => Math.round(simCapitalFreed.value * (365 / (simStockDays + simSellDays + simShipDays)) * (simMargin / 100)))
 
-// Concept 2 — active dashboard mock advances (mature = several weeks of activity)
+// Concept 2 — active dashboard mock advances. Numbers reflect a seller ~1 year
+// into BackFunds usage (the prototype lands here after the simulated approval).
 const recentAdvancesMature = [
-  { date: '22 Apr 2026', type: 'Advance',    amount: 625,  fee: 4, balance: 625 },
-  { date: '21 Apr 2026', type: 'Repayment',  amount: -618, fee: 0, balance: 0 },
-  { date: '17 Apr 2026', type: 'Advance',    amount: 618,  fee: 4, balance: 0 },
-  { date: '16 Apr 2026', type: 'Advance',    amount: 631,  fee: 4, balance: 0 },
-  { date: '15 Apr 2026', type: 'Advance',    amount: 598,  fee: 4, balance: 0 },
-]
-// Fresh state — seller was just approved today, only today's advance has landed
-const recentAdvancesFresh = [
-  { date: 'Today', type: 'Advance', amount: 625, fee: 4, balance: 625 },
+  { date: '28 May 2026', type: 'Advance',    amount: 712,  fee: 5, balance: 712 },
+  { date: '27 May 2026', type: 'Repayment',  amount: -704, fee: 0, balance: 0 },
+  { date: '26 May 2026', type: 'Advance',    amount: 704,  fee: 5, balance: 0 },
+  { date: '23 May 2026', type: 'Advance',    amount: 685,  fee: 5, balance: 0 },
+  { date: '22 May 2026', type: 'Advance',    amount: 697,  fee: 5, balance: 0 },
+  { date: '21 May 2026', type: 'Advance',    amount: 661,  fee: 4, balance: 0 },
 ]
 
-// Concept 2 — under-review / active transition + 3-month preview toggle
+// Concept 2 — under-review / active transition
 const c2CheckingStatus = ref(false)
-const c2MatureView = ref(false)
 // Track per-button "loading" so onboarding step transitions feel real
 const pendingAction = ref<'step-1' | 'step-2' | 'step-3' | 'check-status' | null>(null)
+
+// Reset scroll position when transitioning between major page states.
+const scrollContainerRef = ref<HTMLElement | null>(null)
+function scrollPageToTop() {
+  scrollContainerRef.value?.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 function advanceWithDelay(key: typeof pendingAction.value, action: () => void, ms = 700) {
   if (pendingAction.value) return
@@ -541,12 +546,12 @@ function simulateApproval() {
   c2CheckingStatus.value = true
   setTimeout(() => {
     activePages.value[1] = 'active'
-    c2MatureView.value = false
     c2CheckingStatus.value = false
+    nextTick(() => scrollPageToTop())
   }, 5000)
 }
 
-const recentAdvances = computed(() => c2MatureView.value ? recentAdvancesMature : recentAdvancesFresh)
+const recentAdvances = recentAdvancesMature
 
 // Concept 3 — grid card expand/collapse state
 const c3CardExpanded = ref(false)
@@ -631,7 +636,7 @@ const invoiceColumns = [
     />
 
     <div class="flex-1 relative overflow-hidden">
-    <div class="absolute inset-0 overflow-y-auto bg-gray-50" @click="flashHotspots">
+    <div ref="scrollContainerRef" class="absolute inset-0 overflow-y-auto bg-gray-50" @click="flashHotspots">
 
       <!-- ═════════ CONCEPT 1 ═════════ -->
       <div v-show="activeConcept === 1">
@@ -1310,13 +1315,13 @@ const invoiceColumns = [
                   <p class="text-sm text-[#5C5E63] leading-relaxed">Storfund typically responds within 1–2 days. They'll email you at each stage, and your status on this page updates automatically — no need to refresh. Once approved, your daily advances begin immediately.</p>
                 </div>
 
-                <!-- Prototype-only affordance: simulate Storfund approving the application -->
+                <!-- Prototype-only affordance: fast-forward through Storfund's review window. -->
                 <div class="border-2 border-dashed border-gray-300 rounded-xl p-4 mb-5">
                   <div class="flex items-start gap-3">
-                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Prototype</span>
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded flex-shrink-0">Just for this test</span>
                     <div class="flex-1">
-                      <p class="text-sm text-[#0F1117] font-medium mb-1">Simulate Storfund approval</p>
-                      <p class="text-xs text-[#5C5E63] mb-3">In production this happens automatically (Storfund's webhook updates the page once they've decided — typically 1–2 days). Use this button to skip the wait for testing.</p>
+                      <p class="text-sm text-[#0F1117] font-medium mb-1">Don't want to wait 1–2 days?</p>
+                      <p class="text-xs text-[#5C5E63] mb-3">In real life, Storfund would review your application over a couple of days and email you when they're done. For this preview, you can skip the wait and jump straight to what your dashboard looks like once you're approved and using BackFunds.</p>
                       <button
                         type="button"
                         :disabled="c2CheckingStatus"
@@ -1327,8 +1332,8 @@ const invoiceColumns = [
                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" />
                         </svg>
-                        <svg v-else class="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
-                        {{ c2CheckingStatus ? 'Approving in 5s…' : 'Skip to approved' }}
+                        <svg v-else class="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M4 4l8 8-8 8M12 4l8 8-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        {{ c2CheckingStatus ? 'Approving you now…' : 'Skip ahead to approved' }}
                       </button>
                     </div>
                   </div>
@@ -1447,34 +1452,9 @@ const invoiceColumns = [
             </template>
 
             <!-- ── Active dashboard state ── -->
+            <!-- Lands here after simulated approval. Numbers depict a seller ~1 year into BackFunds. -->
             <template v-else-if="activePages[1] === 'active'">
               <div class="space-y-5">
-                <!-- Preview banner (mature) -->
-                <div v-if="c2MatureView" class="bg-[#0F1117] text-white rounded-xl px-5 py-3 flex items-center justify-between gap-4">
-                  <div class="flex items-center gap-3">
-                    <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /></svg>
-                    <p class="text-sm"><span class="font-semibold">Preview</span> — this is what your dashboard could look like after 3 months on BackFunds.</p>
-                  </div>
-                  <button
-                    type="button"
-                    class="prototype-hotspot text-sm font-semibold text-white underline underline-offset-2 hover:opacity-70 transition-opacity"
-                    @click="c2MatureView = false"
-                  >
-                    Back to today
-                  </button>
-                </div>
-
-                <!-- Welcome banner (fresh) -->
-                <div v-else class="bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-                  </div>
-                  <div>
-                    <p class="text-sm font-semibold text-[#0F1117]">You're live on BackFunds</p>
-                    <p class="text-xs text-[#5C5E63] mt-0.5">Your first advance is on its way — landing tomorrow.</p>
-                  </div>
-                </div>
-
                 <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-2xl p-8 relative overflow-hidden">
                   <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-white/5" />
                   <div class="relative flex items-end justify-between gap-6">
@@ -1494,22 +1474,22 @@ const invoiceColumns = [
                 <div class="grid grid-cols-2 gap-4">
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Advanced this month</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? (Math.round(sellerData.estimatedMonthlyAdvance / 30) * 17).toLocaleString() : '625' }}</p>
-                    <p class="text-xs text-[#5C5E63] mt-1">{{ c2MatureView ? '17 advances this month' : '1 advance · today' }}</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€18,940</p>
+                    <p class="text-xs text-[#5C5E63] mt-1">26 advances in May</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Fees paid this month</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? Math.round(estimatedMonthlyCost * 0.55).toLocaleString() : '4' }}</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€142</p>
                     <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.dailyFee }}% daily · outstanding balance</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Total advanced since onboarding</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? '56,250' : '625' }}</p>
-                    <p class="text-xs text-[#5C5E63] mt-1">{{ c2MatureView ? '3 months on BackFunds' : 'Since today' }}</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€245,180</p>
+                    <p class="text-xs text-[#5C5E63] mt-1">Since May 2025</p>
                   </div>
                   <div class="bg-white rounded-xl border border-gray-200 p-5">
                     <p class="text-xs text-[#5C5E63] uppercase tracking-wide mb-2">Total fees since onboarding</p>
-                    <p class="text-2xl font-bold text-[#0F1117]">€{{ c2MatureView ? '420' : '4' }}</p>
+                    <p class="text-2xl font-bold text-[#0F1117]">€1,720</p>
                     <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.dailyFee }}% daily on outstanding</p>
                   </div>
                 </div>
@@ -1555,17 +1535,6 @@ const invoiceColumns = [
                   </div>
                 </div>
 
-                <!-- Prototype-only affordance: skip ahead to mature state -->
-                <div v-if="!c2MatureView" class="flex justify-center pt-2">
-                  <button
-                    type="button"
-                    class="prototype-hotspot inline-flex items-center gap-2 text-sm font-medium text-[#5C5E63] border border-dashed border-gray-300 rounded-full px-4 py-2 hover:bg-gray-50 hover:text-[#0F1117] transition-colors"
-                    @click="c2MatureView = true"
-                  >
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><path d="M4 4l8 8-8 8M12 4l8 8-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                    Preview: what this looks like after 3 months
-                  </button>
-                </div>
               </div>
             </template>
 
@@ -2110,7 +2079,7 @@ const invoiceColumns = [
                 'prototype-hotspot bg-green-900 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors inline-flex items-center gap-2',
                 !consentChecked ? 'opacity-50 cursor-not-allowed' : pendingAction === 'step-3' ? 'opacity-75 cursor-wait' : 'hover:bg-green-800',
               ]"
-              @click="consentChecked && advanceWithDelay('step-3', () => onboardingStep = 'processing', 1100)"
+              @click="consentChecked && advanceWithDelay('step-3', () => onboardingStep = 'processing', 1800)"
             >
               <svg v-if="pendingAction === 'step-3'" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" /></svg>
               {{ pendingAction === 'step-3' ? 'Submitting' : 'Submit application' }}
