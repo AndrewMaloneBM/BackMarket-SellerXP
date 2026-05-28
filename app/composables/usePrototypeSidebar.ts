@@ -60,11 +60,11 @@ export function usePrototypeSidebar(conceptMeta: readonly PrototypeConcept[]) {
     })
   }
 
-  // When switching back to 'before', drop any after-only sub-tabs (e.g. concept 2 "Daily payout")
+  // When switching back to 'before', drop any after-only sub-tabs (e.g. concept 2 "Payout")
   watch(previewMode, (mode) => {
     if (mode !== 'before') return
     conceptTabs.value = conceptTabs.value.map(tab =>
-      tab === 'Daily payout' ? 'Your wallet' : tab,
+      tab === 'Payout' ? 'Your wallet' : tab,
     )
   })
 

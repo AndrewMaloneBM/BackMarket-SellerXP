@@ -231,7 +231,7 @@ onMounted(() => {
   if (!shareMode.value) return
   activeConcept.value = 2
   activePages.value[1] = 'eligible'
-  conceptTabs.value[1] = 'Daily payout'
+  conceptTabs.value[1] = 'Payout'
 })
 
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
@@ -242,7 +242,7 @@ function setActivePageForConcept(conceptIdx: number, pageId: string) {
 function setActivePage(id: string) {
   const idx = activeConcept.value - 1
   activePages.value[idx] = id
-  if (idx === 1) conceptTabs.value[1] = 'Daily payout'
+  if (idx === 1) conceptTabs.value[1] = 'Payout'
   // Close any open overlays when navigating to a new top-level page
   showLearnMoreModal.value = false
   showOnboardingModal.value = false
@@ -327,8 +327,9 @@ function openOnboarding() {
   onboardingStep.value = 1
 }
 function closeOnboarding() {
-  if (onboardingStep.value === 'processing' && activeConcept.value === 1) {
-    c1Applied.value = true
+  if (onboardingStep.value === 'processing') {
+    if (activeConcept.value === 1) c1Applied.value = true
+    if (activeConcept.value === 2) activePages.value[1] = 'under-review'
   }
   showOnboardingModal.value = false
   onboardingStep.value = 1
@@ -414,7 +415,7 @@ function onC2SubState(_pageId: string, subStateId: string) {
   showGrowthSimulator.value = false
   consentChecked.value = false
   setActivePageForConcept(1, 'eligible')
-  conceptTabs.value[1] = 'Daily payout'
+  conceptTabs.value[1] = 'Payout'
   if (subStateId === 'eligible-landing') return
   if (subStateId === 'growth-simulator') {
     showGrowthSimulator.value = true
@@ -532,6 +533,13 @@ const tabs = [
   'Your wallet', 'Past invoices', 'Goodwill gestures',
   'Seller compensation', 'Financial report',
 ]
+
+// Concept 2 adds a "Payout" tab as the 3rd entry when the "after" design is active.
+const c2Tabs = computed(() =>
+  previewMode.value === 'after'
+    ? ['Your wallet', 'Past invoices', 'Payout', 'Goodwill gestures', 'Seller compensation', 'Financial report']
+    : tabs,
+)
 
 function makeNavDotPredicate(conceptIdx: number) {
   return (item: string) => conceptMeta[conceptIdx]?.pages.some(p => p.navItem === item) ?? false
@@ -1131,24 +1139,14 @@ const invoiceColumns = [
         <BmShell
           :nav-items="navItems"
           active-nav-item="Money"
-          :tabs="tabs"
+          :tabs="c2Tabs"
           :active-tab="conceptTabs[1]"
           :seller-name="sellerData.sellerName"
           page-title="Money"
           :nav-dot-predicate="makeNavDotPredicate(1)"
-          :tab-dot-predicate="previewMode === 'after' ? (tab) => tab === 'Your wallet' : undefined"
+          :tab-dot-predicate="previewMode === 'after' ? (tab) => tab === 'Payout' : undefined"
           @update:active-tab="conceptTabs[1] = $event"
         >
-          <template #tabs-extra>
-            <button
-              v-if="previewMode === 'after'"
-              class="prototype-hotspot"
-              :class="['px-5 py-3 text-sm whitespace-nowrap transition-colors border-b-2 -mb-px', conceptTabs[1] === 'Daily payout' ? 'font-semibold text-gray-900 border-gray-900' : 'font-normal text-gray-400 border-transparent hover:text-gray-700 hover:border-gray-300']"
-              @click="conceptTabs[1] = 'Daily payout'"
-            >
-              <span class="inline-flex items-center gap-1.5">Daily payout <span class="w-2 h-2 rounded-full bg-green-500"></span></span>
-            </button>
-          </template>
 
           <div v-if="conceptTabs[1] === 'Your wallet'" class="mt-6 pb-12">
             <div
@@ -1166,7 +1164,7 @@ const invoiceColumns = [
               </div>
               <button
                 class="prototype-hotspot text-sm font-semibold text-green-800 underline underline-offset-2 hover:opacity-70 whitespace-nowrap ml-6 transition-opacity"
-                @click="conceptTabs[1] = 'Daily payout'"
+                @click="conceptTabs[1] = 'Payout'"
               >
                 See BackFunds →
               </button>
@@ -1215,7 +1213,7 @@ const invoiceColumns = [
             </div>
           </div>
 
-          <div v-else-if="conceptTabs[1] === 'Daily payout'" class="mt-6 pb-16">
+          <div v-else-if="conceptTabs[1] === 'Payout'" class="mt-6 pb-16">
 
             <!-- ── Under review state ── -->
             <template v-if="activePages[1] === 'under-review'">
@@ -1842,7 +1840,6 @@ const invoiceColumns = [
     <div
       v-if="showLearnMoreModal"
       class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
-      @click.self="showLearnMoreModal = false"
     >
       <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <button
@@ -1903,7 +1900,6 @@ const invoiceColumns = [
     <div
       v-if="showOnboardingModal"
       class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
-      @click.self="closeOnboarding"
     >
       <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <button
@@ -1916,7 +1912,7 @@ const invoiceColumns = [
         </button>
 
         <div v-if="onboardingStep === 1" class="p-6">
-          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 1 of 4 · Eligibility</p>
+          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 1 of 3 · Eligibility</p>
           <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">You're eligible for BackFunds</h2>
           <span class="inline-block bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm mb-5">Eligible ✓</span>
 
@@ -1953,7 +1949,7 @@ const invoiceColumns = [
         </div>
 
         <div v-else-if="onboardingStep === 2" class="p-6">
-          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 2 of 4 · Provider</p>
+          <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">Step 2 of 3 · Provider</p>
           <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-2">Your financing partner</h2>
           <p class="text-sm text-[#5C5E63] mb-5">We've matched you with Storfund based on your Back Market sales profile — this is your best-fit financing partner.</p>
 
@@ -2048,7 +2044,7 @@ const invoiceColumns = [
       v-if="showGrowthSimulator"
       class="absolute inset-0 z-[60] flex items-center justify-center font-body"
     >
-      <div class="absolute inset-0 bg-black/50" @click="showGrowthSimulator = false" />
+      <div class="absolute inset-0 bg-black/50" />
 
       <div class="relative w-[calc(100%-4rem)] max-w-4xl bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[calc(100%-4rem)]">
         <div class="px-8 py-5 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
