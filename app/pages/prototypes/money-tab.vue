@@ -686,7 +686,7 @@ const invoiceColumns = [
     <button
       v-if="shareMode"
       type="button"
-      class="prototype-hotspot absolute top-4 right-4 z-40 inline-flex items-center gap-2 bg-[#0F1117] text-white text-xs font-semibold rounded-full pl-2.5 pr-3.5 py-1.5 shadow-lg hover:bg-gray-800 transition-colors"
+      class="absolute top-4 right-4 z-40 inline-flex items-center gap-2 bg-[#0F1117] text-white text-xs font-semibold rounded-full pl-2.5 pr-3.5 py-1.5 shadow-lg hover:bg-gray-800 transition-colors"
       @click="restartPrototype"
     >
       <span class="bg-amber-300 text-[#0F1117] text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">Test</span>
