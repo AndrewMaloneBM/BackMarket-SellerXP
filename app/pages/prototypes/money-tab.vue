@@ -521,6 +521,30 @@ const recentAdvancesMature = [
 
 // Concept 2 — under-review / active transition
 const c2CheckingStatus = ref(false)
+// Pause / Stop service controls
+const c2Paused = ref(false)
+const c2WasStopped = ref(false)
+const showPauseConfirm = ref(false)
+const showResumeConfirm = ref(false)
+const showStopConfirm = ref(false)
+
+function confirmPause() {
+  c2Paused.value = true
+  showPauseConfirm.value = false
+  nextTick(() => scrollPageToTop())
+}
+function confirmResume() {
+  c2Paused.value = false
+  showResumeConfirm.value = false
+  nextTick(() => scrollPageToTop())
+}
+function confirmStop() {
+  c2Paused.value = false
+  c2WasStopped.value = true
+  activePages.value[1] = 'eligible'
+  showStopConfirm.value = false
+  nextTick(() => scrollPageToTop())
+}
 // Track per-button "loading" so onboarding step transitions feel real
 const pendingAction = ref<'step-1' | 'step-2' | 'step-3' | 'check-status' | null>(null)
 
@@ -546,6 +570,7 @@ function simulateApproval() {
   c2CheckingStatus.value = true
   setTimeout(() => {
     activePages.value[1] = 'active'
+    c2WasStopped.value = false
     c2CheckingStatus.value = false
     nextTick(() => scrollPageToTop())
   }, 5000)
@@ -1455,18 +1480,40 @@ const invoiceColumns = [
             <!-- Lands here after simulated approval. Numbers depict a seller ~1 year into BackFunds. -->
             <template v-else-if="activePages[1] === 'active'">
               <div class="space-y-5">
-                <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-2xl p-8 relative overflow-hidden">
+                <!-- Paused banner -->
+                <div v-if="c2Paused" class="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-amber-700" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5h3v14H8zm5 0h3v14h-3z" /></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-[#0F1117]">BackFunds is paused</p>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">No new daily advances. Your account is otherwise unchanged.</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="prototype-hotspot text-sm font-semibold text-[#0F1117] underline underline-offset-2 hover:opacity-70 transition-opacity"
+                    @click="showResumeConfirm = true"
+                  >
+                    Resume advances →
+                  </button>
+                </div>
+
+                <!-- Hero card -->
+                <div :class="['rounded-2xl p-8 relative overflow-hidden', c2Paused ? 'bg-gradient-to-br from-gray-800 to-gray-700' : 'bg-gradient-to-br from-green-900 to-green-800']">
                   <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-white/5" />
                   <div class="relative flex items-end justify-between gap-6">
                     <div>
-                      <p class="text-xs font-semibold tracking-widest text-green-300 uppercase mb-3">Daily payout · Active · Powered by Storfund</p>
-                      <p class="text-green-200 text-sm mb-1">Today's advance</p>
-                      <p class="font-heading-primary font-semibold text-5xl text-white leading-none">€{{ Math.round(sellerData.estimatedMonthlyAdvance / 30).toLocaleString() }}</p>
-                      <p class="text-green-300 text-sm mt-3">Landing in your account tomorrow · D+1</p>
+                      <p :class="['text-xs font-semibold tracking-widest uppercase mb-3', c2Paused ? 'text-gray-400' : 'text-green-300']">{{ c2Paused ? 'Daily payout · Paused · Powered by Storfund' : 'Daily payout · Active · Powered by Storfund' }}</p>
+                      <p :class="['text-sm mb-1', c2Paused ? 'text-gray-300' : 'text-green-200']">{{ c2Paused ? 'Today\'s advance' : 'Today\'s advance' }}</p>
+                      <p class="font-heading-primary font-semibold text-5xl text-white leading-none">{{ c2Paused ? '—' : '€' + Math.round(sellerData.estimatedMonthlyAdvance / 30).toLocaleString() }}</p>
+                      <p :class="['text-sm mt-3', c2Paused ? 'text-gray-400' : 'text-green-300']">{{ c2Paused ? 'No new advances while paused' : 'Landing in your account tomorrow · D+1' }}</p>
                     </div>
                     <div class="flex flex-col items-end gap-3 flex-shrink-0">
-                      <span class="bg-green-400/20 text-green-200 text-xs font-semibold px-3 py-1 rounded-full border border-green-400/30">● Active</span>
-                      <p class="text-xs text-green-400 text-right">{{ sellerData.advanceRate }}% of shipped GMV<br>{{ sellerData.dailyFee }}% daily fee on outstanding</p>
+                      <span v-if="c2Paused" class="bg-amber-400/20 text-amber-200 text-xs font-semibold px-3 py-1 rounded-full border border-amber-400/30">❙❙ Paused</span>
+                      <span v-else class="bg-green-400/20 text-green-200 text-xs font-semibold px-3 py-1 rounded-full border border-green-400/30">● Active</span>
+                      <p :class="['text-xs text-right', c2Paused ? 'text-gray-400' : 'text-green-400']">{{ sellerData.advanceRate }}% of shipped GMV<br>{{ sellerData.dailyFee }}% daily fee on outstanding</p>
                     </div>
                   </div>
                 </div>
@@ -1526,11 +1573,29 @@ const invoiceColumns = [
                 <div class="bg-[#F2F3F7] rounded-xl p-5 flex items-center justify-between gap-4">
                   <div>
                     <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Manage your BackFunds service</p>
-                    <p class="text-xs text-[#5C5E63]">Pause requires balance = €0. Stopping triggers the offboarding flow.</p>
+                    <p class="text-xs text-[#5C5E63]">Pausing keeps your account active but stops new advances. Stopping ends BackFunds — you can reapply anytime.</p>
                   </div>
                   <div class="flex gap-2 flex-shrink-0">
-                    <button class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors">Pause advances</button>
-                    <button class="prototype-hotspot border border-red-200 bg-white text-sm font-medium text-red-600 px-4 py-2 rounded-bm hover:bg-red-50 transition-colors">Stop BackFunds</button>
+                    <button
+                      v-if="!c2Paused"
+                      class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
+                      @click="showPauseConfirm = true"
+                    >
+                      Pause advances
+                    </button>
+                    <button
+                      v-else
+                      class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
+                      @click="showResumeConfirm = true"
+                    >
+                      Resume advances
+                    </button>
+                    <button
+                      class="prototype-hotspot border border-red-200 bg-white text-sm font-medium text-red-600 px-4 py-2 rounded-bm hover:bg-red-50 transition-colors"
+                      @click="showStopConfirm = true"
+                    >
+                      Stop BackFunds
+                    </button>
                     <button class="prototype-hotspot text-sm font-medium text-[#5C5E63] px-4 py-2 rounded-bm hover:text-[#0F1117] transition-colors underline">Contact Support</button>
                   </div>
                 </div>
@@ -1540,6 +1605,15 @@ const invoiceColumns = [
 
             <!-- ── Default: eligible, not yet applied ── -->
             <template v-else>
+            <div v-if="c2WasStopped" class="bg-gray-100 border border-gray-200 rounded-xl px-5 py-4 mb-6 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-[#5C5E63]" viewBox="0 0 24 24" fill="none"><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" /></svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-[#0F1117]">You stopped BackFunds</p>
+                <p class="text-xs text-[#5C5E63] mt-0.5">Daily advances have ended. You can reapply below anytime.</p>
+              </div>
+            </div>
             <div class="bg-gradient-to-br from-green-900 to-green-800 rounded-2xl p-10 mb-8 relative overflow-hidden">
               <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-white/5" />
               <div class="relative flex gap-10 items-center">
@@ -1553,7 +1627,7 @@ const invoiceColumns = [
                       class="prototype-hotspot bg-white text-green-900 font-semibold px-6 py-3 rounded-bm text-sm hover:bg-green-50 transition-colors"
                       @click="openOnboarding"
                     >
-                      Apply for BackFunds
+                      {{ c2WasStopped ? 'Reapply for BackFunds' : 'Apply for BackFunds' }}
                     </button>
                     <a href="#daily-payout-how" class="prototype-hotspot text-green-300 text-sm underline ml-4 hover:text-white" @click.prevent="scrollToHowItWorks">See how it works →</a>
                   </div>
@@ -2304,6 +2378,82 @@ const invoiceColumns = [
           >
             Not now
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ CONCEPT 2 — Pause advances confirmation ═════════ -->
+    <div
+      v-if="showPauseConfirm"
+      class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
+    >
+      <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-md p-6">
+        <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-3">Pause BackFunds</p>
+        <h2 class="font-heading-primary font-semibold text-xl text-[#0F1117] mb-3">Pause your daily advances?</h2>
+        <p class="text-sm text-[#5C5E63] mb-4">Pausing keeps your BackFunds account active, but no new daily advances will be added until you resume.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-green-600 mt-0.5">✓</span>
+            <span>Your Back Market payouts continue as normal (D+7)</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-green-600 mt-0.5">✓</span>
+            <span>You can resume daily advances anytime from this page</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-green-600 mt-0.5">✓</span>
+            <span>No new fees while paused</span>
+          </li>
+        </ul>
+        <div class="flex gap-3 justify-end">
+          <button type="button" class="prototype-hotspot text-sm font-semibold text-[#0F1117] px-5 py-2.5 rounded-bm hover:bg-gray-50 transition-colors" @click="showPauseConfirm = false">Cancel</button>
+          <button type="button" class="prototype-hotspot bg-[#0F1117] text-white text-sm font-semibold rounded-bm px-5 py-2.5 hover:bg-gray-800 transition-colors" @click="confirmPause">Pause advances</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ CONCEPT 2 — Resume advances confirmation ═════════ -->
+    <div
+      v-if="showResumeConfirm"
+      class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
+    >
+      <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-md p-6">
+        <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-3">Resume BackFunds</p>
+        <h2 class="font-heading-primary font-semibold text-xl text-[#0F1117] mb-3">Resume your daily advances?</h2>
+        <p class="text-sm text-[#5C5E63] mb-6">Daily advances will restart with your next sale. Your existing settings and fee rate stay the same.</p>
+        <div class="flex gap-3 justify-end">
+          <button type="button" class="prototype-hotspot text-sm font-semibold text-[#0F1117] px-5 py-2.5 rounded-bm hover:bg-gray-50 transition-colors" @click="showResumeConfirm = false">Cancel</button>
+          <button type="button" class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white text-sm font-semibold rounded-bm px-5 py-2.5 transition-colors" @click="confirmResume">Resume advances</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ CONCEPT 2 — Stop BackFunds confirmation ═════════ -->
+    <div
+      v-if="showStopConfirm"
+      class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
+    >
+      <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-md p-6">
+        <p class="text-xs font-semibold tracking-widest text-red-600 uppercase mb-3">Stop BackFunds</p>
+        <h2 class="font-heading-primary font-semibold text-xl text-[#0F1117] mb-3">Stop BackFunds permanently?</h2>
+        <p class="text-sm text-[#5C5E63] mb-4">Stopping ends your BackFunds service. Your Back Market account is unaffected, but daily advances will end.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-amber-600 mt-0.5">!</span>
+            <span>Any outstanding advance must be repaid from your next Back Market payouts before BackFunds closes</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-amber-600 mt-0.5">!</span>
+            <span>You can reapply later, but you'll need to go through the full application again</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
+            <span class="text-green-600 mt-0.5">✓</span>
+            <span>If you just need a break, pausing is reversible — try that first</span>
+          </li>
+        </ul>
+        <div class="flex gap-3 justify-end">
+          <button type="button" class="prototype-hotspot text-sm font-semibold text-[#0F1117] px-5 py-2.5 rounded-bm hover:bg-gray-50 transition-colors" @click="showStopConfirm = false">Cancel</button>
+          <button type="button" class="prototype-hotspot bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-bm px-5 py-2.5 transition-colors" @click="confirmStop">Yes, stop BackFunds</button>
         </div>
       </div>
     </div>
