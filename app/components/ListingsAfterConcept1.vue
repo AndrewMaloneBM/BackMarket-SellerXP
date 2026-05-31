@@ -494,10 +494,9 @@ function fmtMargin(amount: number, c: Currency): string {
                               <div class="flex flex-col gap-0.5">
                                 <span class="rounded-bm-xs inline-block w-fit px-1 text-xs font-semibold" :style="{ background: 'hsl(145, 83%, 77%)', color: 'hsl(156, 100%, 21%)' }">You've won the BackBox</span>
                                 <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.backBox.price, row.currency) }}</p>
-                                <p class="text-xs font-semibold text-bm-text-low">Your product's got eyes on it</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
                                   {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
-                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
                                     <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
                                     Higher margin
                                   </span>
@@ -520,7 +519,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-xs font-semibold text-bm-text-low">Win BackBox to start selling</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
                                   {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
-                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
                                     <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
                                     Higher margin
                                   </span>
@@ -542,7 +541,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">Higher visibility, more traffic</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
                                   {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
-                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
                                     <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
                                     Higher margin
                                   </span>
@@ -557,7 +556,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">~5% less commission, more margin</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
                                   {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
-                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
                                     <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
                                     Higher margin
                                   </span>
