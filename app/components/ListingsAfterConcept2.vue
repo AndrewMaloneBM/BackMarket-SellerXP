@@ -458,7 +458,7 @@ function fmtMargin(amount: number, c: Currency): string {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(row, ri) in pricingFor(listing)" :key="row.code" :class="['bg-white', ri !== pricingFor(listing).length - 1 && 'border-b border-bm-border']">
+                        <tr v-for="(row, ri) in pricingFor(listing)" :key="row.code" :class="[ri !== pricingFor(listing).length - 1 && 'border-b border-bm-border']">
                           <td class="px-4 py-6 first:pl-6 align-middle">
                             <button class="inline-flex items-center gap-2 text-base text-bm-text-hi hover:underline cursor-pointer">
                               <FlagChip :code="row.code" :height="12" />
