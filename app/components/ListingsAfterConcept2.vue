@@ -499,11 +499,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 </div>
                                 <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.backBox.price, row.currency) }}</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
-                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
-                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
-                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
-                                    Higher margin
-                                  </span>
+                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit after BM fees
                                 </p>
                                 <p v-if="row.recommendation.side === 'backbox'" class="text-xs text-bm-text-low leading-relaxed max-w-[360px]">{{ row.recommendation.reason }}</p>
                                 <button class="inline-flex items-center gap-1 text-xs text-bm-text-hi underline hover:text-bm-text-mid cursor-pointer w-fit">
@@ -536,11 +532,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.backBox.price, row.currency) }}</p>
                                 <p class="text-xs font-semibold text-bm-text-low">Win BackBox to start selling</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
-                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
-                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
-                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
-                                    Higher margin
-                                  </span>
+                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit after BM fees
                                 </p>
                                 <p v-if="row.recommendation.side === 'backbox'" class="text-xs text-bm-text-low leading-relaxed max-w-[360px]">{{ row.recommendation.reason }}</p>
                                 <button class="inline-flex items-center gap-1 text-xs text-bm-text-hi underline hover:text-bm-text-mid cursor-pointer w-fit">
@@ -569,11 +561,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.strategy.price!, row.currency) }}</p>
                                 <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">Higher visibility, more traffic</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
-                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
-                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
-                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
-                                    Higher margin
-                                  </span>
+                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit after BM fees
                                 </p>
                                 <p v-if="row.recommendation.side === 'promo'" class="text-xs text-bm-text-low leading-relaxed max-w-[360px]">{{ row.recommendation.reason }}</p>
                                 <button v-if="row.recommendation.side === 'promo'" class="rounded-bm-sm px-3 py-1.5 mt-2 text-sm font-semibold cursor-pointer transition-colors inline-flex items-center justify-center gap-2 text-white self-start" :style="{ background: 'hsl(156, 100%, 21%)' }">
@@ -598,11 +586,7 @@ function fmtMargin(amount: number, c: Currency): string {
                                 <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.strategy.price!, row.currency) }} <span class="text-xs font-normal text-bm-text-low">or less</span></p>
                                 <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">~5% less commission, more margin</p>
                                 <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
-                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
-                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-xs font-medium" :style="{ color: 'hsl(156, 100%, 21%)' }">
-                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
-                                    Higher margin
-                                  </span>
+                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit after BM fees
                                 </p>
                                 <p v-if="row.recommendation.side === 'promo'" class="text-xs text-bm-text-low leading-relaxed max-w-[360px]">{{ row.recommendation.reason }}</p>
                                 <button v-if="row.recommendation.side === 'promo'" class="rounded-bm-sm px-3 py-1.5 mt-2 text-sm font-semibold cursor-pointer transition-colors inline-flex items-center justify-center gap-2 text-white self-start" :style="{ background: 'hsl(156, 100%, 21%)' }">
