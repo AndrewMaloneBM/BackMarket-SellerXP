@@ -5,13 +5,31 @@ definePageMeta({ layout: false })
 
 const conceptMeta: readonly PrototypeConcept[] = [
   {
-    name: 'Concept 1',
-    prdFeature: 'TBD',
-    prdMetric: 'TBD',
-    pros: [],
-    cons: [],
+    name: 'Margin comparison',
+    prdFeature: 'PRD 2.1 — Margin tradeoff visibility',
+    prdMetric: 'Recommended-price adoption 31% → 40%+. Seller-set vs optimal-margin gap under €8.',
+    pros: [
+      'Surfaces the decision sellers actually care about — euros earned — at the moment of choice',
+      'Targets the €15 gap: shows when a promotion out-earns the BackBox despite a lower price',
+      'Two clear choices, not a forced recommendation — respects seller judgment',
+    ],
+    cons: [
+      'Adds vertical weight per market; sellers with many markets see more on screen',
+      'Informs the choice but doesn\'t make it — the seller still weighs margin against reach',
+    ],
     pages: [
-      { id: 'listings', label: 'Listings', navItem: 'Listings', changes: ['TBD — changes will be defined when the concept brief is written.'] },
+      {
+        id: 'listings',
+        label: 'Listings',
+        navItem: 'Listings',
+        changes: [
+          'Each market shows two pricing choices side by side — Win the BackBox vs the available promotion — each led by projected net margin in euros, not price',
+          '"How is this calculated?" opens a fee breakdown: commission, CCBM, logistics, trade-in',
+          'Higher-margin choice flagged, without hiding that reach can justify a thinner margin',
+          'Minimum and target price demoted to supporting context',
+          '"Last time you won the BackBox here: 14 units in 7 days" links out to Opportunities',
+        ],
+      },
     ],
   },
   {
@@ -77,7 +95,8 @@ function resetDismissedUi() {
 
     <div class="flex-1 overflow-auto bg-bm-surface">
       <div v-show="activeConcept === 1">
-        <ListingsBaseline />
+        <ListingsBaseline v-show="previewMode === 'before'" />
+        <ListingsAfterConcept1 v-show="previewMode === 'after'" />
       </div>
       <div v-show="activeConcept === 2">
         <ListingsBaseline />
