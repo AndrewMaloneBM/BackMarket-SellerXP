@@ -79,6 +79,22 @@ const inProgress: Prototype[] = [
     link: '/prototypes/money-tab',
     accent: '#D4860A',
   },
+  {
+    title: 'Listing Page explorations',
+    description: 'A workspace for rethinking the seller Listings page — from catalogue browsing and bulk actions to listing health, visibility, and the path from draft to live.',
+    problemStatement: 'TBD — exploration just kicking off; starting from a faithful replica of today\'s Listings page.',
+    author: 'Andrew Malone',
+    date: 'May 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Baseline', pages: ['Listings'] },
+    ],
+    scope: 'Listings',
+    goal: 'TBD',
+    impact: 'TBD',
+    link: '/prototypes/listing-page-explorations',
+    accent: '#2E7CB8',
+  },
 ]
 
 const shipped: Prototype[] = []
