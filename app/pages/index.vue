@@ -88,7 +88,7 @@ const inProgress: Prototype[] = [
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Inline margin', pages: ['Listings'] },
-      { n: 2, name: 'Concept 2', pages: ['Listings'] },
+      { n: 2, name: 'Recommended action', pages: ['Listings'] },
       { n: 3, name: 'Concept 3', pages: ['Listings'] },
     ],
     scope: 'Listings',

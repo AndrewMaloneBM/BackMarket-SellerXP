@@ -33,13 +33,31 @@ const conceptMeta: readonly PrototypeConcept[] = [
     ],
   },
   {
-    name: 'Concept 2',
-    prdFeature: 'TBD',
-    prdMetric: 'TBD',
-    pros: [],
-    cons: [],
+    name: 'Recommended action',
+    prdFeature: 'PRD 2.2 — Reasoned recommendation',
+    prdMetric: 'Recommended-price adoption 31% → 40%+. Fewer sellers overriding then manually pricing within €5 of the recommendation.',
+    pros: [
+      'Reduces decision load — the seller gets a defensible answer, not a comparison to work through',
+      'Reasoning-by-default is the direct fix for what the old recommendation lacked',
+      'Scales to many markets: one clear call per row, confirmed in one click',
+    ],
+    cons: [
+      'A distrusted or wrong recommendation erodes trust faster than a neutral comparison would',
+      'De-emphasising the alternative risks sellers feeling steered toward the platform\'s interest',
+    ],
     pages: [
-      { id: 'listings', label: 'Listings', navItem: 'Listings', changes: ['TBD — changes will be defined when the concept brief is written.'] },
+      {
+        id: 'listings',
+        label: 'Listings',
+        navItem: 'Listings',
+        changes: [
+          'The platform recommends one pricing option per market — BackBox or the available promotion, whichever earns more — and marks it clearly',
+          'A one-line plain-language reason sits with every recommendation, always visible',
+          'Projected net margin shown under both options, as in the baseline margin view',
+          'The seller always confirms — the recommended option\'s Apply button is emphasised, but nothing is pre-filled or applied automatically',
+          'Min/target inputs and row height unchanged — the table stays compact and fast',
+        ],
+      },
     ],
   },
   {
@@ -99,7 +117,8 @@ function resetDismissedUi() {
         <ListingsAfterConcept1 v-show="previewMode === 'after'" />
       </div>
       <div v-show="activeConcept === 2">
-        <ListingsBaseline />
+        <ListingsBaseline v-show="previewMode === 'before'" />
+        <ListingsAfterConcept2 v-show="previewMode === 'after'" />
       </div>
       <div v-show="activeConcept === 3">
         <ListingsBaseline />
