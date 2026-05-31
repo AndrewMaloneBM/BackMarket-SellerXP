@@ -367,11 +367,11 @@ function resetDismissedUi() {
                 <tbody>
                   <template v-for="(listing, idx) in listings" :key="listing.id">
                     <tr :class="['bg-white', idx !== listings.length - 1 && 'border-b border-bm-border']">
-                      <td class="px-4 py-6 first:pl-6 align-top">
+                      <td class="px-4 py-6 first:pl-6 align-middle">
                         <div class="h-12 w-12 rounded-bm-sm border border-bm-border" :style="{ background: thumbBg(listing.thumb) }" />
                       </td>
 
-                      <td class="px-4 py-6 align-top max-w-[320px]">
+                      <td class="px-4 py-6 align-middle max-w-[320px]">
                         <div class="flex flex-col">
                           <button class="text-base font-semibold text-bm-text-hi underline hover:text-bm-text-mid text-left cursor-pointer">{{ listing.title }}</button>
                           <span class="mt-1 text-sm text-bm-text-low max-w-[256px] break-words">SKU: {{ listing.sku }}</span>
@@ -395,7 +395,7 @@ function resetDismissedUi() {
                         </div>
                       </td>
 
-                      <td class="px-4 py-6 align-top">
+                      <td class="px-4 py-6 align-middle">
                         <div class="relative max-w-[130px]">
                           <input :value="listing.units" type="text" class="peer h-12 w-full px-3 pr-10 pt-4 rounded-bm-sm border border-bm-border-action bg-white text-base text-bm-text-hi focus:outline-none focus:border-bm-text-hi" />
                           <label class="pointer-events-none absolute left-3 top-1.5 text-xs text-bm-text-low">Units</label>
@@ -405,7 +405,7 @@ function resetDismissedUi() {
                         </div>
                       </td>
 
-                      <td class="px-4 py-6 align-top">
+                      <td class="px-4 py-6 align-middle">
                         <ul class="flex list-none flex-wrap gap-1 max-w-[320px]">
                           <li v-for="m in listing.markets" :key="m.code">
                             <span :class="['inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold border-[1.5px]', m.active ? 'bg-[hsl(145,83%,93%)] border-[hsl(145,60%,55%)] text-bm-text-hi' : 'bg-[hsl(3,100%,96%)] border-[hsl(3,80%,65%)] text-bm-text-hi']">
@@ -416,11 +416,11 @@ function resetDismissedUi() {
                         </ul>
                       </td>
 
-                      <td class="px-4 py-6 align-top">
+                      <td class="px-4 py-6 align-middle">
                         <span :class="['inline-block rounded-bm-xs px-1 text-sm font-semibold', competitionTag(listing.competition).bg, competitionTag(listing.competition).text]">{{ competitionTag(listing.competition).label }}</span>
                       </td>
 
-                      <td class="px-4 py-6 last:pr-6 text-right align-top">
+                      <td class="px-4 py-6 last:pr-6 text-right align-middle">
                         <button class="size-8 rounded-full inline-flex items-center justify-center bg-white text-bm-text-hi hover:bg-static-default-mid transition-colors" @click="toggleRow(listing.id)">
                           <svg :class="['w-5 h-5 transition-transform', isExpanded(listing.id) && 'rotate-180']" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06z" clip-rule="evenodd" /></svg>
                         </button>
