@@ -406,9 +406,9 @@ function resetDismissedUi() {
                       </td>
 
                       <td class="px-4 py-6 align-top">
-                        <ul class="flex list-none flex-wrap gap-1 max-w-[280px]">
+                        <ul class="flex list-none flex-wrap gap-1 max-w-[320px]">
                           <li v-for="m in listing.markets" :key="m.code">
-                            <span :class="['inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold border', m.active ? 'bg-[hsl(145,83%,90%)] border-[hsl(145,60%,75%)] text-bm-text-hi' : 'bg-[hsl(3,100%,95%)] border-[hsl(3,80%,85%)] text-bm-text-hi']">
+                            <span :class="['inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-semibold border-[1.5px]', m.active ? 'bg-[hsl(145,83%,93%)] border-[hsl(145,60%,55%)] text-bm-text-hi' : 'bg-[hsl(3,100%,96%)] border-[hsl(3,80%,65%)] text-bm-text-hi']">
                               <FlagChip :code="m.code" :height="8" />
                               {{ m.code }}
                             </span>

@@ -10,5 +10,10 @@ const src = computed(() => `${baseHref}/flags/Flag${props.code}.svg`)
 </script>
 
 <template>
-  <img :src="src" :alt="code" :height="height" class="h-auto max-h-full max-w-full leading-none" />
+  <img
+    :src="src"
+    :alt="code"
+    class="block flex-shrink-0 leading-none"
+    :style="{ height: `${height}px`, width: 'auto' }"
+  />
 </template>
