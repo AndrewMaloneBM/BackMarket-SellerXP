@@ -68,7 +68,12 @@ const emit = defineEmits<{
 
     <template v-if="pageTitle && tabs">
       <div class="px-8">
-        <h1 class="text-3xl font-bold text-bm-text-hi mt-6 mb-4">{{ pageTitle }}</h1>
+        <div class="flex items-start justify-between gap-4 mt-6 mb-4">
+          <h1 class="text-3xl font-bold text-bm-text-hi">{{ pageTitle }}</h1>
+          <div class="pt-1">
+            <slot name="header-actions" />
+          </div>
+        </div>
 
         <div class="border-b border-bm-border flex items-center">
           <button
