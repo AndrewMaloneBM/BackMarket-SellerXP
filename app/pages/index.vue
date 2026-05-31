@@ -87,7 +87,9 @@ const inProgress: Prototype[] = [
     date: 'May 2026',
     status: 'In progress',
     concepts: [
-      { n: 1, name: 'Baseline', pages: ['Listings'] },
+      { n: 1, name: 'Concept 1', pages: ['Listings'] },
+      { n: 2, name: 'Concept 2', pages: ['Listings'] },
+      { n: 3, name: 'Concept 3', pages: ['Listings'] },
     ],
     scope: 'Listings',
     goal: 'TBD',
