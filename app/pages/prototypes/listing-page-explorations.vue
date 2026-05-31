@@ -5,17 +5,17 @@ definePageMeta({ layout: false })
 
 const conceptMeta: readonly PrototypeConcept[] = [
   {
-    name: 'Margin comparison',
+    name: 'Inline margin',
     prdFeature: 'PRD 2.1 — Margin tradeoff visibility',
     prdMetric: 'Recommended-price adoption 31% → 40%+. Seller-set vs optimal-margin gap under €8.',
     pros: [
-      'Surfaces the decision sellers actually care about — euros earned — at the moment of choice',
-      'Targets the €15 gap: shows when a promotion out-earns the BackBox despite a lower price',
-      'Two clear choices, not a forced recommendation — respects seller judgment',
+      'Margin becomes visible at the moment of decision without adding any vertical weight',
+      'Keeps the table fast to scan and act on — no new surface, no extra clicks',
+      'Targets the €15 gap by showing when a promotion out-earns the BackBox',
     ],
     cons: [
-      'Adds vertical weight per market; sellers with many markets see more on screen',
-      'Informs the choice but doesn\'t make it — the seller still weighs margin against reach',
+      'Inline figures are subtler than cards — easier to overlook at a glance',
+      'Shows the margin but doesn\'t help the seller decide or act faster on it',
     ],
     pages: [
       {
@@ -23,10 +23,10 @@ const conceptMeta: readonly PrototypeConcept[] = [
         label: 'Listings',
         navItem: 'Listings',
         changes: [
-          'Each market shows two pricing choices side by side — Win the BackBox vs the available promotion — each led by projected net margin in euros, not price',
+          'Projected net margin per unit shown inline beneath each price — BackBox and promotion — without changing the table layout',
+          'Higher-margin option marked with a small indicator, not a card or border',
           '"How is this calculated?" opens a fee breakdown: commission, CCBM, logistics, trade-in',
-          'Higher-margin choice flagged, without hiding that reach can justify a thinner margin',
-          'Minimum and target price demoted to supporting context',
+          'Min/target inputs and row height unchanged — the table stays compact and fast to scan',
           '"Last time you won the BackBox here: 14 units in 7 days" links out to Opportunities',
         ],
       },

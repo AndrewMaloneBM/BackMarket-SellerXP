@@ -20,30 +20,24 @@ function isExpanded(id: string) {
 }
 
 type Currency = 'EUR' | 'SEK'
+type BackBoxStatus = 'won' | 'opportunity'
+type StrategyType = 'visibility-boost' | 'apply-deal' | 'none'
 type PromoType = 'visibility-boost' | 'apply-deal' | 'none'
-type CardType = 'win-backbox' | 'win-backbox-opportunity' | 'visibility-boost' | 'apply-deal'
 
 interface Market { code: string; active: boolean }
 
-interface MarginCard {
-  type: CardType
-  title: string
-  marginPerUnit: number
-  price: number
-  priceCondition?: 'or-less'
-  reasoning: string
-  isBestMargin: boolean
-}
-
-interface AfterRow {
+interface PricingRow {
   code: string
   country: string
   currency: Currency
   minPrice: number
   targetPrice: number
-  cards: MarginCard[]
-  noPromotionNote?: boolean
-  showLoopClosingLine?: boolean
+  backBox: { status: BackBoxStatus; price: number }
+  strategy: { type: StrategyType; price?: number }
+  actions: Array<{ label: string; variant: 'primary' | 'flash' }>
+  bbMargin: number
+  promoMargin?: number
+  bbHigher: boolean
 }
 
 interface Listing {
@@ -111,8 +105,8 @@ function mkMarkets(overrides: Partial<Record<string, boolean>> = {}): Market[] {
   return MARKET_CODES.map(code => ({ code, active: overrides[code] ?? true }))
 }
 
-function afterPricingFor(listing: Listing): AfterRow[] {
-  return listing.markets.filter(m => m.active).map((m): AfterRow => {
+function pricingFor(listing: Listing): PricingRow[] {
+  return listing.markets.filter(m => m.active).map((m): PricingRow => {
     const { name, currency } = COUNTRY[m.code]
     const rate = BB_MARGIN_RATE[m.code] ?? 0.13
     const priceDelta = PRICE_DELTA_FROM_BASE[m.code] ?? -3
@@ -120,59 +114,40 @@ function afterPricingFor(listing: Listing): AfterRow[] {
 
     const bbMarginEur = listing.basePrice * rate
     const bbPriceEur = listing.basePrice + priceDelta + 0.45
-    const minPriceEur = listing.basePrice + priceDelta - 25
-    const targetPriceEur = listing.basePrice + priceDelta + 15
+    const promoPriceEur = bbPriceEur - listing.basePrice * 0.12
+    const minPriceEur = listing.basePrice + priceDelta - 25 + 0.45
+    const targetPriceEur = bbPriceEur + 5
 
     const bbMargin = bbMarginEur * cf
     const bbPrice = bbPriceEur * cf
+    const promoPrice = promoPriceEur * cf
     const minPrice = minPriceEur * cf
     const targetPrice = targetPriceEur * cf
 
     const isOpportunity = BACKBOX_OPPORTUNITY_MARKETS.has(m.code)
     const promo = PROMO_BY_MARKET[m.code] ?? 'visibility-boost'
 
-    const winCard: MarginCard = {
-      type: isOpportunity ? 'win-backbox-opportunity' : 'win-backbox',
-      title: 'Win the BackBox',
-      marginPerUnit: bbMargin,
-      price: bbPrice,
-      reasoning: isOpportunity
-        ? 'Match the price to win the BackBox and start selling. Standard commission, full visibility.'
-        : 'Matches the price to win the listing. Standard commission, full visibility.',
-      isBestMargin: false,
-    }
-
-    const cards: MarginCard[] = [winCard]
+    let strategy: PricingRow['strategy'] = { type: 'none' }
+    let actions: PricingRow['actions'] = []
+    let promoMargin: number | undefined
 
     if (promo === 'visibility-boost') {
       const vbMarginEur = bbMarginEur - listing.basePrice * 0.028
-      const vbPriceEur = bbPriceEur - listing.basePrice * 0.12
-      cards.push({
-        type: 'visibility-boost',
-        title: 'Visibility Boost',
-        marginPerUnit: vbMarginEur * cf,
-        price: vbPriceEur * cf,
-        reasoning: 'Promoted on product pages, deals, and Google Shopping. More reach, thinner margin.',
-        isBestMargin: false,
-      })
+      promoMargin = vbMarginEur * cf
+      strategy = { type: 'visibility-boost', price: promoPrice }
+      actions = isOpportunity
+        ? [{ label: 'Win BackBox', variant: 'primary' }, { label: 'Apply price', variant: 'flash' }]
+        : [{ label: 'Apply price', variant: 'flash' }]
     } else if (promo === 'apply-deal') {
       const dMarginEur = bbMarginEur + listing.basePrice * 0.006
-      const dPriceEur = bbPriceEur - listing.basePrice * 0.12
-      cards.push({
-        type: 'apply-deal',
-        title: 'Apply deal',
-        marginPerUnit: dMarginEur * cf,
-        price: dPriceEur * cf,
-        priceCondition: 'or-less',
-        reasoning: 'Lower price, but ~5% less commission. The fee saving beats the price cut.',
-        isBestMargin: false,
-      })
+      promoMargin = dMarginEur * cf
+      strategy = { type: 'apply-deal', price: promoPrice }
+      actions = [{ label: 'Apply price', variant: 'flash' }]
+    } else {
+      actions = isOpportunity ? [{ label: 'Win BackBox', variant: 'primary' }] : []
     }
 
-    if (cards.length === 2) {
-      if (cards[1].marginPerUnit > cards[0].marginPerUnit) cards[1].isBestMargin = true
-      else cards[0].isBestMargin = true
-    }
+    const bbHigher = promoMargin === undefined ? true : bbMargin > promoMargin
 
     return {
       code: m.code,
@@ -180,9 +155,15 @@ function afterPricingFor(listing: Listing): AfterRow[] {
       currency,
       minPrice,
       targetPrice,
-      cards,
-      noPromotionNote: promo === 'none',
-      showLoopClosingLine: m.code === 'FR',
+      backBox: {
+        status: isOpportunity ? 'opportunity' : 'won',
+        price: bbPrice,
+      },
+      strategy,
+      actions,
+      bbMargin,
+      promoMargin,
+      bbHigher,
     }
   })
 }
@@ -453,78 +434,159 @@ function fmtMargin(amount: number, c: Currency): string {
                   </div>
 
                   <div class="bg-static-default-mid">
-                    <div
-                      v-for="(row, ri) in afterPricingFor(listing)"
-                      :key="row.code"
-                      :class="['bg-white px-6 py-5', ri !== afterPricingFor(listing).length - 1 && 'border-b border-bm-border']"
-                    >
-                      <div class="flex flex-wrap items-center gap-x-6 gap-y-3 mb-4">
-                        <button class="inline-flex items-center gap-2 text-base font-semibold text-bm-text-hi hover:underline cursor-pointer">
-                          <FlagChip :code="row.code" :height="14" />
-                          {{ row.country }}
-                          <span v-if="row.code === 'FR'" class="ml-1 text-xs font-normal text-bm-text-low">Primary market</span>
-                        </button>
-
-                        <div class="flex items-center gap-2">
-                          <div class="relative w-28">
-                            <input :value="row.minPrice.toFixed(2)" type="text" class="h-9 w-full px-2 pt-3.5 text-xs rounded-bm-sm border border-bm-border-action bg-white text-bm-text-hi focus:outline-none focus:border-bm-text-hi" />
-                            <label class="pointer-events-none absolute top-0.5 left-2 text-[10px] text-bm-text-low">Min ({{ currencySymbol(row.currency) }})</label>
-                          </div>
-                          <div class="relative w-28">
-                            <input :value="row.targetPrice.toFixed(2)" type="text" class="h-9 w-full px-2 pt-3.5 text-xs rounded-bm-sm border border-bm-border-action bg-white text-bm-text-hi focus:outline-none focus:border-bm-text-hi" />
-                            <label class="pointer-events-none absolute top-0.5 left-2 text-[10px] text-bm-text-low">Target ({{ currencySymbol(row.currency) }})</label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div :class="['grid gap-3', row.cards.length === 2 ? 'md:grid-cols-2' : 'grid-cols-1 max-w-[480px]']">
-                        <article
-                          v-for="card in row.cards"
-                          :key="card.type"
-                          class="rounded-bm-lg p-5 flex flex-col gap-3 relative bg-white"
-                          :style="card.isBestMargin ? { borderColor: 'hsl(145, 60%, 55%)', borderWidth: '2px', borderStyle: 'solid' } : { borderColor: 'hsl(225, 15%, 89%)', borderWidth: '1px', borderStyle: 'solid' }"
-                        >
-                          <div class="flex items-start justify-between gap-2">
-                            <p class="text-sm font-semibold text-bm-text-hi">{{ card.title }}</p>
-                            <span v-if="card.isBestMargin" class="inline-flex items-center gap-1 rounded-bm-xs px-1.5 py-0.5 text-[11px] font-semibold" :style="{ background: 'hsl(145, 83%, 90%)', color: 'hsl(156, 100%, 21%)' }">
-                              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm3.7-9.3a1 1 0 0 0-1.4-1.4L9 10.6 7.7 9.3a1 1 0 0 0-1.4 1.4l2 2a1 1 0 0 0 1.4 0l4-4Z" /></svg>
-                              Best margin
-                            </span>
-                          </div>
-
-                          <div class="flex flex-col gap-0.5">
-                            <div class="flex items-baseline gap-1">
-                              <p class="text-[2rem] leading-none font-semibold text-bm-text-hi tracking-tight">{{ fmtMargin(card.marginPerUnit, row.currency) }}</p>
-                              <span class="text-base text-bm-text-low">/unit</span>
+                    <table class="w-full border-collapse text-base">
+                      <thead class="border-b border-bm-border h-14">
+                        <tr>
+                          <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">Market</th>
+                          <th class="px-4 py-3 text-left text-base font-semibold text-bm-text-hi">Minimum price</th>
+                          <th class="px-4 py-3 text-left text-base font-semibold text-bm-text-hi">Target price</th>
+                          <th class="px-4 py-3 text-left text-base font-semibold text-bm-text-hi">
+                            <div class="flex items-center gap-1">
+                              BackBox price
+                              <span class="size-8 inline-flex items-center justify-center rounded-full bg-white text-bm-text-hi">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd" /></svg>
+                              </span>
                             </div>
-                            <span class="text-xs text-bm-text-low">Net margin per unit</span>
-                          </div>
+                          </th>
+                          <th class="px-4 py-3 text-left text-base font-semibold text-bm-text-hi">
+                            <div class="flex items-center gap-1">
+                              Pricing strategy
+                              <span class="size-8 inline-flex items-center justify-center rounded-full bg-white text-bm-text-hi">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd" /></svg>
+                              </span>
+                            </div>
+                          </th>
+                          <th class="px-4 py-3 last:pr-6"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(row, ri) in pricingFor(listing)" :key="row.code" :class="['bg-white', ri !== pricingFor(listing).length - 1 && 'border-b border-bm-border']">
+                          <td class="px-4 py-6 first:pl-6 align-middle">
+                            <button class="inline-flex items-center gap-2 text-base text-bm-text-hi hover:underline cursor-pointer">
+                              <FlagChip :code="row.code" :height="12" />
+                              {{ row.country }}
+                            </button>
+                          </td>
 
-                          <p class="text-sm text-bm-text-mid">
-                            Price <span class="font-semibold text-bm-text-hi">{{ fmtMoney(card.price, row.currency) }}</span><span v-if="card.priceCondition === 'or-less'" class="text-bm-text-low"> or less</span>
-                          </p>
+                          <td class="px-4 py-6 align-middle">
+                            <div class="relative max-w-[130px]">
+                              <input :value="row.minPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })" type="text" class="peer h-12 w-full px-3 pr-10 pt-4 rounded-bm-sm border border-bm-border-action bg-white text-base text-bm-text-hi focus:outline-none focus:border-bm-text-hi" />
+                              <label class="pointer-events-none absolute left-3 top-1.5 text-xs text-bm-text-low">Min.({{ currencySymbol(row.currency) }})</label>
+                              <button class="absolute right-1 top-1 size-10 rounded-full flex items-center justify-center bg-white text-bm-text-low hover:bg-static-default-mid transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                              </button>
+                            </div>
+                          </td>
 
-                          <p class="text-xs text-bm-text-low leading-relaxed flex-1">{{ card.reasoning }}</p>
+                          <td class="px-4 py-6 align-middle">
+                            <div class="relative max-w-[130px]">
+                              <input :value="row.targetPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })" type="text" class="peer h-12 w-full px-3 pr-10 pt-4 rounded-bm-sm border border-bm-border-action bg-white text-base text-bm-text-hi focus:outline-none focus:border-bm-text-hi" />
+                              <label class="pointer-events-none absolute left-3 top-1.5 text-xs text-bm-text-low">Target ({{ currencySymbol(row.currency) }})</label>
+                              <button class="absolute right-1 top-1 size-10 rounded-full flex items-center justify-center bg-white text-bm-text-low hover:bg-static-default-mid transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                              </button>
+                            </div>
+                          </td>
 
-                          <button class="self-start rounded-bm-sm px-3 py-1.5 text-sm font-semibold inline-flex items-center gap-1.5 text-white transition-colors mt-1" :style="{ background: 'hsl(156, 100%, 21%)' }">
-                            Apply price
-                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.05a.5.5 0 0 1 .58.61l-1.5 5.84h5.12a.5.5 0 0 1 .4.8l-8.7 11.65a.5.5 0 0 1-.88-.4l1.5-5.84H2.7a.5.5 0 0 1-.4-.8l8.7-11.66a.5.5 0 0 1 .3-.2Z" /></svg>
-                          </button>
-                        </article>
-                      </div>
+                          <td class="px-4 py-6 align-middle">
+                            <div v-if="row.backBox.status === 'won'" class="flex items-start gap-3" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                              <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2z" /></svg>
+                              <div class="flex flex-col gap-0.5">
+                                <span class="rounded-bm-xs inline-block w-fit px-1 text-xs font-semibold" :style="{ background: 'hsl(145, 83%, 77%)', color: 'hsl(156, 100%, 21%)' }">You've won the BackBox</span>
+                                <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.backBox.price, row.currency) }}</p>
+                                <p class="text-xs font-semibold text-bm-text-low">Your product's got eyes on it</p>
+                                <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
+                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
+                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
+                                    Higher margin
+                                  </span>
+                                </p>
+                                <button class="inline-flex items-center gap-1 text-xs text-bm-text-hi underline hover:text-bm-text-mid cursor-pointer w-fit">
+                                  How is this calculated?
+                                  <svg class="w-3.5 h-3.5 text-bm-text-low" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd" /></svg>
+                                </button>
+                                <a v-if="row.code === 'FR'" class="inline-flex items-center gap-1 mt-1 text-xs text-bm-text-low underline hover:text-bm-text-mid cursor-pointer w-fit">
+                                  Last time you won the BackBox here: 14 units sold in 7 days
+                                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+                                </a>
+                              </div>
+                            </div>
+                            <div v-else class="flex items-start gap-3" style="color: hsl(219, 27%, 40%)">
+                              <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 8-9 4-9-4m18 0-9-4-9 4m18 0v8l-9 4m-9-12v8l9 4m0-12v12" /></svg>
+                              <div class="flex flex-col gap-0.5">
+                                <span class="rounded-bm-xs inline-block w-fit px-1 text-xs font-semibold bg-static-default-hi text-bm-text-hi">BackBox</span>
+                                <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.backBox.price, row.currency) }}</p>
+                                <p class="text-xs font-semibold text-bm-text-low">Win BackBox to start selling</p>
+                                <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
+                                  {{ fmtMargin(row.bbMargin, row.currency) }}/unit projected margin
+                                  <span v-if="row.bbHigher && row.promoMargin !== undefined" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
+                                    Higher margin
+                                  </span>
+                                </p>
+                                <button class="inline-flex items-center gap-1 text-xs text-bm-text-hi underline hover:text-bm-text-mid cursor-pointer w-fit">
+                                  How is this calculated?
+                                  <svg class="w-3.5 h-3.5 text-bm-text-low" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd" /></svg>
+                                </button>
+                              </div>
+                            </div>
+                          </td>
 
-                      <div class="mt-3 flex flex-col gap-1.5">
-                        <button class="inline-flex items-center gap-1 text-xs text-bm-text-hi underline hover:text-bm-text-mid w-fit cursor-pointer">
-                          How is this calculated?
-                          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a1 1 0 0 0 0 2v3a1 1 0 0 0 1 1h1a1 1 0 1 0 0-2v-3a1 1 0 0 0-1-1H9Z" clip-rule="evenodd" /></svg>
-                        </button>
-                        <p v-if="row.noPromotionNote" class="text-xs text-bm-text-low italic">No promotion available for this market</p>
-                        <a v-if="row.showLoopClosingLine" class="inline-flex items-center gap-1 text-xs text-bm-text-low underline hover:text-bm-text-mid w-fit cursor-pointer">
-                          Last time you won the BackBox here: 14 units sold in 7 days
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-                        </a>
-                      </div>
-                    </div>
+                          <td class="px-4 py-6 align-middle">
+                            <div v-if="row.strategy.type === 'visibility-boost'" class="flex items-start gap-3 max-w-[400px]" :style="{ color: 'hsl(219, 27%, 40%)' }">
+                              <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.05a.5.5 0 0 1 .58.61l-1.5 5.84h5.12a.5.5 0 0 1 .4.8l-8.7 11.65a.5.5 0 0 1-.88-.4l1.5-5.84H2.7a.5.5 0 0 1-.4-.8l8.7-11.66a.5.5 0 0 1 .3-.2Z" /></svg>
+                              <div class="flex flex-col gap-0.5">
+                                <span class="rounded-bm-xs inline-block w-fit px-1 text-xs font-semibold bg-static-default-hi text-bm-text-hi">Visibility Boost</span>
+                                <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.strategy.price!, row.currency) }}</p>
+                                <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">Higher visibility, more traffic</p>
+                                <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
+                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
+                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
+                                    Higher margin
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                            <div v-else-if="row.strategy.type === 'apply-deal'" class="flex items-start gap-3 max-w-[400px]" :style="{ color: 'hsl(219, 27%, 40%)' }">
+                              <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.5 3A2.5 2.5 0 0 0 3 5.5v2.879a2.5 2.5 0 0 0 .732 1.767l6.5 6.5a2.5 2.5 0 0 0 3.536 0l2.878-2.878a2.5 2.5 0 0 0 0-3.536l-6.5-6.5A2.5 2.5 0 0 0 8.38 3H5.5ZM6 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" clip-rule="evenodd" /></svg>
+                              <div class="flex flex-col gap-0.5">
+                                <span class="rounded-bm-xs inline-block w-fit px-1 text-xs font-semibold bg-static-default-hi text-bm-text-hi">Deal</span>
+                                <p class="text-base font-semibold text-bm-text-hi">{{ fmtMoney(row.strategy.price!, row.currency) }} <span class="text-xs font-normal text-bm-text-low">or less</span></p>
+                                <p class="text-xs font-semibold" :style="{ color: 'hsl(156, 100%, 21%)' }">~5% less commission, more margin</p>
+                                <p class="mt-1 text-xs font-medium text-bm-text-low flex items-center gap-1.5 flex-wrap">
+                                  {{ fmtMargin(row.promoMargin!, row.currency) }}/unit projected margin
+                                  <span v-if="!row.bbHigher" class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide" :style="{ color: 'hsl(156, 100%, 21%)' }">
+                                    <span class="inline-block size-1.5 rounded-full" :style="{ background: 'hsl(156, 100%, 21%)' }" />
+                                    Higher margin
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td class="px-4 py-6 last:pr-6 align-middle">
+                            <div class="flex w-full flex-col gap-2">
+                              <button
+                                v-for="(a, ai) in row.actions"
+                                :key="ai"
+                                :class="[
+                                  'rounded-bm-sm whitespace-nowrap text-sm font-semibold cursor-pointer transition-colors inline-flex items-center justify-center gap-2',
+                                  a.variant === 'primary'
+                                    ? 'px-3 py-1.5 bg-bm-text-hi text-white hover:bg-bm-gray-700'
+                                    : 'px-[11px] py-[5px] text-white',
+                                ]"
+                                :style="a.variant === 'flash' ? { background: 'hsl(156, 100%, 21%)' } : undefined"
+                              >
+                                {{ a.label }}
+                                <svg v-if="a.variant === 'flash'" class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M11.3 1.05a.5.5 0 0 1 .58.61l-1.5 5.84h5.12a.5.5 0 0 1 .4.8l-8.7 11.65a.5.5 0 0 1-.88-.4l1.5-5.84H2.7a.5.5 0 0 1-.4-.8l8.7-11.66a.5.5 0 0 1 .3-.2Z" /></svg>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </td>
               </tr>
