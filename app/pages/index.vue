@@ -89,7 +89,7 @@ const inProgress: Prototype[] = [
     concepts: [
       { n: 1, name: 'Inline margin', pages: ['Listings'] },
       { n: 2, name: 'Recommended action', pages: ['Listings'] },
-      { n: 3, name: 'Concept 3', pages: ['Listings'] },
+      { n: 3, name: 'Earnings-aware BackPricer', pages: ['Listings'] },
     ],
     scope: 'Listings',
     goal: 'TBD',

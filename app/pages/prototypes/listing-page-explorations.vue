@@ -61,13 +61,31 @@ const conceptMeta: readonly PrototypeConcept[] = [
     ],
   },
   {
-    name: 'Concept 3',
-    prdFeature: 'TBD',
-    prdMetric: 'TBD',
-    pros: [],
-    cons: [],
+    name: 'Earnings-aware BackPricer',
+    prdFeature: 'PRD 2.3 — Earnings-aware automated repricing',
+    prdMetric: 'Recommended-price adoption 31% → 40%+. Higher share of automated listings sitting on the higher-earning option.',
+    pros: [
+      'Builds on a tool sellers already trust — same range inputs, same automation, smarter objective',
+      'Closes the gap Concepts 1 and 2 expose: the BackBox isn\'t always the highest-earning choice',
+      'True Level 3 automation — acts only inside limits the seller sets themselves',
+    ],
+    cons: [
+      'Automating the choice (not just the price) asks for more trust than a recommendation does',
+      'Earnings optimisation depends on the after-fee figure being accurate; a wrong figure misroutes the automation',
+    ],
     pages: [
-      { id: 'listings', label: 'Listings', navItem: 'Listings', changes: ['TBD — changes will be defined when the concept brief is written.'] },
+      {
+        id: 'listings',
+        label: 'Listings',
+        navItem: 'Listings',
+        changes: [
+          'BackPricer keeps the range the seller already sets, but now optimises for earnings after BM fees — not only for winning the BackBox',
+          'Per market, it automatically holds the higher-earning option (BackBox or the available promotion) within the seller\'s min/target range',
+          'A standing toggle per market: "Optimise for earnings" (on) vs the current "Win the BackBox" behaviour (off)',
+          'Each market shows which option BackPricer is currently holding and why, in one line',
+          'Nothing leaves the seller\'s range — the min/target band is still the hard limit, fully in their control',
+        ],
+      },
     ],
   },
 ]
@@ -121,7 +139,8 @@ function resetDismissedUi() {
         <ListingsAfterConcept2 v-show="previewMode === 'after'" />
       </div>
       <div v-show="activeConcept === 3">
-        <ListingsBaseline />
+        <ListingsBaseline v-show="previewMode === 'before'" />
+        <ListingsAfterConcept3 v-show="previewMode === 'after'" />
       </div>
     </div>
   </div>
