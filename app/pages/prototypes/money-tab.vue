@@ -2198,17 +2198,17 @@ const invoiceColumns = [
             <svg class="w-8 h-8 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
           </div>
           <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Application submitted</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">Your BackFunds application is in — everything went through successfully and there's nothing more for you to do right now.</p>
+          <p class="text-sm text-[#5C5E63] mb-5">Your BackFunds application is in. It's now over to our funding partner to confirm a few things before you're set up.</p>
 
           <div class="border border-bm-border rounded-bm-lg bg-[#F2F3F7] p-4 text-left mb-6 space-y-3">
             <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase">What happens next</p>
             <div class="flex items-start gap-3">
               <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center"><svg class="w-3 h-3 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Sent to Storfund.</span> We've shared your application — they'll verify your identity, entirely on their side.</p>
+              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Handed to our funding partner.</span> Storfund will reach out to verify your identity and confirm a few business details — this happens entirely on their side.</p>
             </div>
             <div class="flex items-start gap-3">
               <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center"><svg class="w-3 h-3 text-amber-600" viewBox="0 0 24 24"><path d="M12.75 6.5a.75.75 0 0 0-1.5 0v5.293a1.25 1.25 0 0 0 .366.884l2.354 2.353a.75.75 0 1 0 1.06-1.06l-2.28-2.28V6.5" fill="currentColor"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25M3.75 12a8.25 8.25 0 1 1 16.5 0 8.25 8.25 0 1 1-16.5 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Decision in 1–2 days.</span> Your status updates automatically on your Money page, and Storfund emails you at each stage.</p>
+              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Decision in 1–2 days.</span> Watch for an email from Storfund — they may ask for ID or extra info. Your status updates automatically here on your Money page.</p>
             </div>
           </div>
 
