@@ -1696,7 +1696,7 @@ const invoiceColumns = [
                 <ul class="space-y-2">
                   <li class="flex items-start text-sm text-[#0F1117]">
                     <span class="text-green-600 mr-2">✓</span>
-                    <span>Back Market pays you weekly (D+7)</span>
+                    <span>Back Market pays you weekly — 7 to 14 days after a sale</span>
                   </li>
                   <li class="flex items-start text-sm text-[#0F1117]">
                     <span class="text-green-600 mr-2">✓</span>
