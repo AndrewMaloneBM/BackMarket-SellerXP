@@ -1,14 +1,13 @@
 // BackFunds Growth Simulator engine — implements the authoritative 8-step model
 // from the Phase 1 PRD (June 2 2026). Pure functions, no Vue.
 //
-// Two deliberate departures from the raw PRD, agreed for credibility:
-//   - REINVESTMENT_FRACTION dampens the PRD's 100%-reinvestment assumption.
-//     Set it to 1.0 to reproduce the PRD's worked example exactly.
-//   - workingCapitalFreed is surfaced as a tangible secondary metric.
+// REINVESTMENT_FRACTION dampens the PRD's 100%-reinvestment assumption.
+// Kept at 1.0 to match the PRD proposal exactly (drop to e.g. 0.7 to temper
+// the headline numbers for credibility — every other step is unchanged).
 
 export const BM_PAYOUT_DELAY = 7        // days BM takes to pay (weekly cycle baseline)
 export const ACCEL_PAYOUT_DELAY = 1     // D+1 once BackFunds is active
-export const REINVESTMENT_FRACTION = 0.7
+export const REINVESTMENT_FRACTION = 1.0
 export const DEFAULT_INVENTORY_CYCLE = 7
 export const DEFAULT_GROSS_MARGIN = 0.40
 
@@ -36,15 +35,19 @@ export interface Assumptions {
 }
 
 export interface SimResult {
+  standardRevenue: number
+  acceleratedRevenue: number
   currentCashCycle: number
   acceleratedCashCycle: number
   rawMultiplier: number
   effectiveMultiplier: number
-  acceleratedRevenue: number
+  grossProfitStandard: number
+  grossProfitAccelerated: number
   financingFee: number
+  netProfitStandard: number
+  netProfitAccelerated: number
   incrementalProfit: number
   roi: number
-  workingCapitalFreed: number
 }
 
 export function runSimulation(annualRevenue: number, provider: Provider, a: Assumptions): SimResult {
@@ -60,22 +63,26 @@ export function runSimulation(annualRevenue: number, provider: Provider, a: Assu
 
   const grossProfitStandard = annualRevenue * a.grossMargin
   const grossProfitAccelerated = acceleratedRevenue * a.grossMargin
+  const netProfitStandard = grossProfitStandard
   const netProfitAccelerated = grossProfitAccelerated - financingFee
-  const incrementalProfit = netProfitAccelerated - grossProfitStandard
+  const incrementalProfit = netProfitAccelerated - netProfitStandard
 
   const roi = financingFee > 0 ? incrementalProfit / financingFee : 0
-  const workingCapitalFreed = provider.advanceRate * (annualRevenue / 365) * (BM_PAYOUT_DELAY - ACCEL_PAYOUT_DELAY)
 
   return {
+    standardRevenue: annualRevenue,
+    acceleratedRevenue,
     currentCashCycle,
     acceleratedCashCycle,
     rawMultiplier,
     effectiveMultiplier,
-    acceleratedRevenue,
+    grossProfitStandard,
+    grossProfitAccelerated,
     financingFee,
+    netProfitStandard,
+    netProfitAccelerated,
     incrementalProfit,
     roi,
-    workingCapitalFreed,
   }
 }
 
