@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getSellerBackFundsData } from '~/utils/mockBackFundsApi'
+import { pickRecommendedProvider, REINVESTMENT_FRACTION } from '~/utils/growthSimulator'
 import type { PrototypeConcept } from '~/composables/usePrototypeSidebar'
 
 definePageMeta({ layout: false, alias: ['/share/backfunds'] })
@@ -495,18 +496,28 @@ const estimatedMonthlyCost = computed(() =>
   Math.round(sellerData.estimatedMonthlyAdvance * (sellerData.dailyFee / 100) * 30),
 )
 
-const simAnnualGmv = computed(() =>
-  Math.round((sellerData.estimatedMonthlyAdvance / (sellerData.advanceRate / 100)) * 12),
+// Growth simulator — seller-editable assumptions feed the PRD 8-step engine,
+// which evaluates every eligible provider and returns the cheapest.
+const simDaysToGetPaid = sellerData.payoutDelayDays
+const simStockDays = ref(4)
+const simSellDays = ref(5)
+const simShipDays = ref(1)
+const simMargin = ref(40) // gross margin %
+const simInventoryCycle = computed(() => simStockDays.value + simSellDays.value + simShipDays.value)
+const simReinvestPct = Math.round(REINVESTMENT_FRACTION * 100)
+
+const recommended = computed(() =>
+  pickRecommendedProvider(sellerData.annualRevenue, sellerData.currency, {
+    inventoryCycleDays: simInventoryCycle.value,
+    grossMargin: simMargin.value / 100,
+  }),
 )
-const simDaysToGetPaid = 7
-const simStockDays = 4
-const simSellDays = 5
-const simShipDays = 1
-const simMargin = 4
-const simTotalCycle = computed(() => simStockDays + simSellDays + simShipDays + simDaysToGetPaid)
-const simNewCycle = computed(() => simStockDays + simSellDays + simShipDays + 1)
-const simCapitalFreed = computed(() => Math.round(simAnnualGmv.value * (simDaysToGetPaid - 1) / 365))
-const simAdditionalRevenue = computed(() => Math.round(simCapitalFreed.value * (365 / (simStockDays + simSellDays + simShipDays)) * (simMargin / 100)))
+const simProviderName = computed(() => recommended.value?.provider.name ?? '—')
+const simProviderAdvancePct = computed(() => recommended.value ? Math.round(recommended.value.provider.advanceRate * 100) : 0)
+const simProviderFeePct = computed(() => recommended.value ? +(recommended.value.provider.feeRate * 100).toFixed(2) : 0)
+const simIncrementalProfit = computed(() => recommended.value ? Math.round(recommended.value.sim.incrementalProfit) : 0)
+const simRoi = computed(() => recommended.value ? +recommended.value.sim.roi.toFixed(1) : 0)
+const simWorkingCapitalFreed = computed(() => recommended.value ? Math.round(recommended.value.sim.workingCapitalFreed) : 0)
 
 // Concept 2 — active dashboard mock advances. Numbers reflect a seller ~1 year
 // into BackFunds usage (the prototype lands here after the simulated approval).
@@ -1725,14 +1736,14 @@ const invoiceColumns = [
 
               <div class="grid grid-cols-2 gap-8 pb-6 border-b border-gray-100">
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide mb-3 text-[#5C5E63]">Capital freed / year</p>
-                  <p class="font-heading-secondary text-4xl font-semibold text-green-700">+€{{ simCapitalFreed.toLocaleString() }}</p>
-                  <p class="text-sm mt-2 text-[#5C5E63]">Cash unlocked by moving from D+7 to D+1 — available to reinvest in inventory immediately.</p>
+                  <p class="text-xs font-semibold uppercase tracking-wide mb-3 text-[#5C5E63]">Working capital freed</p>
+                  <p class="font-heading-secondary text-4xl font-semibold text-green-700">+€{{ simWorkingCapitalFreed.toLocaleString() }}</p>
+                  <p class="text-sm mt-2 text-[#5C5E63]">Cash unlocked now by moving from D+{{ simDaysToGetPaid }} to D+1 — available to reinvest in inventory immediately.</p>
                 </div>
                 <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide mb-3 text-[#5C5E63]">Additional revenue / year</p>
-                  <p class="font-heading-secondary text-4xl font-semibold text-green-700">+€{{ simAdditionalRevenue.toLocaleString() }}</p>
-                  <p class="text-sm mt-2 text-[#5C5E63]">Estimated additional annual revenue from faster inventory cycles.</p>
+                  <p class="text-xs font-semibold uppercase tracking-wide mb-3 text-[#5C5E63]">Potential additional profit / year</p>
+                  <p class="font-heading-secondary text-4xl font-semibold text-green-700">+€{{ simIncrementalProfit.toLocaleString() }}</p>
+                  <p class="text-sm mt-2 text-[#5C5E63]">Net of financing fees, from recycling that capital into faster inventory cycles.</p>
                 </div>
               </div>
 
@@ -2256,9 +2267,15 @@ const invoiceColumns = [
               </div>
 
               <div class="border-t border-gray-200 pt-6">
-                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Annual shipped GMV</p>
-                <p class="text-xs text-[#5C5E63] mb-3">Estimated from your monthly advance and advance rate.</p>
-                <p class="text-2xl font-bold text-[#0F1117]">€{{ simAnnualGmv.toLocaleString() }}</p>
+                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Annual revenue</p>
+                <p class="text-xs text-[#5C5E63] mb-3">Your last 12 months of sales on Back Market.</p>
+                <p class="text-2xl font-bold text-[#0F1117]">€{{ sellerData.annualRevenue.toLocaleString() }}</p>
+              </div>
+
+              <div class="border-t border-gray-200 pt-6">
+                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Security deposit held</p>
+                <p class="text-xs text-[#5C5E63] mb-3">Funds Back Market currently holds against warranty issues.</p>
+                <p class="text-2xl font-bold text-[#0F1117]">€{{ sellerData.currentDeposit.toLocaleString() }}</p>
               </div>
             </div>
 
@@ -2268,10 +2285,7 @@ const invoiceColumns = [
           <div class="flex-1 p-8 overflow-y-auto">
             <div class="flex items-center justify-between mb-6">
               <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide">Your inputs</p>
-              <button class="flex items-center gap-1 text-xs font-bold underline text-[#0F1117]">
-                <img src="/icons/IconEdit.svg" class="w-3.5 h-3.5" />
-                Edit
-              </button>
+              <p class="text-xs text-[#5C5E63]">Adjust to match your business</p>
             </div>
 
             <div class="space-y-5">
@@ -2280,7 +2294,10 @@ const invoiceColumns = [
                   <p class="text-sm font-semibold text-[#0F1117] mb-0.5">How quickly do you receive stock from your suppliers</p>
                   <p class="text-xs text-[#5C5E63]">The average number of days between ordering stock and receiving it.</p>
                 </div>
-                <p class="text-sm font-bold text-[#0F1117] flex-shrink-0">{{ simStockDays }} days</p>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <input v-model.number="simStockDays" type="number" min="0" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+                  <span class="text-sm text-[#5C5E63]">days</span>
+                </div>
               </div>
 
               <div class="flex items-start justify-between py-4 border-b border-gray-100">
@@ -2288,7 +2305,10 @@ const invoiceColumns = [
                   <p class="text-sm font-semibold text-[#0F1117] mb-0.5">How quickly do you sell</p>
                   <p class="text-xs text-[#5C5E63]">The average number of days between listing items and selling them.</p>
                 </div>
-                <p class="text-sm font-bold text-[#0F1117] flex-shrink-0">{{ simSellDays }} days</p>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <input v-model.number="simSellDays" type="number" min="0" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+                  <span class="text-sm text-[#5C5E63]">days</span>
+                </div>
               </div>
 
               <div class="flex items-start justify-between py-4 border-b border-gray-100">
@@ -2296,32 +2316,49 @@ const invoiceColumns = [
                   <p class="text-sm font-semibold text-[#0F1117] mb-0.5">How quickly do you ship your orders</p>
                   <p class="text-xs text-[#5C5E63]">The average number of days between selling an item and shipping it. If you ship the day you sell, select 0.</p>
                 </div>
-                <p class="text-sm font-bold text-[#0F1117] flex-shrink-0">{{ simShipDays }} day</p>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <input v-model.number="simShipDays" type="number" min="0" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+                  <span class="text-sm text-[#5C5E63]">days</span>
+                </div>
               </div>
 
               <div class="flex items-start justify-between py-4">
                 <div class="flex-1 pr-8">
-                  <p class="text-sm font-semibold text-[#0F1117] mb-0.5">What is your net margin</p>
-                  <p class="text-xs text-[#5C5E63]">The percentage of profit you make on your sales after marketplace fees and refunds.</p>
+                  <p class="text-sm font-semibold text-[#0F1117] mb-0.5">What is your gross margin</p>
+                  <p class="text-xs text-[#5C5E63]">The percentage you make on your sales before financing fees. We subtract the BackFunds fee separately.</p>
                 </div>
-                <p class="text-sm font-bold text-[#0F1117] flex-shrink-0">{{ simMargin }}%</p>
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <input v-model.number="simMargin" type="number" min="0" max="100" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+                  <span class="text-sm text-[#5C5E63]">%</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="border-t border-gray-200 bg-green-900 px-8 py-6 flex-shrink-0">
+          <p class="text-xs text-green-300 mb-4">
+            Best rate for you: <span class="font-semibold text-white">{{ simProviderName }}</span>
+            · {{ simProviderAdvancePct }}% advance · {{ simProviderFeePct }}% / yr fee
+            — the cheapest of the providers you qualify for
+          </p>
           <div class="flex items-center gap-10">
             <div>
-              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Working capital freed per year</p>
-              <p class="text-2xl font-bold text-white">+€{{ simCapitalFreed.toLocaleString() }}</p>
-              <p class="text-xs text-green-300 mt-0.5">By moving from D+{{ simDaysToGetPaid }} to D+1</p>
+              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Potential additional profit / year</p>
+              <p class="text-2xl font-bold text-white">+€{{ simIncrementalProfit.toLocaleString() }}</p>
+              <p class="text-xs text-green-300 mt-0.5">Net of financing fees</p>
             </div>
             <div class="w-px bg-green-700 self-stretch" />
             <div>
-              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Potential additional annual revenue</p>
-              <p class="text-2xl font-bold text-white">+€{{ simAdditionalRevenue.toLocaleString() }}</p>
-              <p class="text-xs text-green-300 mt-0.5">Reinvesting freed capital into more inventory cycles</p>
+              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Return on financing</p>
+              <p class="text-2xl font-bold text-white">{{ simRoi }}×</p>
+              <p class="text-xs text-green-300 mt-0.5">Profit per €1 of fees</p>
+            </div>
+            <div class="w-px bg-green-700 self-stretch" />
+            <div>
+              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Working capital freed</p>
+              <p class="text-2xl font-bold text-white">+€{{ simWorkingCapitalFreed.toLocaleString() }}</p>
+              <p class="text-xs text-green-300 mt-0.5">Cash unlocked now</p>
             </div>
             <div class="ml-auto">
               <button
@@ -2333,7 +2370,7 @@ const invoiceColumns = [
               </button>
             </div>
           </div>
-          <p class="text-xs text-green-400 mt-4">Illustrative estimate. Individual results may vary. Not financial advice.</p>
+          <p class="text-xs text-green-400 mt-4">Illustrative estimate assuming {{ simReinvestPct }}% of freed capital is reinvested. Individual results may vary. Not financial advice.</p>
         </div>
       </div>
     </div>
