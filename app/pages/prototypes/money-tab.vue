@@ -2306,8 +2306,8 @@ const invoiceColumns = [
 
             <div class="grid grid-cols-2 gap-4 mb-6">
               <div class="border border-gray-200 rounded-bm p-3">
-                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">How quickly do you sell</p>
-                <p class="text-xs text-[#5C5E63] mb-2 leading-snug">Days you hold an item before it sells.</p>
+                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Sales velocity</p>
+                <p class="text-xs text-[#5C5E63] mb-2 leading-snug">The number of days you hold an item before it sells.</p>
                 <div class="flex items-center gap-1.5">
                   <input v-model.number="simSalesVelocity" type="number" min="0" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
                   <span class="text-sm text-[#5C5E63]">days</span>
