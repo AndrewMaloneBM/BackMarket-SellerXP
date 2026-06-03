@@ -2287,12 +2287,6 @@ const invoiceColumns = [
                 <p class="text-xs text-[#5C5E63] mb-1">Your last 12 months of sales.</p>
                 <p class="text-lg font-bold text-[#0F1117]">€{{ sellerData.annualRevenue.toLocaleString() }}</p>
               </div>
-
-              <div class="border-t border-gray-200 pt-3.5">
-                <p class="text-sm font-semibold text-[#0F1117]">Security deposit held</p>
-                <p class="text-xs text-[#5C5E63] mb-1">Held against warranty issues.</p>
-                <p class="text-lg font-bold text-[#0F1117]">€{{ sellerData.currentDeposit.toLocaleString() }}</p>
-              </div>
             </div>
 
             <p class="text-xs text-[#5C5E63] mt-auto pt-5 leading-snug">If you don't have 12 months of data, we estimate from your recent performance.</p>
@@ -2347,32 +2341,18 @@ const invoiceColumns = [
         </div>
 
         <div class="border-t border-gray-200 bg-green-900 px-8 py-4 flex-shrink-0">
-          <p class="text-xs text-green-300 mb-3">
-            Best rate for you: <span class="font-semibold text-white">{{ simProviderName }}</span>
-            · {{ simProviderAdvancePct }}% advance · {{ simProviderFeePct }}% / yr fee
-            — the cheapest of the providers you qualify for
-          </p>
-          <div class="flex items-center gap-10">
-            <div>
-              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Potential additional profit / year</p>
-              <p class="text-2xl font-bold text-white">+€{{ simIncrementalProfit.toLocaleString() }}</p>
-              <p class="text-xs text-green-300 mt-0.5">Net of financing fees</p>
-            </div>
-            <div class="w-px bg-green-700 self-stretch" />
-            <div>
-              <p class="text-xs font-semibold text-green-300 uppercase tracking-wide mb-1">Return on financing</p>
-              <p class="text-2xl font-bold text-white">{{ simRoi }}×</p>
-              <p class="text-xs text-green-300 mt-0.5">Profit per €1 of fees</p>
-            </div>
-            <div class="ml-auto">
-              <button
-                type="button"
-                class="prototype-hotspot bg-white text-green-900 font-semibold rounded-bm px-6 py-2.5 text-sm hover:bg-green-50 transition-colors"
-                @click="showGrowthSimulator = false; openOnboarding()"
-              >
-                Apply for BackFunds
-              </button>
-            </div>
+          <div class="flex items-center justify-between gap-6">
+            <p class="text-xs text-green-300">
+              <span class="font-semibold text-white">{{ simProviderName }}</span>
+              · {{ simProviderAdvancePct }}% advance · {{ simProviderFeePct }}% / yr fee
+            </p>
+            <button
+              type="button"
+              class="prototype-hotspot bg-white text-green-900 font-semibold rounded-bm px-6 py-2.5 text-sm hover:bg-green-50 transition-colors flex-shrink-0"
+              @click="showGrowthSimulator = false; openOnboarding()"
+            >
+              Apply for BackFunds
+            </button>
           </div>
           <p class="text-xs text-green-400 mt-3">Illustrative estimate assuming you reinvest the same working capital faster ({{ simReinvestPct }}% recycled). Individual results may vary. Not financial advice.</p>
         </div>

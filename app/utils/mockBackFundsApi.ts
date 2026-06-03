@@ -28,7 +28,6 @@ export interface BackFundsSellerData {
   daysAccelerated: number          // e.g. 6 = D+7 → D+1
   annualRevenue: number            // SUM(GMV_EUR) last 12 months — drives the growth simulator
   payoutDelayDays: number          // BM's current payout baseline (days from sale to payment)
-  currentDeposit: number           // deferred-payout / security deposit held by BM (EUR)
 }
 
 export const getSellerBackFundsData = (_sellerId: string): BackFundsSellerData => {
@@ -55,6 +54,5 @@ export const getSellerBackFundsData = (_sellerId: string): BackFundsSellerData =
     daysAccelerated: 6,
     annualRevenue: 500000,
     payoutDelayDays: 7,
-    currentDeposit: 0,
   }
 }

@@ -8,8 +8,6 @@
 export const BM_PAYOUT_DELAY = 7        // days BM takes to pay (weekly cycle baseline)
 export const ACCEL_PAYOUT_DELAY = 1     // D+1 once BackFunds is active
 export const REINVESTMENT_FRACTION = 1.0
-export const DEFAULT_INVENTORY_CYCLE = 7
-export const DEFAULT_GROSS_MARGIN = 0.40
 
 export interface Provider {
   id: string
@@ -17,16 +15,15 @@ export interface Provider {
   advanceRate: number        // decimal, e.g. 0.80
   feeRate: number            // effective annual rate, decimal, e.g. 0.008
   currencies: string[]
-  financesDeposit: boolean
   minAnnualRevenue: number   // eligibility floor (EUR)
 }
 
 // Terms per the PRD's Growth Simulator inputs (effective annual fee rates,
 // not the daily contractual rates from the detailed @BFF tool).
 export const PROVIDERS: Provider[] = [
-  { id: 'storfund', name: 'Storfund', advanceRate: 0.80, feeRate: 0.0080, currencies: ['EUR', 'GBP', 'USD', 'CAD'], financesDeposit: true, minAnnualRevenue: 240_000 },
-  { id: 'unloq', name: 'Unloq', advanceRate: 0.80, feeRate: 0.0075, currencies: ['EUR', 'GBP'], financesDeposit: true, minAnnualRevenue: 1_200_000 },
-  { id: 'hero', name: 'Hero', advanceRate: 0.70, feeRate: 0.0100, currencies: ['EUR'], financesDeposit: false, minAnnualRevenue: 240_000 },
+  { id: 'storfund', name: 'Storfund', advanceRate: 0.80, feeRate: 0.0080, currencies: ['EUR', 'GBP', 'USD', 'CAD'], minAnnualRevenue: 240_000 },
+  { id: 'unloq', name: 'Unloq', advanceRate: 0.80, feeRate: 0.0075, currencies: ['EUR', 'GBP'], minAnnualRevenue: 1_200_000 },
+  { id: 'hero', name: 'Hero', advanceRate: 0.70, feeRate: 0.0100, currencies: ['EUR'], minAnnualRevenue: 240_000 },
 ]
 
 export interface Assumptions {
@@ -39,8 +36,6 @@ export interface SimResult {
   acceleratedRevenue: number
   currentCashCycle: number
   acceleratedCashCycle: number
-  rawMultiplier: number
-  effectiveMultiplier: number
   grossProfitStandard: number
   grossProfitAccelerated: number
   financingFee: number
@@ -74,8 +69,6 @@ export function runSimulation(annualRevenue: number, provider: Provider, a: Assu
     acceleratedRevenue,
     currentCashCycle,
     acceleratedCashCycle,
-    rawMultiplier,
-    effectiveMultiplier,
     grossProfitStandard,
     grossProfitAccelerated,
     financingFee,
