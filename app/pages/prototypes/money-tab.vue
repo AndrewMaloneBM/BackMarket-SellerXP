@@ -525,13 +525,13 @@ const simComparisonRows = computed(() => {
   const netPct = s.netProfitStandard ? Math.round((s.incrementalProfit / s.netProfitStandard) * 100) : 0
   const cycleDiff = +(s.currentCashCycle - s.acceleratedCashCycle).toFixed(1)
   return [
-    { metric: 'Cash cycle', standard: `${s.currentCashCycle} days`, accelerated: `${+s.acceleratedCashCycle.toFixed(1)} days`, difference: `−${cycleDiff} days` },
-    { metric: 'Annual revenue', standard: simEur(s.standardRevenue), accelerated: simEur(s.acceleratedRevenue), difference: `+${simEur(revGain)} (+${revPct}%)` },
-    { metric: 'Gross profit (before fee)', standard: simEur(s.grossProfitStandard), accelerated: simEur(s.grossProfitAccelerated), difference: `+${simEur(s.grossProfitAccelerated - s.grossProfitStandard)}` },
-    { metric: 'Financing fee', standard: '€0', accelerated: simEur(s.financingFee), difference: `−${simEur(s.financingFee)}` },
-    { metric: 'Net profit after fee', standard: simEur(s.netProfitStandard), accelerated: simEur(s.netProfitAccelerated), difference: `+${simEur(s.incrementalProfit)} (+${netPct}%)` },
-    { metric: 'Working capital used', standard: 'Same', accelerated: 'Same', difference: '€0' },
-    { metric: 'ROI of the service', standard: '–', accelerated: '–', difference: `${+s.roi.toFixed(1)}×` },
+    { metric: 'Cash cycle', standard: `${s.currentCashCycle} days`, accelerated: `${+s.acceleratedCashCycle.toFixed(1)} days`, difference: `−${cycleDiff} days`, tone: 'pos', emphasis: false },
+    { metric: 'Annual revenue', standard: simEur(s.standardRevenue), accelerated: simEur(s.acceleratedRevenue), difference: `+${simEur(revGain)} (+${revPct}%)`, tone: 'pos', emphasis: false },
+    { metric: 'Gross profit', standard: simEur(s.grossProfitStandard), accelerated: simEur(s.grossProfitAccelerated), difference: `+${simEur(s.grossProfitAccelerated - s.grossProfitStandard)}`, tone: 'pos', emphasis: false },
+    { metric: 'Financing fee', standard: '€0', accelerated: simEur(s.financingFee), difference: `−${simEur(s.financingFee)}`, tone: 'cost', emphasis: false },
+    { metric: 'Working capital used', standard: 'Same', accelerated: 'Same', difference: 'No change', tone: 'neutral', emphasis: false },
+    { metric: 'Net profit (after fee)', standard: simEur(s.netProfitStandard), accelerated: simEur(s.netProfitAccelerated), difference: `+${simEur(s.incrementalProfit)} (+${netPct}%)`, tone: 'pos', emphasis: true },
+    { metric: 'Return on the fee', standard: '–', accelerated: '–', difference: `${+s.roi.toFixed(1)}×`, tone: 'pos', emphasis: true },
   ]
 })
 
@@ -2260,90 +2260,87 @@ const invoiceColumns = [
     >
       <div class="absolute inset-0 bg-black/50" />
 
-      <div class="relative w-[calc(100%-4rem)] max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[calc(100%-4rem)]">
-        <div class="px-8 py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+      <div class="relative w-[calc(100%-4rem)] max-w-3xl bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[calc(100%-4rem)]">
+        <div class="px-7 pt-6 pb-4 flex items-start justify-between flex-shrink-0">
           <div>
-            <p class="text-xs font-semibold tracking-widest text-green-700 uppercase mb-0.5">Growth simulator</p>
-            <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117]">Adjust your assumptions</h2>
+            <p class="text-[11px] font-semibold tracking-widest text-green-700 uppercase mb-1.5">Growth simulator</p>
+            <h2 class="font-heading-secondary font-semibold text-2xl text-[#0F1117] leading-tight">See what faster payouts could unlock</h2>
           </div>
-          <button type="button" class="prototype-hotspot text-gray-400 hover:text-gray-600 transition-colors" @click="showGrowthSimulator = false">
+          <button type="button" class="prototype-hotspot -mr-1 text-gray-400 hover:text-gray-600 transition-colors" @click="showGrowthSimulator = false">
             <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3.47 3.47a.75.75 0 0 1 1.06 0L12 10.94l7.47-7.47a.75.75 0 1 1 1.06 1.06L13.06 12l7.47 7.47a.75.75 0 1 1-1.06 1.06L12 13.06l-7.47 7.47a.75.75 0 0 1-1.06-1.06L10.94 12 3.47 4.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd" fill="currentColor"/></svg>
           </button>
         </div>
 
-        <div class="flex flex-1 overflow-hidden">
-          <div class="w-1/3 bg-[#F2F3F7] p-6 flex flex-col border-r border-gray-200 overflow-y-auto">
-            <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide mb-4">What Back Market can see</p>
-
-            <div class="space-y-3.5">
-              <div>
-                <p class="text-sm font-semibold text-[#0F1117]">Days you wait to get paid</p>
-                <p class="text-xs text-[#5C5E63] mb-1">From shipping an order to receiving payment.</p>
-                <p class="text-lg font-bold text-[#0F1117]">{{ simDaysToGetPaid }} days</p>
-              </div>
-
-              <div class="border-t border-gray-200 pt-3.5">
-                <p class="text-sm font-semibold text-[#0F1117]">Annual revenue</p>
-                <p class="text-xs text-[#5C5E63] mb-1">Your last 12 months of sales.</p>
+        <div class="flex-1 overflow-y-auto px-7 pb-6 space-y-6">
+          <!-- Assumptions: BM data (read-only) + seller inputs (editable) in one strip -->
+          <div>
+            <div class="flex items-baseline justify-between mb-2">
+              <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide">Your numbers</p>
+              <p class="text-xs text-[#5C5E63]">From your Back Market data — tweak the editable fields</p>
+            </div>
+            <div class="grid grid-cols-4 rounded-bm-lg border border-gray-200 overflow-hidden divide-x divide-gray-200">
+              <div class="p-4 bg-[#F7F8FB]">
+                <p class="text-[11px] font-medium text-[#5C5E63] uppercase tracking-wide mb-1.5">Annual revenue</p>
                 <p class="text-lg font-bold text-[#0F1117]">€{{ sellerData.annualRevenue.toLocaleString() }}</p>
               </div>
-            </div>
-
-            <p class="text-xs text-[#5C5E63] mt-auto pt-5 leading-snug">If you don't have 12 months of data, we estimate from your recent performance.</p>
-          </div>
-
-          <div class="flex-1 p-6 overflow-y-auto">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide">Your inputs</p>
-              <p class="text-xs text-[#5C5E63]">Adjust to match your business</p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="border border-gray-200 rounded-bm p-3">
-                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Sales velocity</p>
-                <p class="text-xs text-[#5C5E63] mb-2 leading-snug">The number of days you hold an item before it sells.</p>
-                <div class="flex items-center gap-1.5">
-                  <input v-model.number="simSalesVelocity" type="number" min="0" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              <div class="p-4 bg-[#F7F8FB]">
+                <p class="text-[11px] font-medium text-[#5C5E63] uppercase tracking-wide mb-1.5">You're paid in</p>
+                <p class="text-lg font-bold text-[#0F1117]">{{ simDaysToGetPaid }} days</p>
+              </div>
+              <div class="p-4 bg-white">
+                <p class="text-[11px] font-medium text-green-700 uppercase tracking-wide mb-1.5 flex items-center gap-1">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M21.03 5.78 18.22 2.97a1.5 1.5 0 0 0-2.12 0L4.4 14.67a1.5 1.5 0 0 0-.42.79l-.95 4.74a.75.75 0 0 0 .88.88l4.74-.95a1.5 1.5 0 0 0 .79-.42L20.97 7.9a1.5 1.5 0 0 0 0-2.12" fill="currentColor"/></svg>
+                  Sales velocity
+                </p>
+                <div class="flex items-baseline gap-1.5">
+                  <input v-model.number="simSalesVelocity" type="number" min="0" class="w-12 text-center text-lg font-bold text-[#0F1117] border border-gray-300 rounded-bm px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-green-600" />
                   <span class="text-sm text-[#5C5E63]">days</span>
                 </div>
               </div>
-
-              <div class="border border-gray-200 rounded-bm p-3">
-                <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Your gross margin</p>
-                <p class="text-xs text-[#5C5E63] mb-2 leading-snug">Before financing fees (we subtract those separately).</p>
-                <div class="flex items-center gap-1.5">
-                  <input v-model.number="simMargin" type="number" min="0" max="100" class="w-14 text-right text-sm font-bold text-[#0F1117] border border-gray-300 rounded-bm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-600" />
+              <div class="p-4 bg-white">
+                <p class="text-[11px] font-medium text-green-700 uppercase tracking-wide mb-1.5 flex items-center gap-1">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M21.03 5.78 18.22 2.97a1.5 1.5 0 0 0-2.12 0L4.4 14.67a1.5 1.5 0 0 0-.42.79l-.95 4.74a.75.75 0 0 0 .88.88l4.74-.95a1.5 1.5 0 0 0 .79-.42L20.97 7.9a1.5 1.5 0 0 0 0-2.12" fill="currentColor"/></svg>
+                  Gross margin
+                </p>
+                <div class="flex items-baseline gap-1.5">
+                  <input v-model.number="simMargin" type="number" min="0" max="100" class="w-12 text-center text-lg font-bold text-[#0F1117] border border-gray-300 rounded-bm px-1 py-0.5 focus:outline-none focus:ring-2 focus:ring-green-600" />
                   <span class="text-sm text-[#5C5E63]">%</span>
                 </div>
               </div>
             </div>
+            <p class="text-[11px] text-[#5C5E63] mt-2 leading-snug">Sales velocity = days you hold an item before it sells. Gross margin is before financing fees. With under 12 months of history, we estimate revenue from recent performance.</p>
+          </div>
 
-            <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide mb-2">Standard payout vs daily payout</p>
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b border-gray-200 text-left">
-                  <th class="pb-2 pr-3 text-xs font-medium text-gray-400 whitespace-nowrap"></th>
-                  <th class="pb-2 px-3 text-xs font-medium text-gray-400 whitespace-nowrap">Standard ({{ simDaysToGetPaid }}d)</th>
-                  <th class="pb-2 px-3 text-xs font-medium text-gray-400 whitespace-nowrap">Daily ({{ simProviderAdvancePct }}%)</th>
-                  <th class="pb-2 pl-3 text-xs font-medium text-gray-400 whitespace-nowrap">Difference</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in simComparisonRows" :key="row.metric" class="border-b border-gray-100 last:border-0">
-                  <td class="py-1.5 pr-3 text-[#5C5E63] whitespace-nowrap">{{ row.metric }}</td>
-                  <td class="py-1.5 px-3 text-[#0F1117] whitespace-nowrap">{{ row.standard }}</td>
-                  <td class="py-1.5 px-3 text-[#0F1117] whitespace-nowrap">{{ row.accelerated }}</td>
-                  <td class="py-1.5 pl-3 font-semibold text-green-700 whitespace-nowrap">{{ row.difference }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Outcome comparison: the "With BackFunds" column is the highlighted path -->
+          <div>
+            <p class="text-xs font-semibold text-[#5C5E63] uppercase tracking-wide mb-2">If you switched to daily payouts</p>
+            <div class="rounded-bm-lg border border-gray-200 overflow-hidden">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-[#F7F8FB] text-left align-bottom">
+                    <th class="py-3 px-4"></th>
+                    <th class="py-3 px-4 text-[11px] font-medium text-[#5C5E63] uppercase tracking-wide whitespace-nowrap">Today</th>
+                    <th class="py-3 px-4 text-[11px] font-semibold text-green-800 uppercase tracking-wide whitespace-nowrap bg-green-50">With BackFunds</th>
+                    <th class="py-3 px-4 text-[11px] font-medium text-[#5C5E63] uppercase tracking-wide whitespace-nowrap text-right">Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in simComparisonRows" :key="row.metric" :class="['border-t border-gray-100', row.emphasis ? 'bg-[#FBFCFE]' : '']">
+                    <td :class="['py-2.5 px-4 whitespace-nowrap', row.emphasis ? 'font-semibold text-[#0F1117]' : 'text-[#5C5E63]']">{{ row.metric }}</td>
+                    <td :class="['py-2.5 px-4 whitespace-nowrap', row.emphasis ? 'font-semibold text-[#0F1117]' : 'text-[#0F1117]']">{{ row.standard }}</td>
+                    <td :class="['py-2.5 px-4 whitespace-nowrap bg-green-50/70', row.emphasis ? 'font-bold text-green-900' : 'text-[#0F1117]']">{{ row.accelerated }}</td>
+                    <td :class="['py-2.5 px-4 whitespace-nowrap text-right font-semibold', row.tone === 'pos' ? 'text-green-700' : 'text-[#5C5E63]']">{{ row.difference }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <div class="border-t border-gray-200 bg-green-900 px-8 py-4 flex-shrink-0">
+        <div class="bg-green-900 px-7 py-4 flex-shrink-0">
           <div class="flex items-center justify-between gap-6">
             <p class="text-xs text-green-300">
-              <span class="font-semibold text-white">{{ simProviderName }}</span>
+              Financing partner <span class="font-semibold text-white">{{ simProviderName }}</span>
               · {{ simProviderAdvancePct }}% advance · {{ simProviderFeePct }}% / yr fee
             </p>
             <button
@@ -2354,7 +2351,7 @@ const invoiceColumns = [
               Apply for BackFunds
             </button>
           </div>
-          <p class="text-xs text-green-400 mt-3">Illustrative estimate assuming you reinvest the same working capital faster ({{ simReinvestPct }}% recycled). Individual results may vary. Not financial advice.</p>
+          <p class="text-[11px] text-green-400/90 mt-3">Illustrative estimate assuming you reinvest the same working capital faster ({{ simReinvestPct }}% recycled). Individual results may vary. Not financial advice.</p>
         </div>
       </div>
     </div>
