@@ -287,7 +287,7 @@ function scrollToHowItWorks() {
   window.document.getElementById('daily-payout-how')?.scrollIntoView({ behavior: 'smooth' })
 }
 
-const DROPPED_CONCEPTS = [3, 4] as const
+const DROPPED_CONCEPTS = [1, 3, 4] as const
 const showDroppedModal = ref(false)
 
 // Concept 1 — Learn More modal + onboarding stepper state
