@@ -2248,10 +2248,11 @@ const invoiceColumns = [
     <!-- ═════════ CONCEPT 1 — Onboarding stepper modal ═════════ -->
     <div
       v-if="showOnboardingModal"
-      class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-4 font-body"
+      :class="['absolute inset-0 z-50 bg-black/40 flex font-body', onboardingStep === 'processing' ? 'justify-end' : 'items-center justify-center p-4']"
     >
-      <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div :class="['relative bg-white shadow-xl', onboardingStep === 'processing' ? 'w-full max-w-md h-full rounded-l-bm-xl overflow-hidden' : 'rounded-bm-xl w-full max-w-lg max-h-[90vh] overflow-y-auto']">
         <button
+          v-if="onboardingStep !== 'processing'"
           type="button"
           class="prototype-hotspot absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl leading-none"
           aria-label="Close"
@@ -2358,23 +2359,75 @@ const invoiceColumns = [
           </div>
         </div>
 
-        <div v-else-if="onboardingStep === 'processing'" class="p-6 py-8 text-center">
-          <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
-          </div>
-          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">One last step</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">Your application and data-sharing consent are submitted. To finish, Storfund needs to verify your business before they can review it.</p>
-
-          <div class="border border-amber-200 bg-amber-50 rounded-bm-lg p-4 text-left mb-6">
-            <p class="text-sm text-[#0F1117] leading-relaxed"><span class="font-semibold">Your application is on hold until your business is verified.</span> Storfund can't review it or set up your daily advances before then. It only takes a few minutes.</p>
+        <div v-else-if="onboardingStep === 'processing'" class="flex flex-col h-full">
+          <!-- Drawer header -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <p class="font-heading-secondary font-semibold text-base text-[#0F1117]">Apply for BackFunds</p>
+            <button type="button" class="prototype-hotspot text-gray-400 hover:text-gray-600" aria-label="Close" @click="closeOnboarding">
+              <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06" clip-rule="evenodd" fill="currentColor"/></svg>
+            </button>
           </div>
 
-          <div class="flex flex-col gap-2">
+          <!-- Drawer body -->
+          <div class="flex-1 overflow-y-auto min-h-0 px-6 py-6">
+            <div class="flex items-center gap-2.5 mb-5">
+              <span class="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"><svg class="w-4 h-4 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
+              <p class="text-sm font-semibold text-green-700">Application submitted</p>
+            </div>
+
+            <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-2 leading-tight">One last step: verify your business</h2>
+            <p class="text-sm text-[#5C5E63] mb-7 leading-relaxed">Storfund needs to verify your business before they can review your application. You'll confirm a few company details on Storfund's site, and it only takes a few minutes.</p>
+
+            <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-4">What happens next</p>
+
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <div class="w-7 h-7 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center flex-shrink-0"><span class="w-2 h-2 rounded-full bg-amber-500"></span></div>
+                <div class="w-px flex-1 bg-gray-200 my-1.5"></div>
+              </div>
+              <div class="pb-5">
+                <div class="flex items-center gap-2">
+                  <p class="text-sm font-semibold text-[#0F1117]">Verify your business</p>
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-amber-800 bg-amber-100 rounded px-1.5 py-0.5">Now</span>
+                </div>
+                <p class="text-xs text-[#5C5E63] mt-1 leading-relaxed">Confirm your company name, country of incorporation, legal type and registration number on Storfund's site.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <div class="w-7 h-7 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0"><span class="w-2 h-2 rounded-full bg-gray-300"></span></div>
+                <div class="w-px flex-1 bg-gray-200 my-1.5"></div>
+              </div>
+              <div class="pb-5">
+                <p class="text-sm font-semibold text-[#0F1117]">Storfund reviews your application</p>
+                <p class="text-xs text-[#5C5E63] mt-1 leading-relaxed">Usually 1–2 days. They email you at each step, and your status updates here automatically.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <div class="w-7 h-7 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0"><span class="w-2 h-2 rounded-full bg-gray-300"></span></div>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-[#0F1117]">Daily advances begin</p>
+                <p class="text-xs text-[#5C5E63] mt-1 leading-relaxed">Once you're approved, your payouts move from D+7 to D+1.</p>
+              </div>
+            </div>
+
+            <div class="mt-7 flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-bm-lg p-3.5">
+              <svg class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24"><path d="M12.75 6.5a.75.75 0 0 0-1.5 0v5.293a1.25 1.25 0 0 0 .366.884l2.354 2.353a.75.75 0 1 0 1.06-1.06l-2.28-2.28V6.5" fill="currentColor"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25M3.75 12a8.25 8.25 0 1 1 16.5 0 8.25 8.25 0 1 1-16.5 0" clip-rule="evenodd" fill="currentColor"/></svg>
+              <p class="text-xs text-[#0F1117] leading-relaxed"><span class="font-semibold">Your application is on hold until you verify.</span> Storfund can't review it or set up your advances before then.</p>
+            </div>
+          </div>
+
+          <!-- Drawer footer -->
+          <div class="border-t border-gray-100 px-6 py-4 flex-shrink-0">
             <a
               href="https://storfund.com"
               target="_blank"
               rel="noopener"
-              class="prototype-hotspot inline-flex items-center justify-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
+              class="prototype-hotspot w-full inline-flex items-center justify-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-3 text-sm transition-colors"
               @click="closeOnboarding"
             >
               Verify with Storfund
@@ -2382,13 +2435,13 @@ const invoiceColumns = [
             </a>
             <button
               type="button"
-              class="prototype-hotspot text-sm font-semibold text-[#5C5E63] hover:text-[#0F1117] px-5 py-2.5 rounded-bm transition-colors"
+              class="prototype-hotspot w-full text-sm font-semibold text-[#5C5E63] hover:text-[#0F1117] px-5 py-2.5 mt-1 rounded-bm transition-colors"
               @click="closeOnboarding"
             >
               Verify later
             </button>
+            <p class="text-center text-xs text-[#5C5E63] mt-2">Prefer to talk it through first? Speak to a Storfund account manager.</p>
           </div>
-          <p class="text-xs text-[#5C5E63] mt-4">Prefer to talk it through first? You can speak to a Storfund account manager.</p>
         </div>
       </div>
     </div>
