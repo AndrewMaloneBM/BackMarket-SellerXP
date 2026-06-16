@@ -1765,19 +1765,11 @@ const invoiceColumns = [
 
               <div class="pt-4 flex items-center gap-5">
                 <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-[#5C5E63]">Daily advance</span>
-                  <span class="text-sm font-semibold text-green-700">€{{ Math.round(sellerData.estimatedMonthlyAdvance / 30).toLocaleString() }}</span>
+                  <span class="text-xs text-[#5C5E63]">Unlock on day one</span>
+                  <span class="text-sm font-semibold text-green-700">€{{ Math.round(sellerData.marketplaceBalance * sellerData.advanceRate / 100).toLocaleString() }}</span>
                 </div>
                 <div class="w-px h-3.5 bg-gray-200 flex-shrink-0"></div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-[#5C5E63]">Monthly advance</span>
-                  <span class="text-sm font-semibold text-[#0F1117]">€{{ sellerData.estimatedMonthlyAdvance.toLocaleString() }}</span>
-                </div>
-                <div class="w-px h-3.5 bg-gray-200 flex-shrink-0"></div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-xs text-[#5C5E63]">Monthly fee (est.)</span>
-                  <span class="text-sm font-semibold text-[#0F1117]">€{{ estimatedMonthlyCost.toLocaleString() }} · {{ sellerData.dailyFee }}% daily</span>
-                </div>
+                <span class="text-xs text-[#5C5E63]">{{ sellerData.advanceRate }}% of your current Back Market balance, with a small daily fee (around {{ sellerData.dailyFee }}%) on what you draw</span>
               </div>
 
               <div class="flex items-center justify-between gap-3 mt-6 pt-6 border-t border-gray-100">
@@ -2054,17 +2046,10 @@ const invoiceColumns = [
           <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-2">Get paid tomorrow, not in 7 days</h2>
           <p class="text-sm text-[#5C5E63] mb-6">BackFunds accelerates your payouts from D+7 to D+1. 58+ sellers are already growing faster with daily cash flow.</p>
 
-          <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="bg-[#F2F3F7] rounded-bm-lg p-4">
-              <p class="text-xs text-[#5C5E63] mb-1">Estimated monthly advance</p>
-              <p class="font-heading-secondary font-semibold text-xl text-[#0F1117]">€{{ sellerData.estimatedMonthlyAdvance.toLocaleString() }} <span class="text-sm font-body font-normal text-[#5C5E63]">/month</span></p>
-              <p class="text-xs text-[#5C5E63] mt-1">based on your last payout</p>
-            </div>
-            <div class="bg-[#F2F3F7] rounded-bm-lg p-4">
-              <p class="text-xs text-[#5C5E63] mb-1">Estimated monthly fee</p>
-              <p class="font-heading-secondary font-semibold text-xl text-[#0F1117]">€{{ estimatedMonthlyCost.toLocaleString() }} <span class="text-sm font-body font-normal text-[#5C5E63]">/month</span></p>
-              <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.dailyFee }}% per day on outstanding advances</p>
-            </div>
+          <div class="bg-[#F2F3F7] rounded-bm-lg p-4 mb-4 text-center">
+            <p class="text-xs text-[#5C5E63] mb-1">Unlock on day one</p>
+            <p class="font-heading-secondary font-semibold text-2xl text-green-700">€{{ Math.round(sellerData.marketplaceBalance * sellerData.advanceRate / 100).toLocaleString() }}</p>
+            <p class="text-xs text-[#5C5E63] mt-1">{{ sellerData.advanceRate }}% of your current Back Market balance, with a small daily fee (around {{ sellerData.dailyFee }}%) on what you draw</p>
           </div>
 
           <div class="bg-green-50 border border-green-200 rounded-bm-lg p-4 mb-6">
@@ -2114,26 +2099,13 @@ const invoiceColumns = [
           <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">You're eligible for BackFunds</h2>
           <span class="inline-block bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm mb-5">Eligible ✓</span>
 
-          <div class="bg-[#F2F3F7] rounded-bm-lg p-4 mb-4 space-y-2">
-            <div class="flex items-center justify-between text-sm">
-              <span class="text-[#5C5E63]">Monthly advance (est.)</span>
-              <span class="font-semibold text-[#0F1117]">€{{ sellerData.estimatedMonthlyAdvance.toLocaleString() }}</span>
-            </div>
-            <div class="flex items-center justify-between text-sm">
-              <span class="text-[#5C5E63]">Daily advance (est.)</span>
-              <span class="font-semibold text-green-700">€{{ Math.round(sellerData.estimatedMonthlyAdvance / 30).toLocaleString() }}</span>
-            </div>
-            <div class="flex items-center justify-between text-sm border-t border-gray-200 pt-2 mt-2">
-              <span class="text-[#5C5E63]">Daily fee</span>
-              <span class="font-semibold text-[#0F1117]">{{ sellerData.dailyFee }}% on outstanding advances</span>
-            </div>
-            <div class="flex items-center justify-between text-sm">
-              <span class="text-[#5C5E63]">Monthly fee (est.)</span>
-              <span class="font-semibold text-[#0F1117]">€{{ estimatedMonthlyCost.toLocaleString() }}</span>
-            </div>
+          <div class="bg-[#F2F3F7] rounded-bm-lg p-5 mb-4 text-center">
+            <p class="text-sm text-[#5C5E63] mb-1">Unlock on day one</p>
+            <p class="font-heading-secondary font-semibold text-4xl text-green-700 mb-2">€{{ Math.round(sellerData.marketplaceBalance * sellerData.advanceRate / 100).toLocaleString() }}</p>
+            <p class="text-sm text-[#5C5E63]">That's {{ sellerData.advanceRate }}% of your current Back Market balance of €{{ sellerData.marketplaceBalance.toLocaleString() }}, available as soon as you're approved.</p>
           </div>
 
-          <p class="text-xs text-[#5C5E63] mb-6">Estimates based on your last 30 days of payout history. Final amounts confirmed after approval.</p>
+          <p class="text-xs text-[#5C5E63] mb-6">BackFunds advances {{ sellerData.advanceRate }}% of your marketplace balance. A small daily fee (around {{ sellerData.dailyFee }}%) applies only to the amount you draw, until it's repaid from your payouts. Final amounts are confirmed by Storfund after approval.</p>
 
           <div class="flex justify-end">
             <button
