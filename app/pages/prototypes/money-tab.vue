@@ -2362,11 +2362,11 @@ const invoiceColumns = [
           <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
           </div>
-          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Consent recorded</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">Your data-sharing consent is saved and your application is submitted. One step is left: verify your business with Storfund so they can review it.</p>
+          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">One last step</h2>
+          <p class="text-sm text-[#5C5E63] mb-5">Your application and data-sharing consent are submitted. To finish, Storfund needs to verify your business before they can review it.</p>
 
           <div class="border border-amber-200 bg-amber-50 rounded-bm-lg p-4 text-left mb-6">
-            <p class="text-sm text-[#0F1117] leading-relaxed"><span class="font-semibold">Until you verify, Storfund can't review your application or set up your daily advances.</span> Verifying takes a few minutes and confirms your company name, country of incorporation, legal type, and registration number. You can speak to a Storfund account manager first if you'd prefer.</p>
+            <p class="text-sm text-[#0F1117] leading-relaxed"><span class="font-semibold">Your application is on hold until your business is verified.</span> Storfund can't review it or set up your daily advances before then. It only takes a few minutes.</p>
           </div>
 
           <div class="flex flex-col gap-2">
@@ -2388,6 +2388,7 @@ const invoiceColumns = [
               Verify later
             </button>
           </div>
+          <p class="text-xs text-[#5C5E63] mt-4">Prefer to talk it through first? You can speak to a Storfund account manager.</p>
         </div>
       </div>
     </div>
