@@ -104,6 +104,18 @@ const conceptMeta: readonly PrototypeConcept[] = [
         ],
       },
       {
+        id: 'complete-application',
+        label: 'Complete the application',
+        navItem: 'Money',
+        changes: [
+          'New step after consent: seller is handed to Storfund to finish business verification (KYB)',
+          '"Continue to Storfund" opens KYB in a new tab — company name, country of incorporation, legal type, registration number',
+          'Progress tracker shows verification as the current action, before Storfund review',
+          'Seller can speak to a Storfund account manager before completing KYB',
+          'Status moves to "under review" automatically once Storfund confirms (webhook)',
+        ],
+      },
+      {
         id: 'under-review',
         label: 'Application under review',
         navItem: 'Money',
@@ -331,7 +343,7 @@ function closeOnboarding() {
   const wasSubmit = onboardingStep.value === 'processing'
   if (wasSubmit) {
     if (activeConcept.value === 1) c1Applied.value = true
-    if (activeConcept.value === 2) activePages.value[1] = 'under-review'
+    if (activeConcept.value === 2) activePages.value[1] = 'complete-application'
   }
   showOnboardingModal.value = false
   onboardingStep.value = 1
@@ -548,6 +560,8 @@ const recentAdvancesMature = [
 
 // Concept 2 — under-review / active transition
 const c2CheckingStatus = ref(false)
+// Concept 2 — Storfund KYB verification step (complete-application → under-review)
+const c2VerifyingKyb = ref(false)
 // Pause / Stop service controls
 const c2Paused = ref(false)
 const c2WasStopped = ref(false)
@@ -609,6 +623,18 @@ function advanceWithDelay(key: typeof pendingAction.value, action: () => void, m
     action()
     pendingAction.value = null
   }, ms)
+}
+
+// Prototype-only shortcut: in production, Storfund confirms KYB via webhook and the
+// status flips to "under review" on its own. Here we trigger it explicitly.
+function completeVerification() {
+  if (c2VerifyingKyb.value) return
+  c2VerifyingKyb.value = true
+  setTimeout(() => {
+    activePages.value[1] = 'under-review'
+    c2VerifyingKyb.value = false
+    nextTick(() => scrollPageToTop())
+  }, 1500)
 }
 
 // Prototype-only shortcut: in production, status updates automatically via webhook.
@@ -1443,6 +1469,112 @@ const invoiceColumns = [
               </div>
             </template>
 
+            <!-- ── Complete the application (Storfund KYB redirect) ── -->
+            <template v-else-if="activePages[1] === 'complete-application'">
+              <div class="max-w-2xl mx-auto py-2">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-11 h-11 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
+                  </div>
+                  <div>
+                    <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117]">Complete your application</h2>
+                    <p class="text-sm text-[#5C5E63]">One more step before Storfund can review · Powered by Storfund</p>
+                  </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-5">
+                  <p class="text-sm font-semibold text-[#0F1117] mb-6">Application progress</p>
+
+                  <div class="flex items-start gap-4 mb-1">
+                    <div class="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M20.53 6.073a.75.75 0 0 1 0 1.06L9.884 17.78a1.25 1.25 0 0 1-1.768 0L3.47 13.134a.75.75 0 0 1 1.06-1.06L9 16.542l10.47-10.47a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
+                    </div>
+                    <div class="flex-1 pb-5 border-b border-gray-100">
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-[#0F1117]">Application submitted</p>
+                        <span class="text-xs text-green-600 font-medium">Complete</span>
+                      </div>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Data consent given · Application sent to Storfund</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start gap-4 mb-1 pt-4">
+                    <div class="w-7 h-7 rounded-full bg-amber-50 border-2 border-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                    </div>
+                    <div class="flex-1 pb-5 border-b border-gray-100">
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-semibold text-[#0F1117]">Verify your business</p>
+                        <span class="text-xs text-amber-600 font-medium bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">Action needed</span>
+                      </div>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Confirm your company details with Storfund to continue</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start gap-4 mb-1 pt-4">
+                    <div class="w-7 h-7 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                    </div>
+                    <div class="flex-1 pb-5 border-b border-gray-100">
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-[#5C5E63]">Storfund review</p>
+                        <span class="text-xs text-[#5C5E63]">Pending</span>
+                      </div>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Verifying business details and sales history</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-start gap-4 pt-4">
+                    <div class="w-7 h-7 rounded-full bg-gray-100 border-2 border-gray-200 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center justify-between">
+                        <p class="text-sm font-medium text-[#5C5E63]">Activation</p>
+                        <span class="text-xs text-[#5C5E63]">Pending</span>
+                      </div>
+                      <p class="text-xs text-[#5C5E63] mt-0.5">Account setup and first daily advance</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-[#F2F3F7] rounded-2xl p-5 mb-5">
+                  <p class="text-sm font-semibold text-[#0F1117] mb-2">Verify your business with Storfund</p>
+                  <p class="text-sm text-[#5C5E63] leading-relaxed mb-4">Storfund needs to confirm a few details about your company before they can advance funds. You'll be taken to Storfund to verify your company name, country of incorporation, legal type, and registration number. Prefer to talk it through first? You can speak to a Storfund account manager before you complete this.</p>
+                  <a
+                    href="https://storfund.com"
+                    target="_blank"
+                    rel="noopener"
+                    class="prototype-hotspot inline-flex items-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
+                  >
+                    Continue to Storfund
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 4.5h6v6M19 5l-9 9M18 13.5V18a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V9a1.5 1.5 0 0 1 1.5-1.5H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+
+                <!-- Prototype-only affordance: simulate Storfund confirming KYB. -->
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-4">
+                  <div class="flex items-start gap-3">
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded flex-shrink-0">Just for this test</span>
+                    <div class="flex-1">
+                      <p class="text-sm text-[#0F1117] font-medium mb-1">Finished verifying with Storfund?</p>
+                      <p class="text-xs text-[#5C5E63] mb-3">In real life, Storfund confirms your verification and your status moves to "under review" on its own. For this preview, jump ahead:</p>
+                      <button
+                        type="button"
+                        :disabled="c2VerifyingKyb"
+                        :class="['prototype-hotspot inline-flex items-center gap-2 text-sm font-semibold rounded-bm px-4 py-2 transition-colors border-2 border-dashed', c2VerifyingKyb ? 'border-gray-300 bg-white text-[#5C5E63] cursor-wait' : 'border-[#0F1117] bg-white text-[#0F1117] hover:bg-gray-50']"
+                        @click="completeVerification"
+                      >
+                        <svg v-if="c2VerifyingKyb" class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.29A7.96 7.96 0 014 12H0c0 3.04 1.13 5.82 3 7.94l3-2.65z" /></svg>
+                        <svg v-else class="h-4 w-4" viewBox="0 0 24 24" fill="none"><path d="M4 4l8 8-8 8M12 4l8 8-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        {{ c2VerifyingKyb ? 'Updating status…' : 'Mark verification complete' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+
             <!-- ── Application not approved state ── -->
             <template v-else-if="activePages[1] === 'application-denied'">
               <div class="max-w-2xl mx-auto py-2">
@@ -2196,18 +2328,18 @@ const invoiceColumns = [
           <div class="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
           </div>
-          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Application submitted</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">Your BackFunds application is in. It's now over to our funding partner to confirm a few things before you're set up.</p>
+          <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Consent recorded</h2>
+          <p class="text-sm text-[#5C5E63] mb-5">Thanks. There's one more step before Storfund can review your application: verifying your business.</p>
 
           <div class="border border-bm-border rounded-bm-lg bg-[#F2F3F7] p-4 text-left mb-6 space-y-3">
             <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase">What happens next</p>
             <div class="flex items-start gap-3">
               <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center"><svg class="w-3 h-3 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Handed to our funding partner.</span> Storfund will reach out to verify your identity and confirm a few business details — this happens entirely on their side.</p>
+              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Verify your business.</span> Next, you'll confirm a few company details with Storfund. This opens in a new tab.</p>
             </div>
             <div class="flex items-start gap-3">
               <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center"><svg class="w-3 h-3 text-amber-600" viewBox="0 0 24 24"><path d="M12.75 6.5a.75.75 0 0 0-1.5 0v5.293a1.25 1.25 0 0 0 .366.884l2.354 2.353a.75.75 0 1 0 1.06-1.06l-2.28-2.28V6.5" fill="currentColor"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25M3.75 12a8.25 8.25 0 1 1 16.5 0 8.25 8.25 0 1 1-16.5 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Decision in 1–2 days.</span> Watch for an email from Storfund — they may ask for ID or extra info. Your status updates automatically here on your Money page.</p>
+              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Decision in 1–2 days.</span> Once your details are verified, Storfund reviews your application and updates your status here automatically.</p>
             </div>
           </div>
 
@@ -2217,7 +2349,7 @@ const invoiceColumns = [
               class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
               @click="closeOnboarding"
             >
-              Back to Money
+              Continue
             </button>
           </div>
         </div>
