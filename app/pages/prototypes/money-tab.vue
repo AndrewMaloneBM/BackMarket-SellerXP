@@ -1490,6 +1490,21 @@ const invoiceColumns = [
                   </div>
                 </div>
 
+                <div class="bg-white border border-amber-200 rounded-2xl p-6 mb-5 shadow-sm">
+                  <span class="inline-block bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded mb-3">Action needed</span>
+                  <p class="font-heading-secondary font-semibold text-lg text-[#0F1117] mb-2">Verify your business with Storfund</p>
+                  <p class="text-sm text-[#5C5E63] leading-relaxed mb-4">Storfund needs to confirm a few details about your company before they can advance funds: your company name, country of incorporation, legal type, and registration number. Until this is done, your application can't move to review. Prefer to talk it through first? You can speak to a Storfund account manager before you complete this.</p>
+                  <a
+                    href="https://storfund.com"
+                    target="_blank"
+                    rel="noopener"
+                    class="prototype-hotspot inline-flex items-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
+                  >
+                    Verify with Storfund
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 4.5h6v6M19 5l-9 9M18 13.5V18a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V9a1.5 1.5 0 0 1 1.5-1.5H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </a>
+                </div>
+
                 <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-5">
                   <p class="text-sm font-semibold text-[#0F1117] mb-6">Application progress</p>
 
@@ -1544,20 +1559,6 @@ const invoiceColumns = [
                       <p class="text-xs text-[#5C5E63] mt-0.5">Account setup and first daily advance</p>
                     </div>
                   </div>
-                </div>
-
-                <div class="bg-[#F2F3F7] rounded-2xl p-5 mb-5">
-                  <p class="text-sm font-semibold text-[#0F1117] mb-2">Verify your business with Storfund</p>
-                  <p class="text-sm text-[#5C5E63] leading-relaxed mb-4">Storfund needs to confirm a few details about your company before they can advance funds. You'll be taken to Storfund to verify your company name, country of incorporation, legal type, and registration number. Prefer to talk it through first? You can speak to a Storfund account manager before you complete this.</p>
-                  <a
-                    href="https://storfund.com"
-                    target="_blank"
-                    rel="noopener"
-                    class="prototype-hotspot inline-flex items-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
-                  >
-                    Continue to Storfund
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 4.5h6v6M19 5l-9 9M18 13.5V18a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V9a1.5 1.5 0 0 1 1.5-1.5H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </a>
                 </div>
 
                 <!-- Prototype-only affordance: simulate Storfund confirming KYB. -->
@@ -2362,27 +2363,29 @@ const invoiceColumns = [
             <svg class="w-8 h-8 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg>
           </div>
           <h2 class="font-heading-secondary font-semibold text-xl text-[#0F1117] mb-2">Consent recorded</h2>
-          <p class="text-sm text-[#5C5E63] mb-5">Thanks. There's one more step before Storfund can review your application: verifying your business.</p>
+          <p class="text-sm text-[#5C5E63] mb-5">Your data-sharing consent is saved and your application is submitted. One step is left: verify your business with Storfund so they can review it.</p>
 
-          <div class="border border-bm-border rounded-bm-lg bg-[#F2F3F7] p-4 text-left mb-6 space-y-3">
-            <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase">What happens next</p>
-            <div class="flex items-start gap-3">
-              <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center"><svg class="w-3 h-3 text-green-700" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M21.03 7.97a.75.75 0 0 1 0 1.06l-9.25 9.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 8.72-8.72a.75.75 0 0 1 1.06 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Verify your business.</span> Next, you'll confirm a few company details with Storfund. This opens in a new tab.</p>
-            </div>
-            <div class="flex items-start gap-3">
-              <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center"><svg class="w-3 h-3 text-amber-600" viewBox="0 0 24 24"><path d="M12.75 6.5a.75.75 0 0 0-1.5 0v5.293a1.25 1.25 0 0 0 .366.884l2.354 2.353a.75.75 0 1 0 1.06-1.06l-2.28-2.28V6.5" fill="currentColor"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25M3.75 12a8.25 8.25 0 1 1 16.5 0 8.25 8.25 0 1 1-16.5 0" clip-rule="evenodd" fill="currentColor"/></svg></span>
-              <p class="text-sm text-[#0F1117]"><span class="font-semibold">Decision in 1–2 days.</span> Once your details are verified, Storfund reviews your application and updates your status here automatically.</p>
-            </div>
+          <div class="border border-amber-200 bg-amber-50 rounded-bm-lg p-4 text-left mb-6">
+            <p class="text-sm text-[#0F1117] leading-relaxed"><span class="font-semibold">Until you verify, Storfund can't review your application or set up your daily advances.</span> Verifying takes a few minutes and confirms your company name, country of incorporation, legal type, and registration number. You can speak to a Storfund account manager first if you'd prefer.</p>
           </div>
 
-          <div class="mt-2 flex justify-center">
-            <button
-              type="button"
-              class="prototype-hotspot bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
+          <div class="flex flex-col gap-2">
+            <a
+              href="https://storfund.com"
+              target="_blank"
+              rel="noopener"
+              class="prototype-hotspot inline-flex items-center justify-center gap-2 bg-green-900 hover:bg-green-800 text-white font-semibold rounded-bm px-5 py-2.5 text-sm transition-colors"
               @click="closeOnboarding"
             >
-              Continue
+              Verify with Storfund
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M13.5 4.5h6v6M19 5l-9 9M18 13.5V18a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18V9a1.5 1.5 0 0 1 1.5-1.5H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <button
+              type="button"
+              class="prototype-hotspot text-sm font-semibold text-[#5C5E63] hover:text-[#0F1117] px-5 py-2.5 rounded-bm transition-colors"
+              @click="closeOnboarding"
+            >
+              Verify later
             </button>
           </div>
         </div>
