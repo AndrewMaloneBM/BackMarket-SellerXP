@@ -568,6 +568,11 @@ const c2WasStopped = ref(false)
 const showPauseConfirm = ref(false)
 const showResumeConfirm = ref(false)
 const showStopConfirm = ref(false)
+// Stopping is gated until the outstanding advance is repaid to zero: the seller
+// pauses first, payouts wind the balance down, then cancel unlocks. Mirrors
+// Storfund's `termination_available` flag, which flips true at a €0 balance.
+const c2OutstandingBalance = ref(712)
+const terminationAvailable = computed(() => c2OutstandingBalance.value === 0)
 
 function confirmPause() {
   c2Paused.value = true
@@ -576,6 +581,7 @@ function confirmPause() {
 }
 function confirmResume() {
   c2Paused.value = false
+  c2OutstandingBalance.value = 712
   showResumeConfirm.value = false
   nextTick(() => scrollPageToTop())
 }
@@ -645,6 +651,8 @@ function simulateApproval() {
   setTimeout(() => {
     activePages.value[1] = 'active'
     c2WasStopped.value = false
+    c2Paused.value = false
+    c2OutstandingBalance.value = 712
     c2CheckingStatus.value = false
     nextTick(() => scrollPageToTop())
   }, 5000)
@@ -1761,33 +1769,58 @@ const invoiceColumns = [
                   </table>
                 </div>
 
-                <div class="bg-[#F2F3F7] rounded-xl p-5 flex items-center justify-between gap-4">
-                  <div>
-                    <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Manage your BackFunds service</p>
-                    <p class="text-xs text-[#5C5E63]">Pausing keeps your account active but stops new advances. Stopping ends BackFunds — you can reapply anytime.</p>
+                <div class="bg-[#F2F3F7] rounded-xl p-5">
+                  <div class="flex items-center justify-between gap-4">
+                    <div>
+                      <p class="text-sm font-semibold text-[#0F1117] mb-0.5">Manage your BackFunds service</p>
+                      <p class="text-xs text-[#5C5E63]">Pausing keeps your account active but stops new advances. You can stop BackFunds once your outstanding balance is repaid.</p>
+                    </div>
+                    <div class="flex gap-2 flex-shrink-0">
+                      <button
+                        v-if="!c2Paused"
+                        class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
+                        @click="showPauseConfirm = true"
+                      >
+                        Pause advances
+                      </button>
+                      <button
+                        v-else
+                        class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
+                        @click="showResumeConfirm = true"
+                      >
+                        Resume advances
+                      </button>
+                      <button
+                        :disabled="!terminationAvailable"
+                        :class="['prototype-hotspot border text-sm font-medium px-4 py-2 rounded-bm transition-colors', terminationAvailable ? 'border-red-200 bg-white text-red-600 hover:bg-red-50' : 'border-gray-200 bg-white text-gray-300 cursor-not-allowed']"
+                        @click="terminationAvailable && (showStopConfirm = true)"
+                      >
+                        Stop BackFunds
+                      </button>
+                      <button class="prototype-hotspot text-sm font-medium text-[#5C5E63] px-4 py-2 rounded-bm hover:text-[#0F1117] transition-colors underline">Contact Support</button>
+                    </div>
                   </div>
-                  <div class="flex gap-2 flex-shrink-0">
-                    <button
-                      v-if="!c2Paused"
-                      class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
-                      @click="showPauseConfirm = true"
-                    >
-                      Pause advances
-                    </button>
-                    <button
-                      v-else
-                      class="prototype-hotspot border border-gray-300 bg-white text-sm font-medium text-[#0F1117] px-4 py-2 rounded-bm hover:bg-gray-50 transition-colors"
-                      @click="showResumeConfirm = true"
-                    >
-                      Resume advances
-                    </button>
-                    <button
-                      class="prototype-hotspot border border-red-200 bg-white text-sm font-medium text-red-600 px-4 py-2 rounded-bm hover:bg-red-50 transition-colors"
-                      @click="showStopConfirm = true"
-                    >
-                      Stop BackFunds
-                    </button>
-                    <button class="prototype-hotspot text-sm font-medium text-[#5C5E63] px-4 py-2 rounded-bm hover:text-[#0F1117] transition-colors underline">Contact Support</button>
+
+                  <!-- Stopping unlocks only at a €0 balance: pause → payouts repay → stop. -->
+                  <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div v-if="!terminationAvailable" class="flex items-start justify-between gap-4">
+                      <p class="text-xs text-[#5C5E63] leading-relaxed">
+                        <span class="font-semibold text-[#0F1117]">Outstanding balance: €{{ c2OutstandingBalance.toLocaleString() }}</span><br>
+                        To stop BackFunds, pause advances first. Your balance repays from your Back Market payouts, and stopping unlocks once it reaches €0.
+                      </p>
+                      <button
+                        v-if="c2Paused"
+                        type="button"
+                        class="prototype-hotspot flex-shrink-0 inline-flex items-center gap-2 text-xs font-semibold rounded-bm px-3 py-1.5 border-2 border-dashed border-[#0F1117] bg-white text-[#0F1117] hover:bg-gray-50 transition-colors"
+                        @click="c2OutstandingBalance = 0"
+                      >
+                        <span class="bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">Test</span>
+                        Mark balance repaid (€0)
+                      </button>
+                    </div>
+                    <p v-else class="text-xs text-[#5C5E63] leading-relaxed">
+                      <span class="font-semibold text-[#0F1117]">Outstanding balance: €0.</span> Your advances are fully repaid, so you can stop BackFunds anytime.
+                    </p>
                   </div>
                 </div>
 
@@ -2563,11 +2596,11 @@ const invoiceColumns = [
           </li>
           <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
             <span class="text-green-600 mt-0.5">✓</span>
-            <span>You can resume daily advances anytime from this page</span>
+            <span>Your outstanding advance is repaid from those payouts while paused</span>
           </li>
           <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
             <span class="text-green-600 mt-0.5">✓</span>
-            <span>No new fees while paused</span>
+            <span>Resume anytime, or stop BackFunds once your balance reaches €0</span>
           </li>
         </ul>
         <div class="flex gap-3 justify-end">
@@ -2601,11 +2634,11 @@ const invoiceColumns = [
       <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-md p-6">
         <p class="text-xs font-semibold tracking-widest text-red-600 uppercase mb-3">Stop BackFunds</p>
         <h2 class="font-heading-primary font-semibold text-xl text-[#0F1117] mb-3">Stop BackFunds permanently?</h2>
-        <p class="text-sm text-[#5C5E63] mb-4">Stopping ends your BackFunds service. Your Back Market account is unaffected, but daily advances will end.</p>
+        <p class="text-sm text-[#5C5E63] mb-4">Your outstanding balance is €0, so BackFunds can close cleanly. Your Back Market account and payouts are unaffected.</p>
         <ul class="space-y-2 mb-6">
           <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
-            <span class="text-amber-600 mt-0.5">!</span>
-            <span>Any outstanding advance must be repaid from your next Back Market payouts before BackFunds closes</span>
+            <span class="text-green-600 mt-0.5">✓</span>
+            <span>Nothing left to repay: your advances are fully settled</span>
           </li>
           <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
             <span class="text-amber-600 mt-0.5">!</span>
@@ -2613,7 +2646,7 @@ const invoiceColumns = [
           </li>
           <li class="flex items-start gap-2 text-sm text-[#5C5E63]">
             <span class="text-green-600 mt-0.5">✓</span>
-            <span>If you just need a break, pausing is reversible — try that first</span>
+            <span>Prefer to keep the option open? Staying paused costs nothing</span>
           </li>
         </ul>
         <div class="flex gap-3 justify-end">
