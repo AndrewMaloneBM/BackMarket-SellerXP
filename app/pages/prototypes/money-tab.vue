@@ -135,7 +135,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
           'Progress tracker shows denial at Storfund review step — activation not reached',
           'Neutral tone — no specific reason given (standard across industry; Storfund controls this)',
           'Seller account impact clearly stated — payouts unaffected',
-          '✏️ Reapply window is a placeholder — confirm timing with Storfund Thursday',
+          'No fixed reapply window. Storfund reviews case by case and re-contacts sellers when eligibility may have changed',
         ],
       },
       {
@@ -1644,7 +1644,7 @@ const invoiceColumns = [
                     </div>
                     <div class="flex items-start gap-2.5 text-sm text-[#5C5E63]">
                       <svg class="w-4 h-4 text-[#5C5E63] flex-shrink-0 mt-0.5" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75m13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5z" clip-rule="evenodd" fill="currentColor"/></svg>
-                      <span>✏️ You may be eligible to reapply in [X months] — confirm reapplication window with Storfund on Thursday</span>
+                      <span>There's no fixed reapply date. Storfund reviews eligibility case by case and will reach out if your situation is likely to have changed.</span>
                     </div>
                   </div>
                 </div>
