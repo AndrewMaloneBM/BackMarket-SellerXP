@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TierStatusResponse } from '~/utils/mockTierApi'
 import { tierLabel } from '~/utils/mockTierApi'
+import RevIcon from '~/components/RevIcon.vue'
 
 defineProps<{ seller: TierStatusResponse; showDetailsLink?: boolean }>()
 const emit = defineEmits<{ 'view-details': [] }>()
@@ -16,7 +17,7 @@ const tierBadgeClass = (tier: number): string => ({
 </script>
 
 <template>
-  <div class="bg-white rounded-bm border border-bm-border shadow-sm p-6">
+  <div class="card p-6">
     <div class="flex items-start justify-between gap-6">
       <div>
         <div class="flex items-center gap-3 mb-2">
@@ -43,6 +44,6 @@ const tierBadgeClass = (tier: number): string => ({
       <p class="text-sm font-semibold text-amber-800">Your deposit policy will change to {{ tierLabel(seller.upcomingChange.tier) }}</p>
       <p class="text-xs text-amber-700 mt-1">This change takes effect on {{ new Date(seller.upcomingChange.effectiveDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) }}. Review your tier details to understand what happens next.</p>
     </div>
-    <button v-if="showDetailsLink !== false" type="button" class="prototype-hotspot mt-5 text-sm font-semibold text-bm-success underline underline-offset-2" @click="emit('view-details')">View deferred payout details →</button>
+    <button v-if="showDetailsLink !== false" type="button" class="prototype-hotspot mt-5 text-sm font-semibold text-bm-success underline underline-offset-2" @click="emit('view-details')">View deferred payout details <RevIcon name="IconArrowRight" class="ml-1 inline h-3.5 w-3.5" /></button>
   </div>
 </template>

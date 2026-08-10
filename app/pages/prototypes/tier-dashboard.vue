@@ -8,6 +8,7 @@ import IntegratedWallet from '~/components/prototypes/IntegratedWallet.vue'
 import UnifiedPayouts from '~/components/prototypes/UnifiedPayouts.vue'
 import IntegratedPayoutDetails from '~/components/prototypes/IntegratedPayoutDetails.vue'
 import MinimalDeferredCard from '~/components/prototypes/MinimalDeferredCard.vue'
+import RevIcon from '~/components/RevIcon.vue'
 
 definePageMeta({ layout: false, alias: ['/share/tier-dashboard'] })
 
@@ -132,11 +133,11 @@ function scrollToSection(sectionId: string) {
       <div v-if="showDroppedModal" class="absolute inset-0 z-50 bg-black/60 flex items-center justify-center p-4 font-body">
         <div class="relative bg-white rounded-bm-xl shadow-xl w-full max-w-md">
           <div class="p-8 text-center">
-            <div class="w-12 h-12 mx-auto mb-5 rounded-full bg-[#F2F3F7] flex items-center justify-center"><svg class="w-5 h-5 text-[#5C5E63]" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18M7.254 17.806A7.5 7.5 0 0 0 17.806 7.254L7.254 17.806M12 4.5a7.5 7.5 0 0 0-5.807 12.245L16.745 6.193A7.467 7.467 0 0 0 12 4.5" clip-rule="evenodd" fill="currentColor"/></svg></div>
-            <p class="text-xs font-semibold tracking-widest text-[#5C5E63] uppercase mb-2">Concept {{ activeConcept }}</p>
-            <h2 class="font-heading-primary font-semibold text-2xl text-[#0F1117] mb-3">Dropped on April 23rd</h2>
-            <p class="text-sm text-[#5C5E63] leading-relaxed mb-8">Kept for reference.</p>
-            <button type="button" class="prototype-hotspot w-full bg-[#0F1117] hover:opacity-80 text-white font-semibold rounded-bm px-5 py-3 text-sm transition-opacity" @click="showDroppedModal = false">View it anyway</button>
+            <div class="w-12 h-12 mx-auto mb-5 rounded-full bg-bm-gray-50 flex items-center justify-center"><RevIcon name="IconBlocked" class="h-5 w-5" /></div>
+            <p class="text-xs font-semibold tracking-widest text-bm-text-low uppercase mb-2">Concept {{ activeConcept }}</p>
+            <h2 class="font-heading-primary font-semibold text-2xl text-bm-text-hi mb-3">Dropped on April 23rd</h2>
+            <p class="text-sm text-bm-text-low leading-relaxed mb-8">Kept for reference.</p>
+            <button type="button" class="prototype-hotspot w-full bg-bm-text-hi hover:opacity-80 text-white font-semibold rounded-bm px-5 py-3 text-sm transition-opacity" @click="showDroppedModal = false">View it anyway</button>
           </div>
         </div>
       </div>

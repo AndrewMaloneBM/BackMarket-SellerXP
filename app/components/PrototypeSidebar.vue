@@ -130,10 +130,10 @@ watch(expandedPageIds, () => nextTick(() => {
     <!-- Collapsed rail -->
     <div v-if="!sidebarOpen" class="flex flex-col items-center px-2 py-3 gap-1">
       <button @click="emit('update:sidebarOpen', true)" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-white transition-colors rounded hover:bg-gray-800">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 3v18"/><path d="M11 9l3 3-3 3"/></svg>
+        <RevIcon name="IconLayout" class="w-5 h-5" />
       </button>
       <NuxtLink v-if="!shareMode" to="/" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-white transition-colors rounded hover:bg-gray-800">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75v-5.25h-4.5V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z"/></svg>
+        <RevIcon name="IconHome" class="w-5 h-5" />
       </NuxtLink>
       <template v-for="n in concepts.length" :key="n">
         <button
@@ -142,11 +142,7 @@ watch(expandedPageIds, () => nextTick(() => {
           @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
         >
           {{ n }}
-          <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
-              <line x1="10" y1="10" x2="90" y2="90"/>
-            </svg>
-          </span>
+          <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none flex items-center justify-center"><span class="h-0.5 w-8 rotate-45 rounded-full bg-current" /></span>
         </button>
       </template>
     </div>
@@ -157,7 +153,7 @@ watch(expandedPageIds, () => nextTick(() => {
       <!-- Zone 1: Header -->
       <div class="sticky top-0 bg-gray-950 border-b border-gray-800 z-10 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <NuxtLink v-if="!shareMode" to="/" class="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          <RevIcon name="IconChevronLeft" class="w-3.5 h-3.5" />
           Hub
         </NuxtLink>
         <span v-else class="w-[42px]" />
@@ -165,7 +161,7 @@ watch(expandedPageIds, () => nextTick(() => {
           <span class="text-xs font-semibold text-white tracking-wide">{{ title }}</span>
         </slot>
         <button @click="emit('update:sidebarOpen', false)" class="text-gray-500 hover:text-white transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 3v18"/><path d="M14 9l-3 3 3 3"/></svg>
+          <RevIcon name="IconLayout" class="w-4 h-4" />
         </button>
       </div>
 
@@ -185,7 +181,7 @@ watch(expandedPageIds, () => nextTick(() => {
             <p class="text-[10px] text-gray-600 uppercase tracking-widest mr-auto">Concept</p>
             <div class="relative" @mouseenter="onResetHover" @mouseleave="onResetLeave">
               <button @click="emit('reset')" class="p-1 rounded text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                <RevIcon name="IconRefresh" class="w-3 h-3" />
               </button>
               <div v-if="showResetTooltip" class="absolute right-0 top-6 z-20 bg-gray-700 text-white text-[11px] rounded px-2 py-1 whitespace-nowrap shadow-lg">Reset dismissed UI</div>
             </div>
@@ -215,7 +211,7 @@ watch(expandedPageIds, () => nextTick(() => {
                 @click="emit('reset')"
                 class="p-1 rounded text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors"
               >
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                <RevIcon name="IconRefresh" class="w-3 h-3" />
               </button>
               <div
                 v-if="showResetTooltip"
@@ -234,9 +230,7 @@ watch(expandedPageIds, () => nextTick(() => {
               >
                 {{ n }}
                 <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
-                  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
-                    <line x1="10" y1="10" x2="90" y2="90"/>
-                  </svg>
+                  <RevIcon name="IconBlocked" class="h-5 w-5" />
                 </span>
               </button>
             </template>
@@ -276,9 +270,7 @@ watch(expandedPageIds, () => nextTick(() => {
                     <span :class="['text-xs truncate', activePageId === page.id ? 'font-medium' : '']">{{ page.label }}</span>
                   </button>
                   <button class="flex-shrink-0 p-0.5 text-gray-700 hover:text-gray-400 transition-colors" @click="toggleExpanded(page.id)">
-                    <svg class="w-3 h-3 transition-transform duration-150" :class="expandedPageIds.includes(page.id) ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                    </svg>
+                    <RevIcon name="IconChevronRight" class="w-3 h-3 transition-transform duration-150" :class="expandedPageIds.includes(page.id) ? 'rotate-90' : ''" />
                   </button>
                 </div>
 
@@ -306,7 +298,7 @@ watch(expandedPageIds, () => nextTick(() => {
           <!-- Internal: page tree scroll fade -->
           <div v-if="!shareMode && pageTreeHasMore" class="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none flex items-end justify-center pb-1">
             <div class="flex flex-col items-center gap-0.5">
-              <svg class="w-3.5 h-3.5 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              <RevIcon name="IconChevronDown" class="w-3.5 h-3.5 text-gray-500 animate-bounce" />
               <span class="text-[9px] text-gray-600 uppercase tracking-widest">Scroll</span>
             </div>
           </div>

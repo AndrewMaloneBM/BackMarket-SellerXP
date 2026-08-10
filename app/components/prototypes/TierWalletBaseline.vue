@@ -7,7 +7,7 @@ const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { max
 
 <template>
   <div class="grid grid-cols-4 gap-6">
-    <div :class="[props.showDeferredPanel ? 'col-span-3' : 'col-span-4', 'bg-white rounded-bm border border-bm-border shadow-sm p-6']">
+    <div :class="[props.showDeferredPanel ? 'col-span-3' : 'col-span-4', 'card p-6']">
       <h2 class="text-xl font-bold text-bm-text-hi mb-5">Your wallet</h2>
       <div class="grid grid-cols-2 gap-6">
         <div class="rounded-bm border border-indigo-100 bg-indigo-50 p-6 min-h-48">
@@ -25,11 +25,11 @@ const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { max
         </div>
       </div>
     </div>
-    <div v-if="props.showDeferredPanel" class="bg-[#F1F2F6] rounded-bm p-6 min-h-48">
+    <div v-if="props.showDeferredPanel" class="bg-bm-surface rounded-bm p-6 min-h-48">
       <h2 class="text-base font-semibold text-bm-text-hi mb-3">Deferred payout</h2>
       <p class="text-sm text-bm-text-mid leading-5">This is the amount Back Market holds for issues that might happen with products under warranty, such as repairs or refunds.</p>
       <button type="button" class="prototype-hotspot mt-3 text-sm font-semibold text-bm-text-hi underline underline-offset-2">Read this article for more details</button>
-      <div class="mt-5 rounded bg-[#E8E9EE] px-3 py-2 text-sm text-bm-text-hi">{{ formatEur(props.seller.currentDpEur) }}</div>
+      <div class="mt-5 rounded bg-bm-gray-100 px-3 py-2 text-sm text-bm-text-hi">{{ formatEur(props.seller.currentDpEur) }}</div>
     </div>
   </div>
 </template>
