@@ -44,6 +44,24 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
+    title: 'Seller Cash Flow Optimization via a 6-Tier Risk Model Migration',
+    description: 'The current 4-tier deferred payout system holds 100% of Future Refunds as deposit for 76% of sellers, with no realistic path to better cash flow terms. This prototype explores how to surface the new 6-tier risk model in the seller Back Office: where the tier dashboard lives on the Money page, how deposit adjustments are communicated, and how proactive progression guidance helps sellers reach the next tier.',
+    problemStatement: 'Mid-performing sellers are stuck in Tier 1 with no visible path to unlock the cash they are owed.',
+    author: 'Andrew Malone',
+    date: 'August 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Full dashboard below wallet', pages: ['Money'] },
+      { n: 2, name: 'Split payouts', pages: ['Money'] },
+      { n: 3, name: 'Wallet summary + Payouts (inactive)', pages: ['Money'] },
+    ],
+    scope: 'Home, Money',
+    goal: 'Make tier progression and deposit releases transparent for all 1,408 sellers',
+    impact: '€4.84M cash released to 512 sellers',
+    link: '/prototypes/tier-dashboard',
+    accent: '#1A9C5B',
+  },
+  {
     title: 'Bring AI into the seller Back Office to reduce support friction and help sellers perform better',
     description: 'Support AI is Back Market\'s first seller-facing AI capability, embedded directly in the BO. Today it answers policy and operational questions instantly. Tomorrow it proactively surfaces personalised insights on payouts, quality, BackFunds eligibility, BackBox opportunities, and new feature releases — without sellers ever leaving the Back Office.',
     problemStatement: 'From answering questions to driving performance — Support AI is the foundation for a smarter Back Office.',

@@ -8,16 +8,24 @@ export interface PrototypeSubState {
   label: string
 }
 
+export interface PrototypeChangeTarget {
+  pageId: string
+  subStateId?: string
+  sectionId?: string
+}
+
 export interface PrototypePage {
   id: string
   label: string
   navItem: string
   changes: string[]
+  changeTargets?: PrototypeChangeTarget[]
   subStates?: PrototypeSubState[]
 }
 
 export interface PrototypeConcept {
   name: string
+  inactive?: boolean
   prdFeature: string
   prdMetric: string
   pros: string[]

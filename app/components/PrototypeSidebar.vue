@@ -20,6 +20,7 @@ const emit = defineEmits<{
   'update:sidebarOpen': [value: boolean]
   'update:activePageId': [value: string]
   'setSubState': [pageId: string, subStateId: string]
+  'navigateToSection': [sectionId: string]
   'reset': []
 }>()
 
@@ -83,6 +84,17 @@ function navigateToSubState(pageId: string, subStateId: string) {
   emit('setSubState', pageId, subStateId)
 }
 
+function navigateToChange(page: PrototypeConcept['pages'][number], changeIndex: number) {
+  const target = page.changeTargets?.[changeIndex]
+  if (!target) {
+    navigateTo(page.id)
+    return
+  }
+  if (target.subStateId) navigateToSubState(target.pageId, target.subStateId)
+  else navigateTo(target.pageId)
+  if (target.sectionId) emit('navigateToSection', target.sectionId)
+}
+
 // Scroll fade — shows gradient when content is cut off below
 const pageTreeEl = ref<HTMLElement | null>(null)
 const zone2El = ref<HTMLElement | null>(null)
@@ -126,8 +138,8 @@ watch(expandedPageIds, () => nextTick(() => {
       <template v-for="n in concepts.length" :key="n">
         <button
           v-if="!shareMode || !droppedConcepts?.includes(n)"
-          :class="['relative overflow-hidden w-8 h-8 flex items-center justify-center text-xs rounded transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-600 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) ? 'opacity-50' : '']"
-          @click="emit('update:activeConcept', n)"
+          :class="['relative overflow-hidden w-8 h-8 flex items-center justify-center text-xs rounded transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-600 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) || concepts[n - 1]?.inactive ? 'opacity-40' : '']"
+          @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
         >
           {{ n }}
           <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
@@ -181,10 +193,11 @@ watch(expandedPageIds, () => nextTick(() => {
           <button
             v-for="(concept, i) in concepts"
             :key="i"
-            :class="['w-full text-left px-3 py-2 rounded text-xs transition-colors', activeConcept === i + 1 ? 'bg-white text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800']"
+            :class="['w-full text-left px-3 py-2 rounded text-xs transition-colors', activeConcept === i + 1 ? 'bg-white text-gray-900 font-semibold' : concept.inactive || droppedConcepts?.includes(i + 1) ? 'text-gray-700 opacity-50' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800']"
             @click="emit('update:activeConcept', i + 1)"
           >
-            {{ concept.name }}
+            <span :class="concept.inactive || droppedConcepts?.includes(i + 1) ? 'line-through' : ''">{{ concept.name }}</span>
+            <span v-if="concept.inactive || droppedConcepts?.includes(i + 1)" class="ml-auto text-[9px] uppercase tracking-widest text-gray-700">Inactive</span>
           </button>
         </div>
 
@@ -217,7 +230,7 @@ watch(expandedPageIds, () => nextTick(() => {
               <button
                 v-if="!shareMode || !droppedConcepts?.includes(n)"
                 :class="['relative overflow-hidden rounded px-3 py-1.5 text-xs transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) ? 'opacity-50' : '']"
-                @click="emit('update:activeConcept', n)"
+                @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
               >
                 {{ n }}
                 <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
@@ -319,9 +332,15 @@ watch(expandedPageIds, () => nextTick(() => {
           <div v-for="page in currentConcept.pages" :key="page.id" class="mb-3 last:mb-0">
             <p class="text-[10px] text-gray-600 mb-1.5">{{ page.label }}</p>
             <ul class="space-y-1">
-              <li v-for="change in page.changes" :key="change" class="flex items-start gap-1.5 text-[12px] text-gray-400 leading-snug">
+              <li v-for="(change, changeIndex) in page.changes" :key="change" class="flex items-start gap-1.5 text-[12px] leading-snug">
                 <span class="text-gray-600 flex-shrink-0">·</span>
-                {{ change }}
+                <button
+                  type="button"
+                  class="text-left text-gray-400 hover:text-white hover:underline underline-offset-2 transition-colors"
+                  @click="navigateToChange(page, changeIndex)"
+                >
+                  {{ change }}
+                </button>
               </li>
             </ul>
           </div>
