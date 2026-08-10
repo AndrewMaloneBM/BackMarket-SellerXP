@@ -3,6 +3,9 @@ import type { PrototypeConcept } from '~/composables/usePrototypeSidebar'
 
 definePageMeta({ layout: false })
 
+const runtimeConfig = useRuntimeConfig()
+const baseHref = (runtimeConfig.app.baseURL ?? '/').replace(/\/$/, '')
+
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 const SELLER_NAME = 'TechRenew GmbH'
 const CHAT_USER_NAME = 'TechRenew GmbH'
@@ -1088,7 +1091,7 @@ function applySubState(subId: string) {
       <div class="sticky top-0 z-30 bg-bm-surface flex-shrink-0">
         <header class="border-b border-bm-border">
           <div class="flex items-center px-8 h-14 gap-4">
-            <img src="/bm-logo.svg" alt="Back Market" class="h-8 w-auto select-none" />
+            <img :src="`${baseHref}/bm-logo.svg`" alt="Back Market" class="h-8 w-auto select-none" />
             <span class="ml-4 text-sm text-bm-text-mid">Hello <strong class="font-semibold text-bm-text-hi">{{ SELLER_NAME }}</strong></span>
             <div class="ml-auto flex items-center gap-2">
               <button @click="drawerOpen = true" class="inline-flex items-center gap-1.5 bg-bm-text-hi text-white text-sm font-medium px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity">
@@ -1284,7 +1287,7 @@ function applySubState(subId: string) {
               <!-- AI message -->
               <div v-else class="flex gap-3">
                 <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <img src="/bm-avatar.svg" class="w-5 h-5 invert" alt="" />
+                  <img :src="`${baseHref}/bm-avatar.svg`" class="w-5 h-5 invert" alt="" />
                 </div>
                 <div class="flex-1">
                   <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
@@ -1456,7 +1459,7 @@ function applySubState(subId: string) {
             <!-- Loading state -->
             <div v-if="chatLoading" class="flex gap-3">
               <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <img src="/bm-avatar.svg" class="w-5 h-5 invert" alt="" />
+                <img :src="`${baseHref}/bm-avatar.svg`" class="w-5 h-5 invert" alt="" />
               </div>
               <div class="flex-1">
                 <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>

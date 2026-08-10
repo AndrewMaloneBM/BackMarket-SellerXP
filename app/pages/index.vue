@@ -135,7 +135,7 @@ onUnmounted(() => {
   <nav class="wb-nav" :class="{ 'wb-nav--scrolled': scrolled }">
     <div class="wb-nav-inner">
       <div class="wb-nav-left">
-        <img src="/bm-wordmark.svg" alt="Back Market" class="wb-nav-logo" />
+        <img :src="withBase('/bm-wordmark.svg')" alt="Back Market" class="wb-nav-logo" />
         <span class="wb-nav-sep">/</span>
         <span class="wb-nav-sub">{{ hub.slug }} · prototypes</span>
       </div>
