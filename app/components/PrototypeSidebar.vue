@@ -229,8 +229,8 @@ watch(expandedPageIds, () => nextTick(() => {
                 @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
               >
                 {{ n }}
-                <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
-                  <RevIcon name="IconBlocked" class="h-5 w-5" />
+                <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                  <span class="h-0.5 w-8 rotate-45 rounded-full bg-current" />
                 </span>
               </button>
             </template>
