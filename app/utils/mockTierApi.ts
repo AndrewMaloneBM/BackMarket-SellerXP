@@ -27,18 +27,19 @@ export interface TierThresholds {
   refundRatePct: Record<ProductCategory, number>
   oowRatePct: number
   wrongProductRatePct: number
+  gmvEur: number | null
   kybUpdated: boolean
   vatNumber: boolean
   seniorityMonths: number
 }
 
 export const THRESHOLD_MATRIX: readonly TierThresholds[] = [
-  { tier: 2, defectiveRatePct: { smartphone: 8, laptop: 9, other: 8.5 }, refundRatePct: { smartphone: 13, laptop: 14, other: 13.5 }, oowRatePct: 12, wrongProductRatePct: 1.5, kybUpdated: true, vatNumber: true, seniorityMonths: 3 },
-  { tier: 3, defectiveRatePct: { smartphone: 6.5, laptop: 7.5, other: 7 }, refundRatePct: { smartphone: 11, laptop: 12, other: 11.5 }, oowRatePct: 10, wrongProductRatePct: 1, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
-  { tier: 4, defectiveRatePct: { smartphone: 5, laptop: 6, other: 5.5 }, refundRatePct: { smartphone: 9, laptop: 10, other: 9.5 }, oowRatePct: 8, wrongProductRatePct: 0.5, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
-  { tier: 5, defectiveRatePct: { smartphone: 3, laptop: 4, other: 4 }, refundRatePct: { smartphone: 6, laptop: 8, other: 7.5 }, oowRatePct: 6, wrongProductRatePct: 0.3, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
-  // NOTE: PRD lists Tier 6 thresholds identical to Tier 4 - likely a typo. Flagged as an open question.
-  { tier: 6, defectiveRatePct: { smartphone: 5, laptop: 6, other: 5.5 }, refundRatePct: { smartphone: 9, laptop: 10, other: 9.5 }, oowRatePct: 8, wrongProductRatePct: 0.5, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
+  { tier: 2, defectiveRatePct: { smartphone: 8, laptop: 9, other: 8.5 }, refundRatePct: { smartphone: 13, laptop: 14, other: 13.5 }, oowRatePct: 12, wrongProductRatePct: 1.5, gmvEur: 50000, kybUpdated: true, vatNumber: true, seniorityMonths: 3 },
+  { tier: 3, defectiveRatePct: { smartphone: 6.5, laptop: 7.5, other: 7 }, refundRatePct: { smartphone: 11, laptop: 12, other: 11.5 }, oowRatePct: 10, wrongProductRatePct: 1, gmvEur: 75000, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
+  { tier: 4, defectiveRatePct: { smartphone: 5, laptop: 6, other: 5.5 }, refundRatePct: { smartphone: 9, laptop: 10, other: 9.5 }, oowRatePct: 8, wrongProductRatePct: 0.5, gmvEur: 100000, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
+  { tier: 5, defectiveRatePct: { smartphone: 3, laptop: 4, other: 4 }, refundRatePct: { smartphone: 6, laptop: 8, other: 7.5 }, oowRatePct: 6, wrongProductRatePct: 0.3, gmvEur: 200000, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
+  // Tier 6 = Premium Sellers. Thresholds intentionally mirror Tier 4; GMV requirement is N/A.
+  { tier: 6, defectiveRatePct: { smartphone: 5, laptop: 6, other: 5.5 }, refundRatePct: { smartphone: 9, laptop: 10, other: 9.5 }, oowRatePct: 8, wrongProductRatePct: 0.5, gmvEur: null, kybUpdated: true, vatNumber: true, seniorityMonths: 6 },
 ]
 
 export type AdjustmentStatus = 'none' | 'releasing' | 'collecting'
@@ -47,7 +48,7 @@ export type MetricStatus = 'met' | 'close' | 'needs_improvement'
 export interface TierMetricGap {
   key: string
   label: string
-  unit: '%' | 'months' | 'boolean'
+  unit: '%' | 'months' | 'boolean' | 'eur'
   current: number | boolean
   required: number | boolean
   gap?: number // absolute distance from requirement (negative = improvement needed)
@@ -131,6 +132,7 @@ function scenarioUpgradeInProgress(): TierStatusResponse {
       { key: 'oow_rate', label: 'OOW declaration rate', unit: '%', current: 9.0, required: 10, status: 'met' },
       { key: 'wrong_product_rate', label: 'Wrong product rate', unit: '%', current: 0.4, required: 1, status: 'met' },
       { key: 'seniority', label: 'Seller seniority', unit: 'months', current: 5, required: 6, gap: 1, status: 'close' },
+      { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 68000, required: 75000, gap: 7000, status: 'close' },
     ],
     tierHistory: [
       { date: '2026-05-01', fromTier: 1, toTier: 2, reason: 'Met Tier 2 thresholds: defective rate, refund rate, seniority' },
@@ -160,6 +162,7 @@ function scenarioCloseToUpgrade(): TierStatusResponse {
       { key: 'oow_rate', label: 'OOW declaration rate', unit: '%', current: 10.8, required: 12, status: 'met' },
       { key: 'wrong_product_rate', label: 'Wrong product rate', unit: '%', current: 1.6, required: 1.5, gap: 0.1, status: 'close' },
       { key: 'seniority', label: 'Seller seniority', unit: 'months', current: 2.5, required: 3, gap: 0.5, status: 'close' },
+      { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 48000, required: 50000, gap: 2000, status: 'close' },
     ],
     tierHistory: [
       { date: '2026-02-15', fromTier: null, toTier: 1, reason: 'Onboarded to Back Market' },
@@ -193,6 +196,7 @@ function scenarioDowngradeNotice(): TierStatusResponse {
       { key: 'oow_rate', label: 'OOW declaration rate', unit: '%', current: 11.4, required: 8, gap: 3.4, status: 'needs_improvement' },
       { key: 'wrong_product_rate', label: 'Wrong product rate', unit: '%', current: 0.8, required: 0.5, gap: 0.3, status: 'needs_improvement' },
       { key: 'seniority', label: 'Seller seniority', unit: 'months', current: 14, required: 6, status: 'met' },
+      { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 72000, required: 100000, gap: 28000, status: 'needs_improvement' },
     ],
     tierHistory: [
       { date: '2026-06-15', fromTier: 4, toTier: 3, reason: 'Downgraded: defective rate above Tier 4 threshold' },
@@ -246,6 +250,7 @@ function scenarioStable(): TierStatusResponse {
       { key: 'oow_rate', label: 'OOW declaration rate', unit: '%', current: 5.2, required: 6, status: 'met' },
       { key: 'wrong_product_rate', label: 'Wrong product rate', unit: '%', current: 0.35, required: 0.3, gap: 0.05, status: 'close' },
       { key: 'seniority', label: 'Seller seniority', unit: 'months', current: 20, required: 6, status: 'met' },
+      { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 185000, required: 200000, gap: 15000, status: 'close' },
     ],
     tierHistory: [
       { date: '2026-05-01', fromTier: 5, toTier: 4, reason: 'Met Tier 4 thresholds: defective rate, refund rate, OOW rate' },
