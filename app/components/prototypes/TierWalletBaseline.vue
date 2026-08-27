@@ -16,11 +16,12 @@ const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { max
           <div class="flex items-baseline justify-between rounded bg-white px-3 py-2"><span class="text-sm text-gray-500">€</span><span class="text-lg font-semibold text-gray-900">301,556.33</span></div>
         </div>
         <div class="rounded-bm border border-bm-gray-200 bg-white p-6 min-h-48">
-          <p class="text-base font-semibold text-gray-900 mb-2">Upcoming payouts</p>
-          <p class="text-sm text-gray-500 mb-5">The amount in your wallet will be split between 2 upcoming payouts.</p>
-          <div class="space-y-3 text-sm text-gray-600">
-            <div class="flex justify-between border-b border-bm-border pb-3"><span>12/08/2026</span><span>€137,982.86</span></div>
-            <div class="flex justify-between"><span>19/08/2026</span><span>€163,663.47</span></div>
+          <p class="text-base font-semibold text-gray-900 mb-2">Next payout</p>
+          <p class="text-3xl font-bold text-gray-900 mb-1">€137,982.86</p>
+          <p class="text-sm text-gray-500 mb-4">On 12 August 2026</p>
+          <div class="border-t border-bm-border pt-4">
+            <p class="text-xs text-gray-400 mb-2">Then</p>
+            <div class="flex justify-between text-sm text-gray-600"><span>19 August 2026</span><span>€163,663.47</span></div>
           </div>
         </div>
       </div>
