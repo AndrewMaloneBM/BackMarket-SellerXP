@@ -8,7 +8,7 @@ const activeTab = ref<string>('Active')
 
 const showMoreFilters = ref(false)
 const expandAll = ref(false)
-const expandedRows = ref<Set<string>>(new Set(['L1']))
+const expandedRows = ref<Set<string>>(new Set())
 
 function toggleRow(id: string) {
   const next = new Set(expandedRows.value)
@@ -185,9 +185,9 @@ defineExpose({
   >
     <template #header-actions>
       <div class="flex flex-col gap-3 md:flex-row md:gap-4">
-        <button class="rounded-bm-sm px-[11px] py-[11px] min-w-20 cursor-pointer bg-white border border-bm-text-hi text-bm-text-hi text-base font-semibold hover:bg-bm-gray-50 transition-colors">Import or export listings</button>
-        <button class="rounded-bm-sm px-[11px] py-[11px] min-w-20 cursor-pointer bg-white border border-bm-text-hi text-bm-text-hi text-base font-semibold hover:bg-bm-gray-50 transition-colors">Manage price rules</button>
-        <button class="rounded-bm-sm p-3 min-w-20 cursor-pointer bg-bm-text-hi text-white text-base font-semibold hover:bg-bm-gray-700 transition-colors">Create new listing</button>
+        <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Import or export listings</button>
+        <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Manage price rules</button>
+        <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors">Create new listing</button>
       </div>
     </template>
 
@@ -295,10 +295,6 @@ defineExpose({
           <button class="rounded-bm-sm px-[11px] py-[5px] cursor-pointer bg-white border border-bm-text-hi text-bm-text-hi text-sm font-semibold hover:bg-bm-gray-50 transition-colors">See all within €4.00 of BackBoxes</button>
           <button class="rounded-bm-sm px-[11px] py-[5px] cursor-pointer bg-white border border-bm-text-hi text-bm-text-hi text-sm font-semibold hover:bg-bm-gray-50 transition-colors">See all within €8.00 of BackBoxes</button>
         </div>
-        <button class="rounded-bm-sm px-[11px] py-[5px] cursor-pointer bg-white border border-bm-text-hi text-bm-text-hi text-sm font-semibold hover:bg-bm-gray-50 transition-colors inline-flex items-center gap-2">
-          See all deal opportunities
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-        </button>
       </div>
 
       <div class="bg-white rounded-bm-lg shadow-sm overflow-hidden">
@@ -309,7 +305,12 @@ defineExpose({
               <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">Product</th>
               <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">Inventory</th>
               <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">Market(s)</th>
-              <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">Competition (Last 7d average)</th>
+              <th class="px-4 py-3 first:pl-6 text-left text-base font-semibold text-bm-text-hi">
+                <div class="flex flex-col gap-0.5">
+                  <span>Competition</span>
+                  <span class="text-xs font-normal text-bm-text-low">Last 7 days</span>
+                </div>
+              </th>
               <th class="px-4 py-3 last:pr-6 text-right"></th>
             </tr>
           </thead>
@@ -317,24 +318,27 @@ defineExpose({
             <template v-for="(listing, idx) in listings" :key="listing.id">
               <tr :class="['bg-white', idx !== listings.length - 1 && 'border-b border-bm-border']">
                 <td class="px-4 py-6 first:pl-6 align-middle">
-                  <div class="h-12 w-12 rounded-bm-sm border border-bm-border" :style="{ background: thumbBg(listing.thumb) }" />
+                  <div class="h-12 w-12 rounded-bm-sm border border-bm-border bg-white overflow-hidden">
+                    <ProductThumb :thumb="listing.thumb" />
+                  </div>
                 </td>
 
                 <td class="px-4 py-6 align-middle max-w-[320px]">
                   <div class="flex flex-col">
                     <button class="text-base font-semibold text-bm-text-hi underline hover:text-bm-text-mid text-left cursor-pointer">{{ listing.title }}</button>
                     <span class="mt-1 text-sm text-bm-text-low max-w-[256px] break-words">SKU: {{ listing.sku }}</span>
-                    <div class="mt-3 flex flex-wrap items-center gap-3">
-                      <span :class="['inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs', listing.grade === 'Fair' ? 'bg-[hsl(45,100%,85%)] text-[hsl(38,90%,28%)]' : 'bg-static-default-mid text-bm-text-hi']">
+                    <div class="mt-3 flex flex-wrap items-center gap-1.5">
+                      <span class="inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-normal bg-bm-gray-100 text-bm-text-mid">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09" /></svg>
                         {{ listing.grade }}
                       </span>
-                      <span class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs bg-static-default-mid text-bm-text-hi">
+                      <span class="inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-normal bg-bm-gray-100 text-bm-text-mid">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M9 17h6" /></svg>
                         {{ listing.sim }}
                       </span>
-                      <span v-if="listing.newBattery" class="inline-flex items-center justify-center rounded-full px-2 py-1 text-xs" :style="{ background: 'hsl(145, 83%, 90%)', color: 'hsl(156, 100%, 21%)' }">
+                      <span v-if="listing.newBattery" class="inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-normal bg-bm-gray-100 text-bm-text-mid">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="8" width="16" height="10" rx="1.5" /><path d="M19 11v4" /><path stroke-linecap="round" stroke-linejoin="round" d="m8 13 2 2 4-4" /></svg>
+                        New battery
                       </span>
                     </div>
                     <button class="mt-2 inline-flex items-center gap-1 text-sm text-bm-text-hi underline hover:text-bm-text-mid w-fit cursor-pointer">

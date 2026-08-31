@@ -1,7 +1,4 @@
 <script setup lang="ts">
-const runtimeConfig = useRuntimeConfig()
-const baseHref = (runtimeConfig.app.baseURL ?? '/').replace(/\/$/, '')
-
 withDefaults(defineProps<{
   navItems: readonly string[]
   activeNavItem: string
@@ -30,7 +27,7 @@ const emit = defineEmits<{
     <div class="sticky top-0 z-30 bg-bm-surface">
       <header class="border-b border-bm-border">
         <div class="flex items-center gap-4 px-8 h-14">
-          <img :src="`${baseHref}/bm-logo.svg`" alt="Back Market" class="h-8 w-auto select-none" />
+          <img src="/bm-logo.svg" alt="Back Market" class="h-8 w-auto select-none" />
           <div class="flex items-center gap-3 ml-6">
             <span class="text-sm text-bm-text-mid">Hello <strong class="font-semibold text-bm-text-hi">{{ sellerName }}</strong></span>
             <button class="border border-bm-border-action rounded-bm-sm px-3 py-1 text-xs text-bm-text-low hover:bg-bm-gray-100 transition-colors">Leave seller view</button>
@@ -73,7 +70,7 @@ const emit = defineEmits<{
       <div class="px-8">
         <div class="flex items-start justify-between gap-4 mt-6 mb-4">
           <h1 class="text-3xl font-bold text-bm-text-hi">{{ pageTitle }}</h1>
-          <div class="pt-1">
+          <div class="flex items-center gap-3">
             <slot name="header-actions" />
           </div>
         </div>
