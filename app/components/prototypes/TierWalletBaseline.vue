@@ -14,8 +14,6 @@ const upcomingPayouts = [
   { payoutDate: '16/11/2026', periodStart: '12/08/2026', periodEnd: '19/08/2026', eur: '94,193.00 €', gbp: '£ 7.563,00', sek: '73,236.00 SEK' },
   { payoutDate: '26/11/2026', periodStart: '19/08/2026', periodEnd: '26/08/2026', eur: '89,744.00 €', gbp: '£ 5.014,00', sek: '65,018.00 SEK' },
   { payoutDate: '05/12/2026', periodStart: '26/08/2026', periodEnd: '01/09/2026', eur: '85,120.00 €', gbp: '£ 4.892,00', sek: '62,150.00 SEK' },
-  { payoutDate: '15/12/2026', periodStart: '01/09/2026', periodEnd: '08/09/2026', eur: '91,450.00 €', gbp: '£ 5.230,00', sek: '66,890.00 SEK' },
-  { payoutDate: '26/12/2026', periodStart: '08/09/2026', periodEnd: '15/09/2026', eur: '78,325.00 €', gbp: '£ 4.510,00', sek: '57,200.00 SEK' },
 ]
 </script>
 

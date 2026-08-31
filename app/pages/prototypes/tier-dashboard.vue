@@ -10,19 +10,9 @@ import IntegratedPayoutDetails from '~/components/prototypes/IntegratedPayoutDet
 import MinimalDeferredCard from '~/components/prototypes/MinimalDeferredCard.vue'
 import RevIcon from '~/components/RevIcon.vue'
 
-definePageMeta({ layout: false, alias: ['/share/tier-dashboard'] })
+definePageMeta({ layout: false })
 
-const route = useRoute()
-const shareMode = computed(() => route.path.startsWith('/share/'))
 const scenario = ref<TierScenario>('upgrade-in-progress')
-
-const scenarioOptions: { value: TierScenario; label: string }[] = [
-  { value: 'upgrade-in-progress', label: 'Upgrade in progress' },
-  { value: 'close-to-upgrade', label: 'Close to upgrade' },
-  { value: 'downgrade-notice', label: 'Downgrade notice' },
-  { value: 'top-tier', label: 'Top tier' },
-  { value: 'stable', label: 'Stable' },
-]
 
 const seller = computed(() => getSellerTierStatus('TechRenew-EU-001', scenario.value))
 const droppedConcepts = [2, 3] as const
@@ -108,7 +98,7 @@ function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
 }
 const activeSubStateId = computed(() => {
-  if (activeConcept.value === 1) return 'wallet'
+  if (activeConcept.value === 1) return scenario.value
   if (activeConcept.value === 2) {
     const tab = conceptTabs.value[1]
     return tab === 'Deferred payouts' ? 'deferred-payouts' : 'wallet'
@@ -118,7 +108,14 @@ const activeSubStateId = computed(() => {
 })
 function onSetSubState(pageId: string, subStateId: string) {
   if (pageId !== 'money') return
-  if (activeConcept.value === 1) conceptTabs.value[0] = subStateId === 'daily-payouts' ? 'Daily payouts' : 'Your wallet'
+  if (activeConcept.value === 1) {
+    if (subStateId === 'wallet' || subStateId === 'daily-payouts') {
+      conceptTabs.value[0] = subStateId === 'daily-payouts' ? 'Daily payouts' : 'Your wallet'
+    } else {
+      scenario.value = subStateId as TierScenario
+      conceptTabs.value[0] = 'Your wallet'
+    }
+  }
   if (activeConcept.value === 2) conceptTabs.value[1] = subStateId === 'daily-payouts' ? 'Daily payouts' : subStateId === 'deferred-payouts' ? 'Deferred payouts' : 'Your wallet'
   if (activeConcept.value === 3) conceptTabs.value[2] = subStateId === 'payouts' ? 'Payouts' : 'Your wallet'
 }
@@ -129,8 +126,7 @@ function scrollToSection(sectionId: string) {
 
 <template>
   <div :class="['flex h-screen overflow-hidden font-body', showHotspots ? 'prototype-hotspots' : '']">
-    <PrototypeSidebar v-if="!shareMode" title="6-Tier Risk Model" :concepts="conceptMeta" :active-concept="activeConcept" :preview-mode="previewMode" :sidebar-open="sidebarOpen" :active-page-id="activePages[activeConcept - 1]" :active-sub-state-id="activeSubStateId" :dropped-concepts="droppedConcepts" :share-mode="shareMode" @update:active-concept="activeConcept = $event" @update:preview-mode="previewMode = $event" @update:sidebar-open="sidebarOpen = $event" @update:active-page-id="setActivePage" @set-sub-state="onSetSubState" @navigate-to-section="scrollToSection" @reset="() => undefined" />
-    <div class="fixed top-4 right-4 z-[60] flex items-center gap-2 rounded-full bg-white border border-bm-border px-3 py-2 shadow-sm"><label for="scenario" class="text-xs font-semibold text-bm-text-mid">Seller state</label><select id="scenario" v-model="scenario" class="bg-transparent text-xs font-semibold text-bm-text-hi outline-none"><option v-for="option in scenarioOptions" :key="option.value" :value="option.value">{{ option.label }}</option></select></div>
+    <PrototypeSidebar title="6-Tier Risk Model" :concepts="conceptMeta" :active-concept="activeConcept" :preview-mode="previewMode" :sidebar-open="sidebarOpen" :active-page-id="activePages[activeConcept - 1]" :active-sub-state-id="activeSubStateId" :dropped-concepts="droppedConcepts" @update:active-concept="activeConcept = $event" @update:preview-mode="previewMode = $event" @update:sidebar-open="sidebarOpen = $event" @update:active-page-id="setActivePage" @set-sub-state="onSetSubState" @navigate-to-section="scrollToSection" @reset="() => undefined" />
     <div class="flex-1 relative overflow-hidden">
       <div class="absolute inset-0 overflow-y-auto bg-bm-surface" @click="flashHotspots">
         <div v-show="activeConcept === 1"><BmShell :nav-items="navItems" :active-nav-item="'Money'" :seller-name="seller.sellerName" page-title="Money" :tabs="concept1Tabs" :active-tab="conceptTabs[0]" :nav-dot-predicate="makeNavDotPredicate(0)" @update:active-tab="conceptTabs[0] = $event" @nav-item-click="onNavClick"><div v-if="conceptTabs[0] === 'Your wallet'" class="mt-6 pb-12"><TierWalletBaseline id="concept-1-wallet-baseline" :seller="seller"><template #deferred><MinimalDeferredCard :seller="seller" :scenario="scenario" /></template></TierWalletBaseline></div><div v-else class="mt-6 pb-12"><DailyPayouts :seller="seller" :scenario="scenario" /></div></BmShell></div>
