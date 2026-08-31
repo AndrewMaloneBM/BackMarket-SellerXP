@@ -1225,12 +1225,15 @@ defineExpose({
                                 ? currentTierIndex(deal) >= ti
                                   ? 'bg-bm-gray-200 border border-bm-gray-300'
                                   : 'bg-white border border-bm-border'
-                                : currentTierIndex(deal) >= ti
-                                  ? 'bg-bm-gray-100 border border-bm-gray-200'
-                                  : 'bg-white border border-bm-border'
+                                : ti === currentTierIndex(deal)
+                                  ? 'border border-bm-success'
+                                  : ti < currentTierIndex(deal)
+                                    ? 'border-2 border-[#006D42]'
+                                    : 'bg-white border border-bm-border'
                             ]"
+                            :style="deal.status !== 'ended' && ti === currentTierIndex(deal) ? { background: '#96F5BD' } : {}"
                           >
-                            <span :class="['text-xs font-semibold leading-tight', currentTierIndex(deal) >= ti ? 'text-bm-text-hi' : 'text-bm-text-mid']">
+                            <span :class="['text-xs font-semibold leading-tight', ti <= currentTierIndex(deal) ? 'text-bm-text-hi' : 'text-bm-text-mid']">
                               {{ deal.baseCommission - tier.commissionDiscount }}%
                             </span>
                             <span class="text-[11px] text-bm-text-low leading-tight">{{ tier.sales }}+ sales</span>
