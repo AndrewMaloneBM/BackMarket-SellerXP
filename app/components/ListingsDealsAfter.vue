@@ -554,7 +554,7 @@ defineExpose({
         <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Import or export listings</button>
         <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Manage price rules</button>
         <button
-          class="prototype-hotspot inline-flex items-center px-3 h-8 gap-2 rounded-bm bg-[#0A1740] hover:opacity-90 transition-opacity cursor-pointer"
+          class="prototype-hotspot inline-flex items-center px-3 py-1.5 gap-2 rounded-bm-sm bg-[#0A1740] hover:opacity-90 transition-opacity cursor-pointer"
           @click="activeDrawer = 'deals'"
         >
           <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"><path d="M12 4L9.5 9.5L4 12L9.5 14.5L12 20L14.5 14.5L20 12L14.5 9.5Z" fill="#E2F77E" /></svg>

@@ -11,7 +11,6 @@ const props = defineProps<{
   activeSubStateId?: string
   droppedConcepts?: readonly number[]
   shareMode?: boolean
-  hideConceptDetails?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -20,7 +19,6 @@ const emit = defineEmits<{
   'update:sidebarOpen': [value: boolean]
   'update:activePageId': [value: string]
   'setSubState': [pageId: string, subStateId: string]
-  'navigateToSection': [sectionId: string]
   'reset': []
 }>()
 
@@ -84,17 +82,6 @@ function navigateToSubState(pageId: string, subStateId: string) {
   emit('setSubState', pageId, subStateId)
 }
 
-function navigateToChange(page: PrototypeConcept['pages'][number], changeIndex: number) {
-  const target = page.changeTargets?.[changeIndex]
-  if (!target) {
-    navigateTo(page.id)
-    return
-  }
-  if (target.subStateId) navigateToSubState(target.pageId, target.subStateId)
-  else navigateTo(target.pageId)
-  if (target.sectionId) emit('navigateToSection', target.sectionId)
-}
-
 // Scroll fade — shows gradient when content is cut off below
 const pageTreeEl = ref<HTMLElement | null>(null)
 const zone2El = ref<HTMLElement | null>(null)
@@ -130,19 +117,23 @@ watch(expandedPageIds, () => nextTick(() => {
     <!-- Collapsed rail -->
     <div v-if="!sidebarOpen" class="flex flex-col items-center px-2 py-3 gap-1">
       <button @click="emit('update:sidebarOpen', true)" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-white transition-colors rounded hover:bg-gray-800">
-        <RevIcon name="IconLayout" class="w-5 h-5" />
+        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill-rule="evenodd" d="m13.043 12-3.47 3.47a.75.75 0 1 0 1.06 1.06l3.647-3.646a1.25 1.25 0 0 0 0-1.768L10.634 7.47a.75.75 0 0 0-1.06 1.06L13.042 12" clip-rule="evenodd" fill="currentColor"/></svg>
       </button>
       <NuxtLink v-if="!shareMode" to="/" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-white transition-colors rounded hover:bg-gray-800">
-        <RevIcon name="IconHome" class="w-5 h-5" />
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75v-5.25h-4.5V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z"/></svg>
       </NuxtLink>
       <template v-for="n in concepts.length" :key="n">
         <button
           v-if="!shareMode || !droppedConcepts?.includes(n)"
-          :class="['relative overflow-hidden w-8 h-8 flex items-center justify-center text-xs rounded transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-600 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) || concepts[n - 1]?.inactive ? 'opacity-40' : '']"
-          @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
+          :class="['relative overflow-hidden w-8 h-8 flex items-center justify-center text-xs rounded transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-600 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) ? 'opacity-50' : '']"
+          @click="emit('update:activeConcept', n)"
         >
           {{ n }}
-          <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none flex items-center justify-center"><span class="h-0.5 w-8 rotate-45 rounded-full bg-current" /></span>
+          <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+              <line x1="10" y1="10" x2="90" y2="90"/>
+            </svg>
+          </span>
         </button>
       </template>
     </div>
@@ -153,7 +144,7 @@ watch(expandedPageIds, () => nextTick(() => {
       <!-- Zone 1: Header -->
       <div class="sticky top-0 bg-gray-950 border-b border-gray-800 z-10 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <NuxtLink v-if="!shareMode" to="/" class="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-          <RevIcon name="IconChevronLeft" class="w-3.5 h-3.5" />
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
           Hub
         </NuxtLink>
         <span v-else class="w-[42px]" />
@@ -161,44 +152,22 @@ watch(expandedPageIds, () => nextTick(() => {
           <span class="text-xs font-semibold text-white tracking-wide">{{ title }}</span>
         </slot>
         <button @click="emit('update:sidebarOpen', false)" class="text-gray-500 hover:text-white transition-colors">
-          <RevIcon name="IconLayout" class="w-4 h-4" />
+          <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill-rule="evenodd" d="m10.957 12 3.47-3.47a.75.75 0 1 0-1.06-1.06L9.72 11.116a1.25 1.25 0 0 0 0 1.768l3.646 3.646a.75.75 0 0 0 1.06-1.06L10.958 12" clip-rule="evenodd" fill="currentColor"/></svg>
         </button>
       </div>
 
       <!-- Zone 2: Controls -->
       <div
         ref="zone2El"
-        :class="['px-4 py-4 space-y-4 relative', shareMode ? 'flex-1 overflow-y-auto' : hideConceptDetails ? 'flex-1 overflow-y-auto' : 'flex-shrink-0 border-b border-gray-800']"
+        :class="['px-4 py-4 space-y-4 relative', shareMode ? 'flex-1 overflow-y-auto' : 'flex-shrink-0 border-b border-gray-800']"
         @scroll="checkScroll(zone2El, v => zone2HasMore = v)"
       >
 
         <!-- Share mode explainer -->
         <p v-if="shareMode" class="text-[11px] text-gray-500 leading-relaxed">Switch between concepts using the numbers below, then use the pages list to navigate screens. Use <span class="text-gray-300">Before / After</span> to toggle the current design against the existing experience.</p>
 
-        <!-- Concept switcher — named labels mode (hideConceptDetails) -->
-        <div v-if="hideConceptDetails" class="space-y-1.5">
-          <div class="flex items-center mb-2">
-            <p class="text-[10px] text-gray-600 uppercase tracking-widest mr-auto">Concept</p>
-            <div class="relative" @mouseenter="onResetHover" @mouseleave="onResetLeave">
-              <button @click="emit('reset')" class="p-1 rounded text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors">
-                <RevIcon name="IconRefresh" class="w-3 h-3" />
-              </button>
-              <div v-if="showResetTooltip" class="absolute right-0 top-6 z-20 bg-gray-700 text-white text-[11px] rounded px-2 py-1 whitespace-nowrap shadow-lg">Reset dismissed UI</div>
-            </div>
-          </div>
-          <button
-            v-for="(concept, i) in concepts"
-            :key="i"
-            :class="['w-full text-left px-3 py-2 rounded text-xs transition-colors', activeConcept === i + 1 ? 'bg-white text-gray-900 font-semibold' : concept.inactive || droppedConcepts?.includes(i + 1) ? 'text-gray-700 opacity-50' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800']"
-            @click="emit('update:activeConcept', i + 1)"
-          >
-            <span :class="concept.inactive || droppedConcepts?.includes(i + 1) ? 'line-through' : ''">{{ concept.name }}</span>
-            <span v-if="concept.inactive || droppedConcepts?.includes(i + 1)" class="ml-auto text-[9px] uppercase tracking-widest text-gray-700">Inactive</span>
-          </button>
-        </div>
-
-        <!-- Concept switcher — standard numbered mode -->
-        <div v-else>
+        <!-- Concept switcher -->
+        <div>
           <div class="flex items-center gap-2 mb-2">
             <p class="text-[10px] text-gray-600 uppercase tracking-widest mr-auto">Concept</p>
             <div class="flex items-center gap-1 text-[10px]">
@@ -211,7 +180,7 @@ watch(expandedPageIds, () => nextTick(() => {
                 @click="emit('reset')"
                 class="p-1 rounded text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors"
               >
-                <RevIcon name="IconRefresh" class="w-3 h-3" />
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
               </button>
               <div
                 v-if="showResetTooltip"
@@ -226,11 +195,13 @@ watch(expandedPageIds, () => nextTick(() => {
               <button
                 v-if="!shareMode || !droppedConcepts?.includes(n)"
                 :class="['relative overflow-hidden rounded px-3 py-1.5 text-xs transition-colors', activeConcept === n ? 'bg-white text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800', droppedConcepts?.includes(n) ? 'opacity-50' : '']"
-                @click="!concepts[n - 1]?.inactive && emit('update:activeConcept', n)"
+                @click="emit('update:activeConcept', n)"
               >
                 {{ n }}
-                <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none flex items-center justify-center">
-                  <span class="h-0.5 w-8 rotate-45 rounded-full bg-current" />
+                <span v-if="droppedConcepts?.includes(n)" class="absolute inset-0 pointer-events-none">
+                  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+                    <line x1="10" y1="10" x2="90" y2="90"/>
+                  </svg>
                 </span>
               </button>
             </template>
@@ -243,7 +214,7 @@ watch(expandedPageIds, () => nextTick(() => {
           <div class="relative">
           <div
             ref="pageTreeEl"
-            :class="['space-y-px pr-0.5', !shareMode && !hideConceptDetails && 'max-h-[320px] overflow-y-auto']"
+            :class="['space-y-px pr-0.5', !shareMode && 'max-h-[320px] overflow-y-auto']"
             @scroll="checkScroll(pageTreeEl, v => pageTreeHasMore = v)"
           >
             <div v-for="page in currentConcept.pages" :key="page.id">
@@ -270,7 +241,9 @@ watch(expandedPageIds, () => nextTick(() => {
                     <span :class="['text-xs truncate', activePageId === page.id ? 'font-medium' : '']">{{ page.label }}</span>
                   </button>
                   <button class="flex-shrink-0 p-0.5 text-gray-700 hover:text-gray-400 transition-colors" @click="toggleExpanded(page.id)">
-                    <RevIcon name="IconChevronRight" class="w-3 h-3 transition-transform duration-150" :class="expandedPageIds.includes(page.id) ? 'rotate-90' : ''" />
+                    <svg class="w-3 h-3 transition-transform duration-150" :class="expandedPageIds.includes(page.id) ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
                   </button>
                 </div>
 
@@ -298,7 +271,7 @@ watch(expandedPageIds, () => nextTick(() => {
           <!-- Internal: page tree scroll fade -->
           <div v-if="!shareMode && pageTreeHasMore" class="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-gray-950 to-transparent pointer-events-none flex items-end justify-center pb-1">
             <div class="flex flex-col items-center gap-0.5">
-              <RevIcon name="IconChevronDown" class="w-3.5 h-3.5 text-gray-500 animate-bounce" />
+              <svg class="w-3.5 h-3.5 text-gray-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
               <span class="text-[9px] text-gray-600 uppercase tracking-widest">Scroll</span>
             </div>
           </div>
@@ -311,7 +284,7 @@ watch(expandedPageIds, () => nextTick(() => {
       </div>
 
       <!-- Zone 3: Concept details — internal only -->
-      <div v-if="!shareMode && !hideConceptDetails" class="flex-1 overflow-y-auto px-4 py-5 space-y-5 bg-gray-900">
+      <div v-if="!shareMode" class="flex-1 overflow-y-auto px-4 py-5 space-y-5 bg-gray-900">
 
         <div>
           <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-1.5">Concept {{ activeConcept }}</p>
@@ -324,15 +297,9 @@ watch(expandedPageIds, () => nextTick(() => {
           <div v-for="page in currentConcept.pages" :key="page.id" class="mb-3 last:mb-0">
             <p class="text-[10px] text-gray-600 mb-1.5">{{ page.label }}</p>
             <ul class="space-y-1">
-              <li v-for="(change, changeIndex) in page.changes" :key="change" class="flex items-start gap-1.5 text-[12px] leading-snug">
+              <li v-for="change in page.changes" :key="change" class="flex items-start gap-1.5 text-[12px] text-gray-400 leading-snug">
                 <span class="text-gray-600 flex-shrink-0">·</span>
-                <button
-                  type="button"
-                  class="text-left text-gray-400 hover:text-white hover:underline underline-offset-2 transition-colors"
-                  @click="navigateToChange(page, changeIndex)"
-                >
-                  {{ change }}
-                </button>
+                {{ change }}
               </li>
             </ul>
           </div>
