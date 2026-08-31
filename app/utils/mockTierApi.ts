@@ -135,7 +135,7 @@ function scenarioUpgradeInProgress(): TierStatusResponse {
       { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 68000, required: 75000, gap: 7000, status: 'close' },
     ],
     tierHistory: [
-      { date: '2026-05-01', fromTier: 1, toTier: 2, reason: 'Met Tier 2 thresholds: defective rate, refund rate, seniority' },
+      { date: '2026-05-01', fromTier: 1, toTier: 2, reason: 'Upgraded to Tier 2' },
       { date: '2026-01-15', fromTier: null, toTier: 1, reason: 'Onboarded to Back Market' },
     ],
   }
@@ -199,8 +199,8 @@ function scenarioDowngradeNotice(): TierStatusResponse {
       { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 72000, required: 100000, gap: 28000, status: 'needs_improvement' },
     ],
     tierHistory: [
-      { date: '2026-06-15', fromTier: 4, toTier: 3, reason: 'Downgraded: defective rate above Tier 4 threshold' },
-      { date: '2026-03-01', fromTier: 3, toTier: 4, reason: 'Met Tier 4 thresholds: refund rate, wrong product rate' },
+      { date: '2026-06-15', fromTier: 4, toTier: 3, reason: 'Downgraded to Tier 3' },
+      { date: '2026-03-01', fromTier: 3, toTier: 4, reason: 'Upgraded to Tier 4' },
       { date: '2025-12-01', fromTier: null, toTier: 3, reason: 'Onboarded to Back Market' },
     ],
   }
@@ -223,8 +223,8 @@ function scenarioTopTier(): TierStatusResponse {
     upcomingChange: null,
     gapToNextTier: [],
     tierHistory: [
-      { date: '2026-07-01', fromTier: 5, toTier: 6, reason: 'Met Tier 6 thresholds across all quality metrics' },
-      { date: '2026-04-01', fromTier: 4, toTier: 5, reason: 'Met Tier 5 thresholds: defective rate, refund rate' },
+      { date: '2026-07-01', fromTier: 5, toTier: 6, reason: 'Upgraded to Tier 6' },
+      { date: '2026-04-01', fromTier: 4, toTier: 5, reason: 'Upgraded to Tier 5' },
     ],
   }
 }
@@ -253,8 +253,8 @@ function scenarioStable(): TierStatusResponse {
       { key: 'gmv', label: 'Monthly GMV', unit: 'eur', current: 185000, required: 200000, gap: 15000, status: 'close' },
     ],
     tierHistory: [
-      { date: '2026-05-01', fromTier: 5, toTier: 4, reason: 'Met Tier 4 thresholds: defective rate, refund rate, OOW rate' },
-      { date: '2026-02-01', fromTier: 3, toTier: 4, reason: 'Met Tier 4 thresholds across all quality metrics' },
+      { date: '2026-05-01', fromTier: 5, toTier: 4, reason: 'Downgraded to Tier 4' },
+      { date: '2026-02-01', fromTier: 3, toTier: 4, reason: 'Upgraded to Tier 4' },
     ],
   }
 }

@@ -8,6 +8,17 @@ const drawerOpen = ref(false)
 const drawerView = ref<'progress' | 'tiers'>('progress')
 const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`
 const formatDate = (date: string) => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+const formatDateOrdinal = (date: string) => {
+  const d = new Date(date)
+  const day = d.getDate()
+  const suffix = day % 10 === 1 && day !== 11 ? 'st' : day % 10 === 2 && day !== 12 ? 'nd' : day % 10 === 3 && day !== 13 ? 'rd' : 'th'
+  return `${day}${suffix} ${d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}`
+}
+const formatDateRange = (entries: { date: string }[], index: number) => {
+  const start = formatDateOrdinal(entries[index].date)
+  if (index === 0) return `${start} - present`
+  return `${start} - ${formatDateOrdinal(entries[index - 1].date)}`
+}
 const tierBadgeClass = (tier: number): string => ({
   1: 'bg-gray-200 text-gray-700',
   2: 'bg-amber-100 text-amber-700',
@@ -17,12 +28,34 @@ const tierBadgeClass = (tier: number): string => ({
   6: 'bg-emerald-100 text-emerald-700',
 }[tier] ?? 'bg-gray-200 text-gray-700')
 const gapStatusColor = (status: string): string => status === 'met' ? 'text-bm-green-700' : status === 'close' ? 'text-amber-700' : 'text-red-700'
-const gapStatusDot = (status: string): string => status === 'met' ? 'bg-bm-green-500' : status === 'close' ? 'bg-amber-500' : 'bg-red-500'
 const gapStatusLabel = (status: string): string => status === 'met' ? 'On track' : status === 'close' ? 'Almost there' : 'Needs attention'
-const formatMetricValue = (metric: { unit: string; current: number | boolean; required: number | boolean }) => {
-  if (metric.unit === 'eur') return { current: formatEur(Number(metric.current)), required: formatEur(Number(metric.required)) }
-  if (metric.unit === 'months') return { current: `${metric.current} months`, required: `${metric.required} months` }
-  return { current: `${metric.current}%`, required: `≤ ${metric.required}%` }
+const metricHelp: Record<string, { label: string; href: string }> = {
+  defective_rate: { label: 'How to reduce your defective rate', href: '#' },
+  refund_rate: { label: 'How to lower your refund rate', href: '#' },
+  oow_rate: { label: 'How to improve OOW declarations', href: '#' },
+  wrong_product_rate: { label: 'How to avoid wrong product listings', href: '#' },
+  gmv: { label: 'How to grow your GMV', href: '#' },
+  seniority: { label: 'How seller seniority works', href: '#' },
+}
+// Metrics where a higher value is better use "more than" / "over" phrasing.
+// All other metrics (rates) use "less than" phrasing.
+const HIGHER_IS_BETTER = new Set(['gmv', 'seniority'])
+const formatCurrentValue = (metric: { unit: string; current: number | boolean }) => {
+  if (metric.unit === 'eur') return formatEur(Number(metric.current))
+  if (metric.unit === 'months') return `${metric.current} months`
+  return `${metric.current}%`
+}
+const formatRequiredCopy = (metric: { key: string; unit: string; required: number | boolean }) => {
+  const higherIsBetter = HIGHER_IS_BETTER.has(metric.key)
+  if (metric.unit === 'eur') return `${higherIsBetter ? 'more than' : 'less than'} ${formatEur(Number(metric.required))}`
+  if (metric.unit === 'months') return `${higherIsBetter ? 'over' : 'less than'} ${metric.required} months`
+  return `less than ${metric.required}%`
+}
+const historyIcon = (history: { fromTier: number | null; toTier: number }): string | null => {
+  if (history.fromTier === null) return null // dash, rendered as plain text
+  if (history.toTier > history.fromTier) return 'IconArrowUpRight'
+  if (history.toTier < history.fromTier) return 'IconArrowDownRight'
+  return null
 }
 const allTiers = [
   { name: 'Tier 1', policy: '100%' },
@@ -35,14 +68,12 @@ const allTiers = [
 </script>
 
 <template>
-  <section id="concept-1-deferred-card" class="card p-6 mt-6 scroll-mt-6">
-    <div class="flex items-center justify-between gap-6">
-      <div>
-        <p class="text-3xl font-bold text-bm-text-hi">{{ formatEur(seller.currentDpEur) }}</p>
-        <p class="text-sm text-bm-text-mid mt-2">Deferred payout</p>
-      </div>
+  <section id="concept-1-deferred-card" class="card p-6 scroll-mt-6">
+    <div class="flex items-center justify-between gap-6 mb-4">
+      <h2 class="text-base font-semibold text-bm-text-hi">Deferred payout</h2>
       <span :class="['text-xs font-semibold rounded-full px-2.5 py-1', tierBadgeClass(seller.currentTier)]">{{ tierLabel(seller.currentTier) }}</span>
     </div>
+    <p class="text-3xl font-bold text-bm-text-hi">{{ formatEur(seller.currentDpEur) }}</p>
     <div class="flex items-center justify-between gap-4 mt-5 border-t border-bm-border pt-4">
       <p class="text-xs text-bm-text-mid">{{ seller.depositPolicyPct }}% of Future Refunds is currently held</p>
       <button type="button" class="prototype-hotspot text-sm font-semibold text-bm-success underline underline-offset-2" @click="drawerOpen = true; drawerView = 'progress'">Show tier details</button>
@@ -52,9 +83,9 @@ const allTiers = [
   <Teleport to="body">
     <div v-if="drawerOpen" class="fixed inset-0 z-50 flex justify-end bg-black/30" role="presentation" @click.self="drawerOpen = false">
       <aside class="h-full w-full max-w-xl overflow-y-auto bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="minimal-tier-drawer-title">
-        <div class="sticky top-0 flex items-center justify-between border-b border-bm-border bg-white px-6 py-5">
-          <h2 id="minimal-tier-drawer-title" class="text-xl font-bold text-bm-text-hi">{{ tierLabel(seller.currentTier) }} path and history</h2>
-          <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-bm-text-mid hover:bg-bm-gray-100 hover:text-bm-text-hi" aria-label="Close tier details" @click="drawerOpen = false">
+        <div class="sticky top-0 flex items-center justify-center border-b border-bm-border bg-white px-6 py-5">
+          <h2 id="minimal-tier-drawer-title" class="text-xl font-bold text-bm-text-hi">Tier details</h2>
+          <button type="button" class="absolute right-6 flex h-8 w-8 items-center justify-center rounded-full text-bm-text-mid hover:bg-bm-gray-100 hover:text-bm-text-hi" aria-label="Close tier details" @click="drawerOpen = false">
             <RevIcon name="IconCross" class="h-4 w-4" />
           </button>
         </div>
@@ -62,55 +93,52 @@ const allTiers = [
         <div class="p-6">
           <div v-if="drawerView === 'progress'">
             <div class="mb-8">
-              <p class="text-sm font-semibold text-bm-text-hi">Your tier is reviewed every week</p>
-              <p class="text-sm text-bm-text-mid mt-1">Currently on {{ tierLabel(seller.currentTier) }}. Keep improving the metrics below to reach the next tier.</p>
-            </div>
+              <h3 class="text-xl font-bold text-bm-text-hi">Path to the next tier</h3>
+              <p class="text-sm text-bm-text-low mt-1">This information is reviewed every week</p>
 
-            <div class="mb-8">
-              <div class="flex items-center justify-between mb-1">
-                <h3 class="text-base font-semibold text-bm-text-hi">Path to the next tier</h3>
+              <div class="grid grid-cols-2 gap-4 mt-5">
+                <div v-for="metric in seller.gapToNextTier" :key="metric.key" class="rounded-bm border border-bm-border bg-white p-5">
+                  <p class="text-sm text-bm-text-hi mb-3">{{ metric.label }}</p>
+                  <p :class="['text-3xl font-bold mb-2', gapStatusColor(metric.status)]">{{ formatCurrentValue(metric) }}</p>
+                  <p class="text-xs text-bm-text-mid"><span class="font-semibold text-bm-text-hi">Required:</span> {{ formatRequiredCopy(metric) }}</p>
+                  <a v-if="metric.status !== 'met' && metricHelp[metric.key]" :href="metricHelp[metric.key].href" class="prototype-hotspot mt-2 inline-block text-xs font-medium text-bm-text-low underline underline-offset-2 hover:text-bm-text-hi">{{ metricHelp[metric.key].label }}</a>
+                </div>
+                <div v-if="seller.gapToNextTier.length === 0" class="col-span-2 rounded-bm border border-bm-green-200 bg-bm-green-50 p-5 text-sm text-bm-green-700">There are no further tier requirements.</div>
               </div>
-              <p class="text-xs text-bm-text-low mb-4">This information is reviewed every week</p>
-              <div class="overflow-hidden rounded-bm-sm border border-bm-border">
-                <div class="grid grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-3 bg-bm-gray-50 px-4 py-3 text-xs font-semibold text-bm-text-mid">
-                  <span>Metric</span>
-                  <span>Required</span>
-                  <span>Current</span>
-                  <span>Status</span>
+
+              <div v-if="seller.gapToNextTier.some(m => m.status !== 'met')" class="mt-4 rounded-bm-sm bg-bm-gray-50 border border-bm-border p-4">
+                <p class="text-sm font-semibold text-bm-text-hi mb-2">Need help improving?</p>
+                <p class="text-xs text-bm-text-mid mb-3">These resources can help you reach the next tier and release more cash from your Future Refunds.</p>
+                <div class="flex flex-col gap-1.5">
+                  <a href="#" class="prototype-hotspot text-xs font-medium text-bm-success underline underline-offset-2">Quality improvement guide</a>
+                  <a href="#" class="prototype-hotspot text-xs font-medium text-bm-success underline underline-offset-2">Shipping best practices</a>
+                  <a href="#" class="prototype-hotspot text-xs font-medium text-bm-success underline underline-offset-2">Contact seller support</a>
                 </div>
-                <div v-for="metric in seller.gapToNextTier" :key="metric.key" class="grid grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-3 items-center border-t border-bm-border px-4 py-3 text-sm">
-                  <span class="text-bm-text-hi">{{ metric.label }}</span>
-                  <span class="text-bm-text-mid">{{ formatMetricValue(metric).required }}</span>
-                  <span :class="['font-semibold', gapStatusColor(metric.status)]">{{ formatMetricValue(metric).current }}</span>
-                  <span :class="['flex items-center gap-1.5 text-xs font-semibold', gapStatusColor(metric.status)]">
-                    <span :class="['w-1.5 h-1.5 rounded-full', gapStatusDot(metric.status)]" />
-                    {{ gapStatusLabel(metric.status) }}
-                  </span>
-                </div>
-                <div v-if="seller.gapToNextTier.length === 0" class="border-t border-bm-border px-4 py-3 text-sm text-bm-green-700">There are no further tier requirements.</div>
               </div>
             </div>
 
             <div class="mb-6">
               <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-bm-text-hi">Tier history</h3>
-                <span class="text-xs text-bm-text-low">Recent changes</span>
+                <h3 class="text-xl font-bold text-bm-text-hi">Tier history</h3>
+                <button type="button" class="prototype-hotspot text-sm font-semibold text-bm-text-hi underline underline-offset-2" @click="drawerView = 'tiers'">How tiers work</button>
               </div>
-              <div class="flex flex-col">
-                <div v-for="(history, index) in seller.tierHistory" :key="index" class="flex items-start gap-4">
-                  <div class="flex flex-col items-center">
-                    <span class="w-2.5 h-2.5 rounded-full bg-bm-success mt-1.5" />
-                    <span v-if="index < seller.tierHistory.length - 1" class="w-px flex-1 bg-bm-border" />
+              <div class="flex flex-col gap-3">
+                <div v-for="(history, index) in seller.tierHistory" :key="index" class="flex items-center justify-between gap-4 rounded-bm border border-bm-border bg-white px-5 py-4">
+                  <div class="flex items-center gap-4">
+                    <RevIcon v-if="historyIcon(history)" :name="historyIcon(history)!" class="h-4 w-4 text-bm-text-low shrink-0" />
+                    <span v-else class="text-bm-text-low">—</span>
+                    <div>
+                      <p class="text-xs text-bm-text-low">{{ formatDateRange(seller.tierHistory, index) }}</p>
+                      <p class="text-sm font-semibold text-bm-text-hi mt-0.5">{{ tierLabel(history.toTier) }}{{ history.reason ? ` (${history.reason})` : '' }}</p>
+                    </div>
                   </div>
-                  <div class="pb-4">
-                    <p class="text-sm font-semibold text-bm-text-hi">{{ history.fromTier ? `${tierLabel(history.fromTier)} to ` : '' }}{{ tierLabel(history.toTier) }}</p>
-                    <p class="text-xs text-bm-text-low mt-0.5">{{ formatDate(history.date) }} · {{ history.reason }}</p>
-                  </div>
+                  <span v-if="history.toTier === seller.currentTier && seller.currentTier === 6" class="flex items-center gap-1 text-xs font-semibold rounded-full bg-bm-green-100 text-bm-green-800 px-3 py-1.5 whitespace-nowrap">
+                    <RevIcon name="IconTrophy" class="h-3.5 w-3.5" /> Top tier
+                  </span>
+                  <span v-else-if="history.toTier === seller.currentTier" class="text-xs font-semibold rounded-full bg-bm-green-100 text-bm-green-800 px-3 py-1.5 whitespace-nowrap">Current tier</span>
                 </div>
               </div>
             </div>
-
-            <button type="button" class="prototype-hotspot text-sm font-semibold text-bm-success underline underline-offset-2" @click="drawerView = 'tiers'">How tiers work</button>
           </div>
 
           <div v-else>
