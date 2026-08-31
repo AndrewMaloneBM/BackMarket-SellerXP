@@ -44,6 +44,22 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
+    title: 'Deals Adoption',
+    description: 'Deal adoption in FR/ES sits at 35-40% vs a 50-60% target. 100-200 daily instances where a seller could adopt a deal at no margin cost and doesn\'t. This prototype explores how to help sellers discover, assess, act on, and track Back Market Deals within the workflows they already use.',
+    problemStatement: 'A deal that could earn a seller more is invisible to 60% of the people it\'s built for, and unclear to the rest.',
+    author: 'Andrew Malone',
+    date: 'August 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Hackathon V1', pages: ['Listings'] },
+    ],
+    scope: 'Home, Listings',
+    goal: 'Lift adoption from 35-40% to 50-60%',
+    impact: '100-200 daily missed deal instances, +9% GMV uplift when sellers participate',
+    link: '/prototypes/deals-adoption',
+    accent: '#5B6CFF',
+  },
+  {
     title: 'Seller Cash Flow Optimization via a 6-Tier Risk Model Migration',
     description: 'The current 4-tier deferred payout system holds 100% of Future Refunds as deposit for 76% of sellers, with no realistic path to better cash flow terms. This prototype explores how to surface the new 6-tier risk model in the seller Back Office: where the tier dashboard lives on the Money page, how deposit adjustments are communicated, and how proactive progression guidance helps sellers reach the next tier.',
     problemStatement: 'Mid-performing sellers are stuck in Tier 1 with no visible path to unlock the cash they are owed.',
