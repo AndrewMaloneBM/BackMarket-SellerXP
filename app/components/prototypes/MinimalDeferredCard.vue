@@ -3,9 +3,10 @@ import type { TierStatusResponse, TierScenario } from '~/utils/mockTierApi'
 import { tierLabel } from '~/utils/mockTierApi'
 import RevIcon from '~/components/RevIcon.vue'
 
-const props = defineProps<{ seller: TierStatusResponse; scenario?: TierScenario }>()
+const props = defineProps<{ seller: TierStatusResponse; scenario?: TierScenario; openDrawerSignal?: number }>()
 const drawerOpen = ref(false)
 const drawerView = ref<'progress' | 'tiers'>('progress')
+watch(() => props.openDrawerSignal, (val) => { if (val) { drawerOpen.value = true; drawerView.value = 'progress' } })
 const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`
 const formatDate = (date: string) => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 const formatDateOrdinal = (date: string) => {

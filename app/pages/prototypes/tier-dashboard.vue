@@ -13,6 +13,7 @@ import RevIcon from '~/components/RevIcon.vue'
 definePageMeta({ layout: false })
 
 const scenario = ref<TierScenario>('upgrade-in-progress')
+const forceDrawerOpen = ref(0)
 
 const seller = computed(() => getSellerTierStatus('TechRenew-EU-001', scenario.value))
 const droppedConcepts = [2, 3] as const
@@ -114,6 +115,7 @@ function onSetSubState(pageId: string, subStateId: string) {
     } else {
       scenario.value = subStateId as TierScenario
       conceptTabs.value[0] = 'Your wallet'
+      forceDrawerOpen.value++
     }
   }
   if (activeConcept.value === 2) conceptTabs.value[1] = subStateId === 'daily-payouts' ? 'Daily payouts' : subStateId === 'deferred-payouts' ? 'Deferred payouts' : 'Your wallet'
@@ -129,7 +131,7 @@ function scrollToSection(sectionId: string) {
     <PrototypeSidebar title="6-Tier Risk Model" :concepts="conceptMeta" :active-concept="activeConcept" :preview-mode="previewMode" :sidebar-open="sidebarOpen" :active-page-id="activePages[activeConcept - 1]" :active-sub-state-id="activeSubStateId" :dropped-concepts="droppedConcepts" @update:active-concept="activeConcept = $event" @update:preview-mode="previewMode = $event" @update:sidebar-open="sidebarOpen = $event" @update:active-page-id="setActivePage" @set-sub-state="onSetSubState" @navigate-to-section="scrollToSection" @reset="() => undefined" />
     <div class="flex-1 relative overflow-hidden">
       <div class="absolute inset-0 overflow-y-auto bg-bm-surface" @click="flashHotspots">
-        <div v-show="activeConcept === 1"><BmShell :nav-items="navItems" :active-nav-item="'Money'" :seller-name="seller.sellerName" page-title="Money" :tabs="concept1Tabs" :active-tab="conceptTabs[0]" :nav-dot-predicate="makeNavDotPredicate(0)" @update:active-tab="conceptTabs[0] = $event" @nav-item-click="onNavClick"><div v-if="conceptTabs[0] === 'Your wallet'" class="mt-6 pb-12"><TierWalletBaseline id="concept-1-wallet-baseline" :seller="seller"><template #deferred><MinimalDeferredCard :seller="seller" :scenario="scenario" /></template></TierWalletBaseline></div><div v-else class="mt-6 pb-12"><DailyPayouts :seller="seller" :scenario="scenario" /></div></BmShell></div>
+        <div v-show="activeConcept === 1"><BmShell :nav-items="navItems" :active-nav-item="'Money'" :seller-name="seller.sellerName" page-title="Money" :tabs="concept1Tabs" :active-tab="conceptTabs[0]" :nav-dot-predicate="makeNavDotPredicate(0)" @update:active-tab="conceptTabs[0] = $event" @nav-item-click="onNavClick"><div v-if="conceptTabs[0] === 'Your wallet'" class="mt-6 pb-12"><TierWalletBaseline id="concept-1-wallet-baseline" :seller="seller"><template #deferred><MinimalDeferredCard :seller="seller" :scenario="scenario" :open-drawer-signal="forceDrawerOpen" /></template></TierWalletBaseline></div><div v-else class="mt-6 pb-12"><DailyPayouts :seller="seller" :scenario="scenario" /></div></BmShell></div>
         <div v-show="activeConcept === 2"><BmShell :nav-items="navItems" :active-nav-item="'Money'" :seller-name="seller.sellerName" page-title="Money" :tabs="concept2Tabs" :active-tab="conceptTabs[1]" :nav-dot-predicate="makeNavDotPredicate(1)" @update:active-tab="conceptTabs[1] = $event" @nav-item-click="onNavClick"><div v-if="conceptTabs[1] === 'Your wallet'" class="mt-6 pb-12"><TierWalletBaseline id="concept-2-wallet-baseline" :seller="seller" /></div><div v-else-if="conceptTabs[1] === 'Daily payouts'" class="mt-6 pb-12"><DailyPayouts :seller="seller" :scenario="scenario" /></div><div v-else class="mt-6 pb-12"><TierFullDashboard id="concept-2-deferred-details" :seller="seller" :scenario="scenario" /></div></BmShell></div>
         <div v-show="activeConcept === 3"><BmShell :nav-items="navItems" :active-nav-item="'Money'" :seller-name="seller.sellerName" page-title="Money" :tabs="concept3Tabs" :active-tab="conceptTabs[2]" :nav-dot-predicate="makeNavDotPredicate(2)" @update:active-tab="conceptTabs[2] = $event" @nav-item-click="onNavClick"><div v-if="conceptTabs[2] === 'Payouts'" class="mt-6 pb-12"><UnifiedPayouts id="concept-3-payouts" :seller="seller" :scenario="scenario" :show-faster-banner="false" :show-deferred-summary="false" /><IntegratedPayoutDetails class="mt-8" :seller="seller" :scenario="scenario" /></div><div v-else class="mt-6 pb-12"><IntegratedWallet :seller="seller" :scenario="scenario" /></div></BmShell></div>
       </div>
