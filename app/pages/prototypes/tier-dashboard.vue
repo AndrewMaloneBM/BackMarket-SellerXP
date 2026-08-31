@@ -25,7 +25,7 @@ const scenarioOptions: { value: TierScenario; label: string }[] = [
 ]
 
 const seller = computed(() => getSellerTierStatus('TechRenew-EU-001', scenario.value))
-const droppedConcepts = [3] as const
+const droppedConcepts = [2, 3] as const
 const showDroppedModal = ref(false)
 
 const conceptMeta: readonly PrototypeConcept[] = [
@@ -43,7 +43,14 @@ const conceptMeta: readonly PrototypeConcept[] = [
         { pageId: 'money', subStateId: 'daily-payouts', sectionId: 'concept-1-daily-payouts' },
         { pageId: 'money', subStateId: 'daily-payouts', sectionId: 'concept-1-daily-payouts' },
       ],
-      subStates: [{ id: 'wallet', label: 'Your wallet' }],
+      subStates: [
+        { id: 'wallet', label: 'Your wallet' },
+        { id: 'upgrade-in-progress', label: 'Upgrade in progress' },
+        { id: 'close-to-upgrade', label: 'Close to upgrade' },
+        { id: 'downgrade-notice', label: 'Downgrade notice' },
+        { id: 'top-tier', label: 'Top tier' },
+        { id: 'stable', label: 'Stable' },
+      ],
     }],
   },
   {
@@ -82,7 +89,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
 ]
 
 const { sidebarOpen, previewMode, activeConcept, activePages, conceptTabs, flashHotspots, showHotspots } = usePrototypeSidebar(conceptMeta)
-watch(activeConcept, (newVal) => { showDroppedModal.value = droppedConcepts.includes(newVal as 3) })
+watch(activeConcept, (newVal) => { showDroppedModal.value = droppedConcepts.includes(newVal as 2 | 3) })
 
 const navItems = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support']
 const baseTabs = ['Your wallet', 'Past invoices', 'Goodwill gestures', 'Seller compensation', 'Financial report']

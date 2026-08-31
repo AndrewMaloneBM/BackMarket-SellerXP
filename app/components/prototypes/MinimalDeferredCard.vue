@@ -3,7 +3,7 @@ import type { TierStatusResponse, TierScenario } from '~/utils/mockTierApi'
 import { tierLabel } from '~/utils/mockTierApi'
 import RevIcon from '~/components/RevIcon.vue'
 
-defineProps<{ seller: TierStatusResponse; scenario?: TierScenario }>()
+const props = defineProps<{ seller: TierStatusResponse; scenario?: TierScenario }>()
 const drawerOpen = ref(false)
 const drawerView = ref<'progress' | 'tiers'>('progress')
 const formatEur = (amount: number) => `€${amount.toLocaleString('en-GB', { maximumFractionDigits: 0 })}`
@@ -57,6 +57,15 @@ const historyIcon = (history: { fromTier: number | null; toTier: number }): stri
   if (history.toTier < history.fromTier) return 'IconArrowDownRight'
   return null
 }
+const formatEuropean = (amount: number) => amount.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+// Deferred payout GBP/SEK are independent reference amounts (not derived from the EUR
+// figure, since refund/warranty exposure differs by currency). EUR stays tied to the
+// seller's real tier-driven amount so it updates with the scenario.
+const deferredBalances = computed(() => [
+  { symbol: '€', amount: formatEuropean(props.seller.currentDpEur) },
+  { symbol: '£', amount: '977,00' },
+  { symbol: 'kr', amount: '13.254,00' },
+])
 const allTiers = [
   { name: 'Tier 1', policy: '100%' },
   { name: 'Tier 2', policy: '75%' },
@@ -69,15 +78,19 @@ const allTiers = [
 
 <template>
   <section id="concept-1-deferred-card" class="card p-6 scroll-mt-6">
-    <div class="flex items-center justify-between gap-6 mb-4">
+    <div class="flex items-center gap-2 mb-2">
       <h2 class="text-base font-semibold text-bm-text-hi">Deferred payout</h2>
       <span :class="['text-xs font-semibold rounded-full px-2.5 py-1', tierBadgeClass(seller.currentTier)]">{{ tierLabel(seller.currentTier) }}</span>
     </div>
-    <p class="text-3xl font-bold text-bm-text-hi">{{ formatEur(seller.currentDpEur) }}</p>
-    <div class="flex items-center justify-between gap-4 mt-5 border-t border-bm-border pt-4">
-      <p class="text-xs text-bm-text-mid">{{ seller.depositPolicyPct }}% of Future Refunds is currently held</p>
-      <button type="button" class="prototype-hotspot text-sm font-semibold text-bm-success underline underline-offset-2" @click="drawerOpen = true; drawerView = 'progress'">Show tier details</button>
+    <p class="text-sm text-bm-text-mid mb-4">Money held in your wallet to cover refunds, warranties, and other seller obligations. <a href="#" class="prototype-hotspot text-bm-text-hi underline underline-offset-2">Learn more</a></p>
+    <p class="text-sm text-bm-text-mid mb-4">{{ seller.depositPolicyPct }}% of future refunds is currently held</p>
+    <div class="flex flex-col gap-3 mb-5">
+      <div v-for="balance in deferredBalances" :key="balance.symbol" class="flex items-baseline justify-between rounded bg-bm-gray-100 px-3 py-2.5">
+        <span class="text-sm text-bm-text-low">{{ balance.symbol }}</span>
+        <span class="text-lg font-semibold text-bm-text-hi">{{ balance.amount }}</span>
+      </div>
     </div>
+    <button type="button" class="prototype-hotspot w-full text-center text-sm font-semibold text-bm-text-hi border border-bm-border rounded-bm px-4 py-2.5 hover:bg-bm-gray-50" @click="drawerOpen = true; drawerView = 'progress'">Show details</button>
   </section>
 
   <Teleport to="body">

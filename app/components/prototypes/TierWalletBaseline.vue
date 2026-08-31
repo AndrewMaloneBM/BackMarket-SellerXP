@@ -38,14 +38,14 @@ const upcomingPayouts = [
 
     <div class="col-span-2 card p-6">
       <h2 class="text-lg font-semibold text-bm-text-hi mb-1">Upcoming payouts</h2>
-      <p class="text-sm text-bm-text-mid mb-5">The amount in your wallet will be split between {{ upcomingPayouts.length }} upcoming payouts.</p>
+      <p class="text-sm text-bm-text-mid mb-5">Your upcoming payouts are listed below by payout date, sales period, and currency. Amounts may change following refunds, cancellations, fees, or deferred payout adjustments.</p>
       <div class="overflow-hidden rounded-bm-sm border border-bm-border">
         <div class="grid grid-cols-[0.9fr_1.3fr_0.9fr_0.9fr_0.9fr_auto] gap-4 bg-bm-gray-50 px-4 py-3 text-xs font-semibold text-bm-text-mid">
           <span>Payout date</span>
           <span>Sales period</span>
-          <span>Amount in €</span>
-          <span>Amount in £</span>
-          <span>Amount in SEK</span>
+          <span>EUR amount</span>
+          <span>GBP amount</span>
+          <span>SEK amount</span>
           <span></span>
         </div>
         <div v-for="payout in upcomingPayouts" :key="payout.payoutDate" class="grid grid-cols-[0.9fr_1.3fr_0.9fr_0.9fr_0.9fr_auto] gap-4 items-center border-t border-bm-border px-4 py-4 text-sm">
