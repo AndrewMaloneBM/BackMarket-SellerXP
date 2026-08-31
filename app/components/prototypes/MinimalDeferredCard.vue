@@ -95,7 +95,7 @@ const allTiers = [
   </section>
 
   <Teleport to="body">
-    <div v-if="drawerOpen" class="fixed inset-0 z-50 flex justify-end bg-black/30" role="presentation" @click.self="drawerOpen = false">
+    <div v-if="drawerOpen" class="fixed top-0 bottom-0 right-0 left-72 z-50 flex justify-end bg-black/30" role="presentation" @click.self="drawerOpen = false">
       <aside class="h-full w-full max-w-xl overflow-y-auto bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="minimal-tier-drawer-title">
         <div class="sticky top-0 flex items-center justify-center border-b border-bm-border bg-white px-6 py-5">
           <h2 id="minimal-tier-drawer-title" class="text-xl font-bold text-bm-text-hi">Tier details</h2>
