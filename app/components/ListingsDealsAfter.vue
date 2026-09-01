@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const props = withDefaults(defineProps<{ hideDealsCta?: boolean }>(), { hideDealsCta: false })
+
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 const SELLER_NAME = 'Merchant'
 const TABS = ['Active', 'On hold', 'Archived'] as const
@@ -171,6 +173,18 @@ function thumbBg(thumb: string): string {
 
 function currencySymbol(c: Currency): string {
   return c === 'SEK' ? 'SEK' : '€'
+}
+
+function listingDealStatus(listing: Listing): 'in-deal' | 'deal-opportunity' | 'not-in-deal' {
+  if (!listing.inDeal) return 'not-in-deal'
+  const deal = deals.find(d => d.id === listing.inDeal)
+  if (!deal) return 'not-in-deal'
+  return deal.status === 'in-progress' || deal.status === 'ending-soon' ? 'in-deal' : 'deal-opportunity'
+}
+
+function filteredListings(): Listing[] {
+  if (filterDealStatus.value === 'all') return listings
+  return listings.filter(l => listingDealStatus(l) === filterDealStatus.value)
 }
 function fmtMoney(amount: number, c: Currency): string {
   const f = amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -365,6 +379,7 @@ const filterSearch = ref('')
 const filterMarket = ref('all')
 const filterStatus = ref('all')
 const filterCategory = ref('all')
+const filterDealStatus = ref('all')
 const cardVariants = [
   { key: '0', label: '0' },
   { key: '0.5', label: '1' },
@@ -554,6 +569,7 @@ defineExpose({
         <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Import or export listings</button>
         <button class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">Manage price rules</button>
         <button
+          v-if="!hideDealsCta"
           class="prototype-hotspot inline-flex items-center px-3 py-1.5 gap-2 rounded-bm-sm bg-[#0A1740] hover:opacity-90 transition-opacity cursor-pointer"
           @click="activeDrawer = 'deals'"
         >
@@ -616,6 +632,12 @@ defineExpose({
               <span class="truncate pr-8 text-base">{{ label }}</span>
               <svg class="pointer-events-none absolute right-3 w-5 h-5 text-bm-text-low" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06z" clip-rule="evenodd" /></svg>
             </button>
+            <select v-model="filterDealStatus" class="relative h-12 w-full px-3 pr-9 rounded-bm-sm border border-bm-border-action bg-white text-base text-bm-text-hi focus:outline-none focus:border-bm-text-hi cursor-pointer appearance-none" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 stroke=%22%235C5E63%22 stroke-width=%222%22 viewBox=%220 0 24 24%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 12px center; background-size: 20px;">
+              <option value="all">All deal statuses</option>
+              <option value="in-deal">In an active deal</option>
+              <option value="deal-opportunity">Deal opportunity</option>
+              <option value="not-in-deal">Not in a deal</option>
+            </select>
           </div>
         </div>
 
@@ -631,7 +653,7 @@ defineExpose({
 
       <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-6 mt-6 md:mb-8 md:mt-8">
         <div class="flex flex-col gap-4 md:gap-2">
-          <h2 class="text-[1.375rem] leading-8 font-semibold text-bm-text-hi">87 active listings</h2>
+          <h2 class="text-[1.375rem] leading-8 font-semibold text-bm-text-hi">{{ filteredListings().length }} active listings</h2>
           <label class="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" class="peer sr-only" :checked="expandAll" @change="expandAll = !expandAll" />
             <span class="bg-white border border-bm-border-action rounded-full relative flex h-6 w-[46px] shrink-0 items-center peer-checked:bg-bm-success peer-checked:border-bm-success transition-colors">
@@ -691,7 +713,7 @@ defineExpose({
             </tr>
           </thead>
           <tbody>
-            <template v-for="(listing, idx) in listings" :key="listing.id">
+            <template v-for="(listing, idx) in filteredListings()" :key="listing.id">
               <tr :class="['bg-white', idx !== listings.length - 1 && 'border-b border-bm-border']">
                 <td class="px-4 py-6 first:pl-6 align-middle">
                   <div class="h-12 w-12 rounded-bm-sm border border-bm-border bg-white overflow-hidden">

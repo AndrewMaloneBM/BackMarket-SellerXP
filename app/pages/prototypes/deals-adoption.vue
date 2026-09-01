@@ -34,6 +34,49 @@ const conceptMeta: readonly PrototypeConcept[] = [
           'BackBox price column with won (green checkmark tag) and opportunity (flame icon) states',
           'Sales strategy column: visibility boost, deal opportunity, or no strategy available',
           'Deal opportunity strategy shows deal price, commission savings, and set deal price CTA',
+          'Deal status filter in more filters: In an active deal / Deal opportunity / Not in a deal',
+        ],
+      },
+    ],
+  },
+  {
+    name: 'Opportunities >> Deals',
+    prdFeature: 'Listings for visibility, Opportunities >> Deals for assessment and action',
+    prdMetric: 'Listings shows deal status at a glance. Opportunities >> Deals gives space for listing-level eligibility, pricing, margin, and next action. No volume-based commission mechanics.',
+    pros: [
+      'Opportunities page gives more space for listing-level info and actions than a drawer',
+      'Listings remains the natural entry point for deal visibility',
+      'Separating assessment from Listings keeps the pricing workflow focused',
+      'No volume-based mechanics simplifies the model: eligibility is based on target price only',
+    ],
+    cons: [
+      'Requires sellers to navigate to a second page for full deal details',
+      'Opportunities page may be unfamiliar to sellers who rarely visit it',
+      'Need clear cross-linking between Listings and Opportunities to avoid dead ends',
+    ],
+    pages: [
+      {
+        id: 'listings',
+        label: 'Listings',
+        navItem: 'Listings',
+        changes: [
+          'Deal status filter: In an active deal / Deal opportunity / Not in a deal',
+          'See all deals CTA links to Opportunities >> Deals tab',
+          'In deal chip on listing rows',
+        ],
+      },
+      {
+        id: 'opportunities',
+        label: 'Opportunities',
+        navItem: 'Opportunities',
+        changes: [
+          'Deals tab in Opportunities with deal cards',
+          'Per-listing deal table: current price vs deal target price',
+          'Eligibility status: Eligible, Near target, Not eligible, Not listed',
+          'Estimated payout with standard vs deal commission',
+          'Estimated seller profit per unit and total impact based on current stock',
+          'One clear next action per listing: See listing, Update price, Review margin, Create listing',
+          'No volume-based commission mechanics or progress bars',
         ],
       },
     ],
@@ -55,6 +98,11 @@ const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?
 function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
 }
+
+// Concept 2: default to Opportunities page
+watch(activeConcept, (n) => {
+  if (n === 2) setActivePage('opportunities')
+}, { immediate: true })
 
 const navItems = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support']
 
@@ -92,6 +140,10 @@ function resetDismissedUi() {
       <div v-show="activeConcept === 1">
         <ListingsBaseline v-if="activePageId === 'listings'" v-show="previewMode === 'before'" />
         <ListingsDealsAfter v-if="activePageId === 'listings'" v-show="previewMode === 'after'" />
+      </div>
+      <div v-show="activeConcept === 2">
+        <ListingsDealsAfter v-if="activePageId === 'listings'" v-show="previewMode === 'after'" hide-deals-cta />
+        <OpportunitiesDeals v-if="activePageId === 'opportunities'" :preview-mode="previewMode" />
       </div>
     </div>
   </div>
