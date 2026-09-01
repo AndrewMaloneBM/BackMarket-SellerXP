@@ -81,6 +81,46 @@ const conceptMeta: readonly PrototypeConcept[] = [
       },
     ],
   },
+  {
+    name: 'Iter 1 — No volume mechanics',
+    prdFeature: 'Same as concept 2 but with all volume-based UI removed for iteration 1',
+    prdMetric: 'Simplified deal experience: target price eligibility only, no tier ladders, no progress bars, no volume goals. Clean and focused.',
+    pros: [
+      'Simplest version to build and ship',
+      'Removes complexity that may confuse sellers in first iteration',
+      'Focuses on the core value: see deal target, check eligibility, see profit, take action',
+      'Can add volume mechanics back in a later iteration if needed',
+    ],
+    cons: [
+      'No gamification through volume tiers',
+      'No progress indicators for sellers to track deal performance',
+      'Less incentive to sell more within a deal',
+    ],
+    pages: [
+      {
+        id: 'listings',
+        label: 'Listings',
+        navItem: 'Listings',
+        changes: [
+          'Deal status filter: In an active deal / Deal opportunity / Not in a deal',
+          'In deal chip on listing rows',
+          'No See all deals CTA (removed for iter 1)',
+        ],
+      },
+      {
+        id: 'opportunities',
+        label: 'Opportunities',
+        navItem: 'Opportunities',
+        changes: [
+          'Deals tab in Opportunities with clean deal cards (no tier ladders, no progress bars)',
+          'Per-listing table: your price, deal target, est. payout, est. impact, status, action',
+          'Eligibility based on target price only: Eligible, Near target, Not eligible, Not listed',
+          'No volume goals, no commission tiers, no progress bars, no units sold',
+          'One clear next action per listing: See listing, Update price, Review margin, Create listing',
+        ],
+      },
+    ],
+  },
 ]
 
 const {
@@ -99,9 +139,9 @@ function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
 }
 
-// Concept 2: default to Opportunities page
+// Concept 2 and 3: default to Opportunities page
 watch(activeConcept, (n) => {
-  if (n === 2) setActivePage('opportunities')
+  if (n === 2 || n === 3) setActivePage('opportunities')
 }, { immediate: true })
 
 const navItems = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support']
@@ -144,6 +184,10 @@ function resetDismissedUi() {
       <div v-show="activeConcept === 2">
         <ListingsDealsAfter v-if="activePageId === 'listings'" v-show="previewMode === 'after'" hide-deals-cta />
         <OpportunitiesDeals v-if="activePageId === 'opportunities'" :preview-mode="previewMode" />
+      </div>
+      <div v-show="activeConcept === 3">
+        <ListingsDealsAfter v-if="activePageId === 'listings'" v-show="previewMode === 'after'" hide-deals-cta />
+        <OpportunitiesDeals v-if="activePageId === 'opportunities'" :preview-mode="previewMode" hide-volume />
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ previewMode?: 'before' | 'after' }>(), { previewMode: 'after' })
+const props = withDefaults(defineProps<{ previewMode?: 'before' | 'after'; hideVolume?: boolean }>(), { previewMode: 'after', hideVolume: false })
 
 const SELLER_NAME = 'TechRenew'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support']
@@ -137,10 +137,16 @@ const deals: Deal[] = [
 ]
 
 const dealDescription: Record<DealStatus, string> = {
-  'starting-soon': 'Price your eligible listings at the deal target price before the deal starts to unlock commission discounts. The more you sell, the bigger the discount.',
-  'in-progress':   'Price your eligible listings at the deal target price to unlock commission discounts. The more you sell, the bigger the discount.',
-  'ending-soon':   'This deal is ending soon. Keep your listings at the deal target price to maximise your commission discount before it closes.',
-  'ended':          'Here is how your listings performed during this deal. Commission discounts were applied based on the tiers you reached.',
+  'starting-soon': 'Price your eligible listings at the deal target price before the deal starts to qualify for reduced commission.',
+  'in-progress':   'Price your eligible listings at the deal target price to qualify for reduced commission.',
+  'ending-soon':   'This deal is ending soon. Keep your listings at the deal target price to maintain your commission rate before it closes.',
+  'ended':          'Here is how your listings performed during this deal.',
+}
+const dealDescriptionNoVolume: Record<DealStatus, string> = {
+  'starting-soon': 'Price your eligible listings at the deal target price before the deal starts to qualify for reduced commission.',
+  'in-progress':   'Price your eligible listings at the deal target price to qualify for reduced commission.',
+  'ending-soon':   'This deal is ending soon. Keep your listings at the deal target price to maintain your commission rate before it closes.',
+  'ended':          'Here is how your listings performed during this deal.',
 }
 
 const dealStatusMeta: Record<DealStatus, { label: string; tagBg: string; tagText: string }> = {
@@ -441,10 +447,10 @@ function thumbBg(thumb: string): string {
                   </div>
                   <div v-if="deal.status === 'ended'" class="inline-flex items-center gap-1.5 mt-2">
                     <svg class="w-4 h-4 text-bm-text-low" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-                    <span class="text-xs text-bm-text-low">Deal ended {{ deal.endDate }}. You reached {{ deal.baseCommission - (currentTierIndex(deal) >= 0 ? deal.volumeTiers[currentTierIndex(deal)].commissionDiscount : 0) }}% commission on {{ deal.currentSales }} sales.</span>
+                    <span class="text-xs text-bm-text-low">Deal ended {{ deal.endDate }}.</span>
                   </div>
                 </div>
-                <div v-if="deal.status === 'starting-soon'" class="px-4 pb-4 flex items-center gap-4">
+                <div v-if="deal.status === 'starting-soon' && !hideVolume" class="px-4 pb-4 flex items-center gap-4">
                   <div class="flex flex-col shrink-0">
                     <span class="text-[32px] font-semibold leading-[36px] text-bm-text-hi" style="font-family: 'BM Duplet DSP', sans-serif;">{{ deal.daysUntilStart }} day{{ deal.daysUntilStart === 1 ? '' : 's' }}</span>
                     <span class="text-xs text-bm-text-low">until the deal starts</span>
@@ -469,7 +475,7 @@ function thumbBg(thumb: string): string {
                     </div>
                   </div>
                 </div>
-                <div v-else class="px-4 pb-4">
+                <div v-else-if="!hideVolume" class="px-4 pb-4">
                   <div class="flex items-center gap-4">
                     <div class="flex items-center gap-1.5 flex-1 min-w-0 flex-wrap">
                       <span class="text-xs text-bm-text-low mr-1 shrink-0">Commission:</span>
@@ -534,7 +540,7 @@ function thumbBg(thumb: string): string {
                       <span class="text-bm-gray-300">|</span>
                       <span>{{ deal.startDate }} - {{ deal.endDate }}</span>
                     </div>
-                  <div v-if="deal.status !== 'starting-soon' && deal.status !== 'ended'" class="mt-3">
+                  <div v-if="deal.status !== 'starting-soon' && deal.status !== 'ended' && !hideVolume" class="mt-3">
                     <div class="flex items-center gap-2 mb-1.5">
                       <div class="flex-1 h-1.5 rounded-full overflow-hidden" style="background: #E0E2E8;">
                         <div class="h-full rounded-full" :style="{ width: `${volumeProgress(deal)}%`, background: '#121016' }" />
@@ -584,16 +590,18 @@ function thumbBg(thumb: string): string {
                         </td>
                         <td style="padding: 16px; vertical-align: middle;"><span style="font-size: 14px; color: #121016;">{{ deal.models.length }}</span></td>
                         <td style="padding: 16px; vertical-align: middle;">
-                          <div v-if="deal.status !== 'starting-soon'" class="flex items-center gap-2">
+                          <div v-if="deal.status !== 'starting-soon' && !hideVolume" class="flex items-center gap-2">
                             <div class="w-24 h-1.5 rounded-full overflow-hidden" style="background: #E0E2E8;">
                               <div class="h-full rounded-full" :style="{ width: `${volumeProgress(deal)}%`, background: deal.status === 'ending-soon' ? '#006D42' : '#121016' }" />
                             </div>
                             <span class="text-xs text-bm-text-low">{{ deal.currentSales }}/{{ deal.volumeTiers[deal.volumeTiers.length - 1].sales }}</span>
                           </div>
-                          <span v-else class="text-xs text-bm-text-low">Not started</span>
+                          <span v-else-if="deal.status === 'starting-soon'" class="text-xs text-bm-text-low">Not started</span>
+                          <span v-else class="text-xs text-bm-text-low">-</span>
                         </td>
                         <td style="padding: 16px; vertical-align: middle;">
-                          <span class="font-semibold" style="font-size: 14px; color: #0F1117;">{{ deal.baseCommission - (currentTierIndex(deal) >= 0 ? deal.volumeTiers[currentTierIndex(deal)].commissionDiscount : 0) }}%</span>
+                          <span v-if="!hideVolume" class="font-semibold" style="font-size: 14px; color: #0F1117;">{{ deal.baseCommission - (currentTierIndex(deal) >= 0 ? deal.volumeTiers[currentTierIndex(deal)].commissionDiscount : 0) }}%</span>
+                          <span v-else class="font-semibold" style="font-size: 14px; color: #0F1117;">{{ deal.baseCommission }}%</span>
                         </td>
                         <td style="padding: 16px; vertical-align: middle;">
                           <span style="font-size: 12px; color: #5C5E63;">{{ deal.startDate }} - {{ deal.endDate }}</span>
@@ -632,7 +640,7 @@ function thumbBg(thumb: string): string {
                         <FlagChip v-for="m in deal.markets" :key="m" :code="m" :height="10" />
                       </div>
                     </div>
-                    <div v-if="deal.status !== 'starting-soon' && deal.status !== 'ended'" class="mt-2">
+                    <div v-if="deal.status !== 'starting-soon' && deal.status !== 'ended' && !hideVolume" class="mt-2">
                       <div class="h-1 rounded-full overflow-hidden" style="background: #E0E2E8;">
                         <div class="h-full rounded-full" :style="{ width: `${volumeProgress(deal)}%`, background: '#121016' }" />
                       </div>
@@ -939,7 +947,7 @@ function thumbBg(thumb: string): string {
                 </span>
               </div>
               <h2 class="text-2xl font-semibold leading-8 text-bm-text-hi" style="font-family: 'BM Duplet DSP', sans-serif;">{{ activeDeal.name }}</h2>
-              <p class="text-sm text-bm-text-hi">{{ dealDescription[activeDeal.status] }}</p>
+              <p class="text-sm text-bm-text-hi">{{ hideVolume ? dealDescriptionNoVolume[activeDeal.status] : dealDescription[activeDeal.status] }}</p>
               <div class="flex items-center gap-1">
                 <span v-for="m in activeDeal.markets" :key="m" class="inline-flex items-center gap-1 pl-2.5 pr-2 h-7 rounded-full text-xs font-normal" style="background: #ECEEF2; color: #2F3136;">
                   <FlagChip :code="m" :height="12" />
