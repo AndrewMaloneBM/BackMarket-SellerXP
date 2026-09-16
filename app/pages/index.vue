@@ -115,6 +115,22 @@ const inProgress: Prototype[] = [
     accent: '#6B5CE7',
   },
   {
+    title: 'Proactive Seller Insights in Support AI',
+    description: 'Support AI evolves from a reactive knowledge-base chatbot into a proactive insight system. It surfaces a small number of high-confidence items that deserve seller attention, lets sellers explore evidence conversationally, and can complete one safe operation (Deal submission) without sending the seller to another workflow. The MVP demonstrates three insight types: Deal (executable), Stock (informational), and Performance (explanatory).',
+    problemStatement: 'Sellers need to discover operational opportunities and risks across multiple Back Office areas, but the chatbot only helps when they already know what to ask.',
+    author: 'Andrew Malone',
+    date: 'September 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Proactive Insights MVP', pages: ['Home'] },
+    ],
+    scope: 'Back Office, Support AI',
+    goal: 'Test whether sellers notice, understand, and explore proactive insights',
+    impact: 'Badge counts attention items; Deal flow is the first executable action in Support AI',
+    link: '/prototypes/proactive-seller-insights',
+    accent: '#6B5CE7',
+  },
+  {
     title: 'Increase Sellers BackFunds adoption through a dedicated micro service and self-onboarding experience',
     description: 'BackFunds lets Back Market sellers get paid daily instead of waiting a week, but only 11% of eligible sellers use it — mostly because they don\'t know it exists. This prototype explores four ways to surface the service inside the seller Back Office so discovery and self-onboarding become effortless.',
     problemStatement: 'A service that could pay sellers six days faster is invisible to 89% of the people it\'s built for.',
