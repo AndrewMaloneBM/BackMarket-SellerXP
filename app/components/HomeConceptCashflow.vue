@@ -63,6 +63,19 @@ const PAYOUT_TIMELINE = [
       <!-- 3. Only the exceptions that cost money -->
       <HomeSection title="Risks to your next payout" locked tone="critical">
         <HomeQueueRow v-for="item in cashQueue" :key="item.id" :item="item" />
+
+        <!-- Refund rate is the gate on the next tier, so it earns a limit bar -->
+        <div class="border-t border-bm-border">
+          <VizLimitBar
+            label="Refund rate"
+            :value="11.2"
+            :limit="10"
+            unit="%"
+            window="Blocks Tier 3, which would halve the amount held"
+            :lower-is-better="true"
+            headroom="Needs to drop 1.2 points to unlock Tier 3"
+          />
+        </div>
       </HomeSection>
 
       <!-- 4. Faster access to cash. Provider named only in the CTA. -->
