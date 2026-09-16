@@ -675,83 +675,78 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
         <div v-if="drawerOpen" class="absolute right-0 top-0 bottom-0 z-50 w-[65vw] bg-surface-default-mid flex flex-col border-l border-bm-border shadow-2xl">
 
           <!-- Drawer header -->
-          <div class="flex items-center px-6 py-4 border-b border-bm-border flex-shrink-0">
-            <button @click="clearChat" class="text-sm text-bm-text-muted hover:text-bm-text-hi transition-colors">Clear chat</button>
+          <div class="flex items-center px-5 py-2.5 border-b border-bm-border flex-shrink-0">
+            <button @click="clearChat" class="text-xs text-bm-text-muted hover:text-bm-text-hi transition-colors">Clear chat</button>
             <span class="flex-1 text-center text-sm font-semibold text-bm-text-hi">Support AI</span>
-            <button @click="drawerOpen = false" class="w-8 h-8 flex items-center justify-center rounded-bm hover:bg-bm-gray-100 text-bm-text-muted hover:text-bm-text-hi transition-colors">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button @click="drawerOpen = false" class="w-7 h-7 flex items-center justify-center rounded-bm hover:bg-bm-gray-100 text-bm-text-muted hover:text-bm-text-hi transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
 
           <!-- Messages -->
-          <div ref="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-5">
+          <div ref="chatContainer" class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
 
             <template v-for="(msg, i) in chatMessages" :key="i">
 
               <!-- User message -->
-              <div v-if="msg.role === 'user'" class="bg-static-default-low rounded-bm-lg p-4">
-                <div class="flex items-center gap-2.5 mb-1.5">
-                  <div class="w-8 h-8 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
-                    <span class="text-sm font-semibold text-bm-text-mid">{{ SELLER_NAME[0] }}</span>
+              <div v-if="msg.role === 'user'" class="bg-static-default-low rounded-bm-lg p-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-6 h-6 rounded-full bg-bm-gray-300 flex items-center justify-center flex-shrink-0">
+                    <span class="text-xs font-semibold text-bm-text-mid">{{ SELLER_NAME[0] }}</span>
                   </div>
-                  <span class="text-sm font-semibold text-bm-text-hi">{{ SELLER_NAME }}</span>
-                  <span v-if="msg.isTopicSelection" class="text-[10px] font-medium text-bm-text-muted bg-bm-gray-100 px-2 py-0.5 rounded-full">Selected topic</span>
+                  <span class="text-xs font-semibold text-bm-text-hi">{{ SELLER_NAME }}</span>
+                  <span v-if="msg.isTopicSelection" class="text-[9px] font-medium text-bm-text-muted bg-bm-gray-100 px-1.5 py-0.5 rounded-full">Selected topic</span>
                 </div>
-                <p class="text-sm text-bm-text-mid leading-relaxed pl-10">{{ msg.text }}</p>
+                <p class="text-xs text-bm-text-mid leading-relaxed pl-8">{{ msg.text }}</p>
               </div>
 
               <!-- AI message -->
-              <div v-else class="flex gap-3">
-                <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <img :src="`${baseHref}/bm-avatar.svg`" class="w-5 h-5 invert" alt="" />
+              <div v-else class="flex gap-2">
+                <div class="w-7 h-7 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <img :src="`${baseHref}/bm-avatar.svg`" class="w-4 h-4 invert" alt="" />
                 </div>
-                <div class="flex-1">
-                  <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
-                  <div class="bg-static-default-low rounded-bm-lg p-4">
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-bm-text-hi mb-1">Support AI</p>
+                  <div class="bg-static-default-low rounded-bm-lg p-3">
 
-                  <p class="text-sm text-bm-text-mid leading-relaxed whitespace-pre-line">{{ msg.text }}</p>
+                  <p class="text-xs text-bm-text-mid leading-snug whitespace-pre-line">{{ msg.text }}</p>
 
                   <!-- Insight cards -->
-                  <div v-if="msg.insightCards" class="mt-4 space-y-3">
+                  <div v-if="msg.insightCards" class="mt-3 space-y-2">
                     <div
                       v-for="insight in insights.filter(i => i.status === 'new' || i.status === 'open' || i.status === 'in_progress')"
                       :key="insight.id"
-                      class="bg-white rounded-bm border border-bm-border p-4 hover:border-bm-gray-400 transition-colors"
+                      class="bg-white rounded-bm border border-bm-border p-2.5 hover:border-bm-gray-400 transition-colors"
                     >
-                      <div class="flex items-start justify-between gap-3">
+                      <div class="flex items-start justify-between gap-2">
                         <div class="flex-1 min-w-0">
-                          <div class="flex items-center gap-2 mb-1.5">
+                          <div class="flex items-center gap-1.5 mb-1">
                             <span
-                              class="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded"
+                              class="text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded"
                               :class="{
                                 'bg-purple-100 text-purple-700': insight.type === 'deal',
                                 'bg-orange-100 text-orange-700': insight.type === 'stock',
                                 'bg-green-100 text-green-700': insight.type === 'performance',
                               }"
-                            >{{ insight.type === 'deal' ? 'Deal opportunity' : insight.type === 'stock' ? 'Stock alert' : 'Performance highlight' }}</span>
-                            <span v-if="insight.status === 'in_progress'" class="text-[10px] font-medium text-bm-text-muted bg-bm-gray-100 px-2 py-0.5 rounded-full">In progress</span>
+                            >{{ insight.type === 'deal' ? 'Deal' : insight.type === 'stock' ? 'Stock' : 'Performance' }}</span>
+                            <span v-if="insight.status === 'in_progress'" class="text-[9px] font-medium text-bm-text-muted bg-bm-gray-100 px-1.5 py-0.5 rounded-full">In progress</span>
                           </div>
-                          <p class="text-sm font-semibold text-bm-text-hi mb-2">{{ insight.title }}</p>
-                          <p class="text-xs text-bm-text-mid leading-relaxed mb-2">{{ insight.reason }}</p>
-                          <div class="flex items-center gap-3 text-[11px] text-bm-text-muted">
-                            <span class="flex items-center gap-1">
-                              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                              {{ insight.freshness }}
-                            </span>
-                            <span class="flex items-center gap-1">
-                              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941" /></svg>
-                              {{ insight.impact }}
-                            </span>
+                          <p class="text-xs font-semibold text-bm-text-hi mb-1">{{ insight.title }}</p>
+                          <p class="text-[11px] text-bm-text-mid leading-snug mb-1.5">{{ insight.reason }}</p>
+                          <div class="flex items-center gap-2 text-[10px] text-bm-text-muted">
+                            <span>{{ insight.freshness }}</span>
+                            <span class="text-bm-gray-300">·</span>
+                            <span>{{ insight.impact }}</span>
                           </div>
                         </div>
                       </div>
-                      <div class="flex items-center gap-2 mt-3">
+                      <div class="flex items-center gap-2 mt-2">
                         <button
-                          class="px-3 py-1.5 text-sm font-medium text-white bg-bm-text-hi rounded-bm hover:opacity-90 transition-opacity"
+                          class="px-2.5 py-1 text-xs font-medium text-white bg-bm-text-hi rounded-bm hover:opacity-90 transition-opacity"
                           @click="selectInsight(insight.id)"
                         >{{ insight.ctaLabel }}</button>
                         <button
-                          class="px-3 py-1.5 text-sm font-medium text-bm-text-muted hover:text-bm-text-hi transition-colors"
+                          class="px-2.5 py-1 text-xs font-medium text-bm-text-muted hover:text-bm-text-hi transition-colors"
                           @click="dismissInsight(insight.id)"
                         >Dismiss</button>
                       </div>
@@ -759,28 +754,28 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
                   </div>
 
                   <!-- Deal recommendation summary -->
-                  <div v-if="msg.dealRecommendation" class="mt-3 bg-white rounded-bm border border-bm-border p-4">
-                    <div class="grid grid-cols-4 gap-4 mb-3">
+                  <div v-if="msg.dealRecommendation" class="mt-2 bg-white rounded-bm border border-bm-border p-3">
+                    <div class="grid grid-cols-4 gap-3 mb-2">
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Recommended</p>
-                        <p class="text-xl font-semibold text-bm-text-hi">18</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Recommended</p>
+                        <p class="text-base font-semibold text-bm-text-hi">18</p>
                       </div>
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Eligible</p>
-                        <p class="text-xl font-semibold text-bm-text-hi">{{ dealEligibleCount }}</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Eligible</p>
+                        <p class="text-base font-semibold text-bm-text-hi">{{ dealEligibleCount }}</p>
                       </div>
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Excluded</p>
-                        <p class="text-xl font-semibold text-orange-600">{{ dealExcludedListings.length }}</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Excluded</p>
+                        <p class="text-base font-semibold text-orange-600">{{ dealExcludedListings.length }}</p>
                       </div>
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Categories</p>
-                        <p class="text-xl font-semibold text-bm-text-hi">4</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Categories</p>
+                        <p class="text-base font-semibold text-bm-text-hi">4</p>
                       </div>
                     </div>
-                    <div class="border-t border-bm-border pt-3">
-                      <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted mb-1.5">Excluded listings</p>
-                      <div v-for="l in dealExcludedListings" :key="l.id" class="flex items-center justify-between text-xs py-1">
+                    <div class="border-t border-bm-border pt-2">
+                      <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted mb-1">Excluded listings</p>
+                      <div v-for="l in dealExcludedListings" :key="l.id" class="flex items-center justify-between text-[11px] py-0.5">
                         <span class="text-bm-text-mid">{{ l.name }}</span>
                         <span class="text-bm-text-muted">{{ l.reason }}</span>
                       </div>
@@ -788,12 +783,12 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
                   </div>
 
                   <!-- Deal review list -->
-                  <div v-if="msg.dealReviewList" class="mt-3 bg-white rounded-bm border border-bm-border p-4">
-                    <div class="max-h-60 overflow-y-auto space-y-1">
+                  <div v-if="msg.dealReviewList" class="mt-2 bg-white rounded-bm border border-bm-border p-3">
+                    <div class="max-h-48 overflow-y-auto space-y-0.5">
                       <div
                         v-for="l in dealListings"
                         :key="l.id"
-                        class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-bm-gray-50 transition-colors"
+                        class="flex items-center justify-between py-1 px-1.5 rounded hover:bg-bm-gray-50 transition-colors"
                       >
                         <div class="flex items-center gap-2">
                           <input
@@ -801,9 +796,9 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
                             :checked="dealSelectedIds.has(l.id)"
                             :disabled="!l.eligible"
                             @change="toggleListing(l.id)"
-                            class="w-4 h-4 rounded border-bm-border"
+                            class="w-3.5 h-3.5 rounded border-bm-border"
                           />
-                          <span class="text-sm text-bm-text-hi">{{ l.name }}</span>
+                          <span class="text-xs text-bm-text-hi">{{ l.name }}</span>
                         </div>
                         <div class="flex items-center gap-2">
                           <span class="text-[10px] text-bm-text-muted">{{ l.category }}</span>
@@ -811,116 +806,116 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
                         </div>
                       </div>
                     </div>
-                    <p class="text-xs text-bm-text-muted mt-2">{{ dealSelectedIds.size }} listings selected</p>
+                    <p class="text-[11px] text-bm-text-muted mt-1.5">{{ dealSelectedIds.size }} listings selected</p>
                   </div>
 
                   <!-- Deal confirm summary -->
-                  <div v-if="msg.dealConfirmSummary" class="mt-3 bg-white rounded-bm border border-bm-border p-4">
-                    <p class="text-xs font-semibold text-bm-text-hi mb-2">Submission summary</p>
+                  <div v-if="msg.dealConfirmSummary" class="mt-2 bg-white rounded-bm border border-bm-border p-3">
+                    <p class="text-[11px] font-semibold text-bm-text-hi mb-1.5">Submission summary</p>
                     <div class="grid grid-cols-2 gap-3">
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Listings to include</p>
-                        <p class="text-lg font-semibold text-bm-text-hi">{{ dealSelectedIds.size }}</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Listings to include</p>
+                        <p class="text-sm font-semibold text-bm-text-hi">{{ dealSelectedIds.size }}</p>
                       </div>
                       <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-wide text-bm-text-muted">Estimated boost</p>
-                        <p class="text-lg font-semibold text-green-600">15-20%</p>
+                        <p class="text-[9px] font-semibold uppercase tracking-wide text-bm-text-muted">Estimated boost</p>
+                        <p class="text-sm font-semibold text-green-600">15-20%</p>
                       </div>
                     </div>
                   </div>
 
                   <!-- Deal submitting state -->
-                  <div v-if="msg.dealSubmitting" class="mt-3 flex items-center gap-2 text-sm text-bm-text-muted">
-                    <svg class="w-4 h-4 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
+                  <div v-if="msg.dealSubmitting" class="mt-2 flex items-center gap-2 text-xs text-bm-text-muted">
+                    <svg class="w-3.5 h-3.5 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
                     Submitting Deal...
                   </div>
 
                   <!-- Deal result -->
-                  <div v-if="msg.dealResult === 'partial'" class="mt-3 bg-orange-50 border border-orange-200 rounded-bm p-4">
-                    <div class="flex items-center gap-2 mb-1">
-                      <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
-                      <p class="text-sm font-semibold text-orange-800">Partial success</p>
+                  <div v-if="msg.dealResult === 'partial'" class="mt-2 bg-orange-50 border border-orange-200 rounded-bm p-2.5">
+                    <div class="flex items-center gap-2 mb-0.5">
+                      <svg class="w-3.5 h-3.5 text-orange-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+                      <p class="text-xs font-semibold text-orange-800">Partial success</p>
                     </div>
-                    <p class="text-xs text-orange-700">The Deal was submitted but 2 listings were excluded at submission time.</p>
+                    <p class="text-[11px] text-orange-700">The Deal was submitted but 2 listings were excluded at submission time.</p>
                   </div>
 
-                  <div v-if="msg.dealResult === 'success'" class="mt-3 bg-green-50 border border-green-200 rounded-bm p-4">
+                  <div v-if="msg.dealResult === 'success'" class="mt-2 bg-green-50 border border-green-200 rounded-bm p-2.5">
                     <div class="flex items-center gap-2">
-                      <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <p class="text-sm font-semibold text-green-800">Deal submitted successfully</p>
+                      <svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <p class="text-xs font-semibold text-green-800">Deal submitted successfully</p>
                     </div>
                   </div>
 
-                  <div v-if="msg.dealResult === 'failed'" class="mt-3 bg-red-50 border border-red-200 rounded-bm p-4">
-                    <div class="flex items-center gap-2 mb-1">
-                      <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
-                      <p class="text-sm font-semibold text-red-800">Submission failed</p>
+                  <div v-if="msg.dealResult === 'failed'" class="mt-2 bg-red-50 border border-red-200 rounded-bm p-2.5">
+                    <div class="flex items-center gap-2 mb-0.5">
+                      <svg class="w-3.5 h-3.5 text-red-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
+                      <p class="text-xs font-semibold text-red-800">Submission failed</p>
                     </div>
-                    <p class="text-xs text-red-700">The Deal could not be submitted. Please try again or contact support.</p>
+                    <p class="text-[11px] text-red-700">The Deal could not be submitted. Please try again or contact support.</p>
                   </div>
 
                   <!-- Stock listings table -->
-                  <div v-if="msg.stockListings" class="mt-3 bg-white rounded-bm border border-bm-border p-4 overflow-x-auto">
-                    <table class="w-full text-xs">
+                  <div v-if="msg.stockListings" class="mt-2 bg-white rounded-bm border border-bm-border p-3 overflow-x-auto">
+                    <table class="w-full text-[11px]">
                       <thead>
                         <tr class="border-b border-bm-border text-bm-text-muted">
-                          <th class="text-left font-semibold py-2 pr-3">Listing</th>
-                          <th class="text-right font-semibold py-2 px-3">Days left</th>
-                          <th class="text-right font-semibold py-2 px-3">Velocity</th>
-                          <th class="text-center font-semibold py-2 px-3">Trend</th>
-                          <th class="text-right font-semibold py-2 pl-3">At risk</th>
+                          <th class="text-left font-semibold py-1.5 pr-2">Listing</th>
+                          <th class="text-right font-semibold py-1.5 px-2">Days</th>
+                          <th class="text-right font-semibold py-1.5 px-2">Velocity</th>
+                          <th class="text-center font-semibold py-1.5 px-2">Trend</th>
+                          <th class="text-right font-semibold py-1.5 pl-2">At risk</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="s in stockListings" :key="s.name" class="border-b border-bm-border last:border-0">
-                          <td class="py-2 pr-3 text-bm-text-hi">{{ s.name }}</td>
-                          <td class="py-2 px-3 text-right" :class="s.daysLeft <= 6 ? 'text-red-600 font-semibold' : 'text-bm-text-mid'">{{ s.daysLeft }}</td>
-                          <td class="py-2 px-3 text-right text-bm-text-mid">{{ s.velocity }}</td>
-                          <td class="py-2 px-3 text-center text-bm-text-mid">{{ s.trend }}</td>
-                          <td class="py-2 pl-3 text-right text-bm-text-mid">{{ s.atRisk }}</td>
+                          <td class="py-1.5 pr-2 text-bm-text-hi">{{ s.name }}</td>
+                          <td class="py-1.5 px-2 text-right" :class="s.daysLeft <= 6 ? 'text-red-600 font-semibold' : 'text-bm-text-mid'">{{ s.daysLeft }}</td>
+                          <td class="py-1.5 px-2 text-right text-bm-text-mid">{{ s.velocity }}</td>
+                          <td class="py-1.5 px-2 text-center text-bm-text-mid">{{ s.trend }}</td>
+                          <td class="py-1.5 pl-2 text-right text-bm-text-mid">{{ s.atRisk }}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
 
                   <!-- Persist notice -->
-                  <div v-if="msg.persistNotice" class="mt-3 bg-blue-50 border border-blue-200 rounded-bm p-3 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg>
-                    <p class="text-xs text-blue-800">Insights persist independently from the chat transcript.</p>
+                  <div v-if="msg.persistNotice" class="mt-2 bg-blue-50 border border-blue-200 rounded-bm p-2 flex items-center gap-2">
+                    <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg>
+                    <p class="text-[11px] text-blue-800">Insights persist independently from the chat transcript.</p>
                   </div>
 
                   <!-- Bullets -->
-                  <ul v-if="msg.bullets?.length" class="mt-3 space-y-1.5">
-                    <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-2 text-sm text-bm-text-mid">
+                  <ul v-if="msg.bullets?.length" class="mt-2 space-y-1">
+                    <li v-for="bullet in msg.bullets" :key="bullet" class="flex items-start gap-1.5 text-xs text-bm-text-mid">
                       <span class="text-bm-text-muted mt-0.5 select-none">·</span>
                       <span>{{ bullet }}</span>
                     </li>
                   </ul>
 
                   <!-- Note -->
-                  <p v-if="msg.note" class="mt-3 text-sm text-bm-text-mid leading-relaxed">{{ msg.note }}</p>
+                  <p v-if="msg.note" class="mt-2 text-xs text-bm-text-mid leading-snug">{{ msg.note }}</p>
 
                   <!-- Based on -->
-                  <p v-if="msg.basedOn" class="mt-4 flex items-center gap-1.5 text-sm font-medium text-bm-text-muted">
+                  <p v-if="msg.basedOn" class="mt-2 flex items-center gap-1.5 text-[11px] font-medium text-bm-text-muted">
                     <span>📄</span>
                     Based on: {{ msg.basedOn }}
                   </p>
 
                   <!-- CTA button -->
-                  <div v-if="msg.ctaButton" class="mt-4">
+                  <div v-if="msg.ctaButton" class="mt-3">
                     <button
-                      class="inline-flex items-center gap-2 px-4 py-2 bg-bm-text-hi text-white text-sm font-medium rounded-bm hover:opacity-90 transition-opacity"
+                      class="inline-flex items-center gap-2 px-3 py-1.5 bg-bm-text-hi text-white text-xs font-medium rounded-bm hover:opacity-90 transition-opacity"
                       @click="activeNavItem = msg.ctaButton!.navItem ?? 'Money'; drawerOpen = false"
                     >{{ msg.ctaButton.label }}</button>
                   </div>
 
                   <!-- Response pills -->
-                  <div v-if="msg.responsePills?.length && !msg.responsePillsUsed" class="flex flex-wrap gap-2 mt-4">
+                  <div v-if="msg.responsePills?.length && !msg.responsePillsUsed" class="flex flex-wrap gap-2 mt-3">
                     <button
                       v-for="pill in msg.responsePills"
                       :key="pill.label"
                       :class="[
-                        'h-auto py-1.5 px-3 text-sm rounded-full border transition-colors whitespace-nowrap',
+                        'h-auto py-1 px-2.5 text-xs rounded-full border transition-colors whitespace-nowrap',
                         pill.action === 'deal-submit'
                           ? 'bg-bm-text-hi text-white border-bm-text-hi hover:opacity-90'
                           : pill.action === 'deal-close' || pill.action.includes('dismiss')
@@ -932,22 +927,22 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
                   </div>
 
                   <!-- Feedback -->
-                  <div v-if="msg.showFeedback" class="mt-4 space-y-3">
+                  <div v-if="msg.showFeedback" class="mt-3 space-y-2">
                     <div class="flex items-center gap-2">
-                      <span class="text-sm text-bm-text-muted">Was this helpful?</span>
+                      <span class="text-xs text-bm-text-muted">Was this helpful?</span>
                       <button
                         @click="giveFeedback(msg, 'up')"
-                        :class="['w-8 h-8 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'up' ? 'bg-bm-text-hi border-bm-text-hi text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
+                        :class="['w-6 h-6 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'up' ? 'bg-bm-text-hi border-bm-text-hi text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
                       >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.669A1.989 1.989 0 013.9 18h-.6a1.5 1.5 0 01-1.5-1.5v-6a1.5 1.5 0 011.5-1.5h.6a2 2 0 011.978 1.698c.088.504.13 1.022.13 1.552a11.92 11.92 0 01-.086 1.423L5.904 18.67z"/></svg>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.669A1.989 1.989 0 013.9 18h-.6a1.5 1.5 0 01-1.5-1.5v-6a1.5 1.5 0 011.5-1.5h.6a2 2 0 011.978 1.698c.088.504.13 1.022.13 1.552a11.92 11.92 0 01-.086 1.423L5.904 18.67z"/></svg>
                       </button>
                       <button
                         @click="giveFeedback(msg, 'down')"
-                        :class="['w-8 h-8 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'down' ? 'bg-bm-text-hi border-bm-text-hi text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
+                        :class="['w-6 h-6 rounded-full border flex items-center justify-center transition-colors', msg.feedbackGiven === 'down' ? 'bg-bm-text-hi border-bm-text-hi text-white' : 'border-bm-border hover:border-bm-gray-400 text-bm-text-muted']"
                       >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/></svg>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/></svg>
                       </button>
-                      <span v-if="msg.feedbackGiven" class="text-sm text-bm-text-muted">Thanks! Your feedback helps us improve.</span>
+                      <span v-if="msg.feedbackGiven" class="text-xs text-bm-text-muted">Thanks!</span>
                     </div>
                   </div>
 
@@ -958,14 +953,14 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
             </template>
 
             <!-- Loading state -->
-            <div v-if="chatLoading" class="flex gap-3">
-              <div class="w-9 h-9 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <img :src="`${baseHref}/bm-avatar.svg`" class="w-5 h-5 invert" alt="" />
+            <div v-if="chatLoading" class="flex gap-2">
+              <div class="w-7 h-7 rounded-full bg-[#6B5CE7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <img :src="`${baseHref}/bm-avatar.svg`" class="w-4 h-4 invert" alt="" />
               </div>
               <div class="flex-1">
-                <p class="text-sm font-semibold text-bm-text-hi mb-2">Support AI</p>
-                <div class="flex items-center gap-2 text-sm text-bm-text-muted">
-                  <svg class="w-4 h-4 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
+                <p class="text-xs font-semibold text-bm-text-hi mb-1">Support AI</p>
+                <div class="flex items-center gap-2 text-xs text-bm-text-muted">
+                  <svg class="w-3.5 h-3.5 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"/></svg>
                   Working on it...
                 </div>
               </div>
@@ -974,24 +969,24 @@ const dealExcludedListings = computed(() => dealListings.filter(l => !l.eligible
           </div>
 
           <!-- Input area -->
-          <div class="border-t border-bm-border p-4 flex-shrink-0">
+          <div class="border-t border-bm-border p-3 flex-shrink-0">
             <form @submit.prevent="sendMessage" class="flex gap-2">
               <input
                 v-model="chatInput"
                 type="text"
                 placeholder="Ask me anything about your business"
                 :disabled="chatLoading"
-                class="flex-1 text-sm px-4 py-2.5 border border-bm-border rounded-bm focus:outline-none focus:border-bm-text-hi bg-static-default-low text-bm-text-hi placeholder-bm-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 text-xs px-3 py-2 border border-bm-border rounded-bm focus:outline-none focus:border-bm-text-hi bg-static-default-low text-bm-text-hi placeholder-bm-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
                 :disabled="!chatInput.trim() || chatLoading"
-                class="w-10 h-10 bg-bm-text-hi text-white rounded-bm flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40"
+                class="w-8 h-8 bg-bm-text-hi text-white rounded-bm flex items-center justify-center hover:opacity-90 transition-opacity disabled:opacity-40"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
               </button>
             </form>
-            <p class="text-xs text-bm-text-muted mt-2">Support AI can make mistakes. Do not share personal details.</p>
+            <p class="text-[10px] text-bm-text-muted mt-1.5">Support AI can make mistakes. Do not share personal details.</p>
           </div>
 
         </div>
