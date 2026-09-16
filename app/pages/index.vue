@@ -44,6 +44,22 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
+    title: 'Seller Back Office — Home page explorations',
+    description: 'A workspace for rethinking the seller Back Office Home page. Starts from a faithful replica of today\'s Home (task list, sale insights, trade-in, opportunities, wallet, reviews) so any change can be measured against the current state.',
+    problemStatement: 'TBD — exploration starting from a baseline replica of the Home page.',
+    author: 'Andrew Malone',
+    date: 'September 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Baseline', pages: ['Home'] },
+    ],
+    scope: 'Home',
+    goal: 'TBD',
+    impact: 'TBD',
+    link: '/prototypes/home-explorations',
+    accent: '#C0392B',
+  },
+  {
     title: 'Deals Adoption',
     description: 'Deal adoption in FR/ES sits at 35-40% vs a 50-60% target. 100-200 daily instances where a seller could adopt a deal at no margin cost and doesn\'t. This prototype explores how to help sellers discover, assess, act on, and track Back Market Deals within the workflows they already use.',
     problemStatement: 'A deal that could earn a seller more is invisible to 60% of the people it\'s built for, and unclear to the rest.',
