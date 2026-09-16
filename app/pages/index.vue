@@ -44,18 +44,22 @@ interface Prototype {
 
 const inProgress: Prototype[] = [
   {
-    title: 'Seller Back Office — Home page explorations',
-    description: 'A workspace for rethinking the seller Back Office Home page. Starts from a faithful replica of today\'s Home (task list, sale insights, trade-in, opportunities, wallet, reviews) so any change can be measured against the current state.',
-    problemStatement: 'TBD — exploration starting from a baseline replica of the Home page.',
+    title: 'Rethinking the seller Back Office Home page',
+    description: 'The Home page is the first thing a seller sees and the least used surface in the Back Office. Today it is a masonry grid of oversized cards showing raw totals rather than actionable exceptions. This prototype tests five different bets about what Home is actually for, each switchable against today\'s layout as a control.',
+    problemStatement: 'The first page every seller lands on is the one they have least reason to read.',
     author: 'Andrew Malone',
     date: 'September 2026',
     status: 'In progress',
     concepts: [
-      { n: 1, name: 'Baseline', pages: ['Home'] },
+      { n: 1, name: 'Triage', pages: ['Home'] },
+      { n: 2, name: 'Cash flow', pages: ['Home'] },
+      { n: 3, name: 'Scoreboard', pages: ['Home'] },
+      { n: 4, name: 'Next best action', pages: ['Home'] },
+      { n: 5, name: 'Bounded hybrid', pages: ['Home'] },
     ],
     scope: 'Home',
-    goal: 'TBD',
-    impact: 'TBD',
+    goal: 'Cut the share of Home sessions with zero interaction',
+    impact: '69% of integrator sellers still use the BO; 58% found features only via a survey',
     link: '/prototypes/home-explorations',
     accent: '#C0392B',
   },
