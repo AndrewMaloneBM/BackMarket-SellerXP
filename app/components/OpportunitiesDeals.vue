@@ -376,7 +376,7 @@ function thumbBg(thumb: string): string {
               <h2 class="text-xl font-semibold text-bm-text-hi">All deals</h2>
               <!-- Layout variant selector -->
               <div class="flex items-center gap-3">
-                <span class="text-[10px] font-semibold uppercase tracking-wider text-bm-text-low">Layout</span>
+                <span class="text-[10px] font-semibold uppercase tracking-wider text-bm-text-low">Layout variants (design test only)</span>
                 <div class="flex items-center gap-1">
                   <button
                     v-for="v in layoutVariants"
