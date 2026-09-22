@@ -9,11 +9,29 @@ const activeNavItem = ref<string>('Home')
 const ENABLED_NAV = ['Home', 'Listings', 'Opportunities']
 const disabledNavItems = NAV_ITEMS.filter((item) => !ENABLED_NAV.includes(item))
 
+import dealCampaignsJson from './deals-step-one/deal_campaigns.json'
+
+/** Products above their Deal target price — the sellers who can still unlock reduced commission. */
+const eligibleCount = dealCampaignsJson.campaigns.reduce(
+  (sum, c) => sum + c.products.filter((p) => p.price != null && p.price > p.targetPrice).length,
+  0,
+)
+
+const baseHref = useRuntimeConfig().app.baseURL
+
+function iconSrc(name: string) {
+  return `${baseHref}icons/${name}.svg`
+}
+
 const emit = defineEmits<{ navItemClick: [item: string] }>()
 
 function onNavClick(item: string) {
   activeNavItem.value = item
   emit('navItemClick', item)
+}
+
+function onViewDeals() {
+  emit('navItemClick', 'Opportunities')
 }
 </script>
 
@@ -131,8 +149,8 @@ function onNavClick(item: string) {
           </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-6 mb-6">
-          <div class="col-span-2 bg-white rounded-xl border border-bm-border p-5">
+        <div class="grid gap-6 mb-6 items-stretch" style="grid-template-columns: 1fr 1fr 320px;">
+          <div class="bg-white rounded-xl border border-bm-border p-5">
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-bm-text-hi" viewBox="0 0 24 24"><path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75a.75.75 0 0 0-1.5 0 8.25 8.25 0 1 1-16.5 0 8.25 8.25 0 0 1 14.124-5.794l.042.044H16a.75.75 0 0 0 0 1.5h3a1.25 1.25 0 0 0 1.25-1.25V3a.75.75 0 0 0-1.5 0v1.964A9.72 9.72 0 0 0 12 2.25" fill="currentColor"/></svg>
@@ -169,7 +187,7 @@ function onNavClick(item: string) {
             </div>
           </div>
 
-          <div class="col-span-2 bg-white rounded-xl border border-bm-border p-5">
+          <div class="bg-white rounded-xl border border-bm-border p-5">
             <div class="flex items-center gap-2 mb-4">
               <svg class="w-4 h-4 text-bm-text-hi" viewBox="0 0 24 24"><path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75a.75.75 0 0 0-1.5 0 8.25 8.25 0 1 1-16.5 0 8.25 8.25 0 0 1 14.124-5.794l.042.044H16a.75.75 0 0 0 0 1.5h3a1.25 1.25 0 0 0 1.25-1.25V3a.75.75 0 0 0-1.5 0v1.964A9.72 9.72 0 0 0 12 2.25" fill="currentColor"/></svg>
               <span class="text-sm font-semibold text-bm-text-hi">Opportunities</span>
@@ -205,6 +223,49 @@ function onNavClick(item: string) {
                   <p class="text-xs text-bm-text-low">Devices available to source from Back Market customers.</p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Deals card — dark navy, count of listings above deal target from deal_campaigns.json -->
+          <div class="relative overflow-hidden rounded-xl p-5 flex flex-col" style="background: #1F2A4A;">
+            <!-- Decorative faint "%" graphic, clipped to the card -->
+            <svg class="absolute -right-8 -bottom-10 w-56 h-56 pointer-events-none" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m9-4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.3 19.7l14-14a1.125 1.125 0 0 0-1.6-1.6l-14 14a1.125 1.125 0 0 0 1.6 1.6" fill="#FFFFFF" fill-opacity="0.06"/>
+            </svg>
+
+            <div class="relative flex items-center gap-2">
+              <img :src="iconSrc('IconDealFilled')" alt="" class="w-5 h-5" style="filter: brightness(0) invert(1);" />
+              <span class="text-sm font-semibold text-white">Deals</span>
+            </div>
+
+            <div class="relative mt-4">
+              <p class="text-6xl font-extrabold leading-none" style="color: #DDF77A;">{{ eligibleCount }}</p>
+              <p class="mt-2 text-xl font-bold leading-snug" style="color: #DDF77A;">
+                {{ eligibleCount === 1 ? 'listing can' : 'listings can' }} unlock reduced commission
+              </p>
+              <p class="mt-3 text-sm leading-relaxed" style="color: #AEB8D6;">
+                Meet the Deal target price to pay less commission on selected products.
+              </p>
+            </div>
+
+            <div class="relative mt-auto pt-6 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
+                style="background: #DDF77A; color: #1F2A4A;"
+                @click="onViewDeals"
+              >
+                View eligible listings
+              </button>
+              <button
+                type="button"
+                class="text-sm font-semibold text-white underline underline-offset-2 cursor-not-allowed"
+                aria-disabled="true"
+                tabindex="-1"
+                title="Not available in this test"
+              >
+                How Deals work
+              </button>
             </div>
           </div>
         </div>
