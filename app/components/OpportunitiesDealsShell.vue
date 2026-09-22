@@ -219,14 +219,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 <table class="w-full border-collapse">
                   <thead>
                     <tr class="bg-bm-gray-100">
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 34%;">Product</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Price</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 38%;">Product</th>
+                      <th class="text-right px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 22%;">Price</th>
                       <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Status</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 34%;">Actions</th>
+                      <th class="text-right px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 24%;">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white">
-                    <tr v-for="model in activeCampaign.models" :key="model.id" class="border-b border-bm-border align-top">
+                    <tr v-for="model in activeCampaign.models" :key="model.id" class="border-b border-bm-border align-middle">
                       <td class="px-4 py-4">
                         <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
                         <div class="mt-2 flex items-center gap-1.5 flex-wrap">
@@ -237,15 +237,15 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                           </span>
                         </div>
                       </td>
-                      <td class="px-4 py-4">
+                      <td class="px-4 py-4 text-right whitespace-nowrap">
                         <template v-if="model.price != null">
-                          <p class="text-sm font-semibold text-bm-text-hi">{{ formatPrice(model.price) }}</p>
-                          <p class="mt-1 text-xs" :class="model.price - model.target > 40 ? 'text-bm-danger' : 'text-bm-warning'">{{ aboveTarget(model) }}</p>
-                          <p class="mt-1 text-xs text-bm-text-low">Target: {{ formatPrice(model.target) }}</p>
+                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price) }}</p>
+                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.target > 40 ? 'text-bm-danger' : 'text-bm-warning'">{{ aboveTarget(model) }}</p>
+                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.target) }}</p>
                         </template>
                         <template v-else>
-                          <p class="text-sm text-bm-text-low italic">Not listed</p>
-                          <p class="mt-1 text-xs text-bm-text-low">Target: {{ formatPrice(model.target) }}</p>
+                          <p class="text-sm text-bm-text-low italic whitespace-nowrap">Not listed</p>
+                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.target) }}</p>
                         </template>
                       </td>
                       <td class="px-4 py-4">
@@ -254,7 +254,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                         </span>
                       </td>
                       <td class="px-4 py-4">
-                        <div class="flex flex-col items-start gap-2">
+                        <div class="flex flex-col items-end gap-2">
                           <button
                             v-if="model.status !== 'in-target'"
                             type="button"
