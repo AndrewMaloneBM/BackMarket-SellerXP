@@ -6,6 +6,13 @@ const TABS = ['Active', 'On hold', 'Archived'] as const
 const activeNavItem = ref<string>('Listings')
 const activeTab = ref<string>('Active')
 
+const emit = defineEmits<{ navItemClick: [item: string] }>()
+
+function onNavClick(item: string) {
+  activeNavItem.value = item
+  emit('navItemClick', item)
+}
+
 const showMoreFilters = ref(false)
 const expandAll = ref(false)
 const expandedRows = ref<Set<string>>(new Set())
@@ -180,7 +187,7 @@ defineExpose({
     page-title="Your listings"
     :tabs="TABS"
     :active-tab="activeTab"
-    @nav-item-click="activeNavItem = $event"
+    @nav-item-click="onNavClick"
     @update:active-tab="activeTab = $event"
   >
     <template #header-actions>

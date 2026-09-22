@@ -54,6 +54,17 @@ function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
 }
 
+const NAV_TO_PAGE: Record<string, string> = {
+  Home: 'home',
+  Listings: 'listings',
+  Opportunities: 'opportunities',
+}
+
+function onShellNav(item: string) {
+  const pageId = NAV_TO_PAGE[item]
+  if (pageId) setActivePage(pageId)
+}
+
 function resetDismissedUi() {
   // Reset any dismissible UI state your prototype owns.
 }
@@ -77,9 +88,9 @@ function resetDismissedUi() {
 
     <div class="flex-1 overflow-auto bg-bm-surface">
       <div v-show="activeConcept === 1">
-        <HomeBaseline v-if="activePageId === 'home'" />
-        <ListingsBaseline v-if="activePageId === 'listings'" />
-        <OpportunitiesDealsShell v-if="activePageId === 'opportunities'" />
+        <HomeBaseline v-if="activePageId === 'home'" @nav-item-click="onShellNav" />
+        <ListingsBaseline v-if="activePageId === 'listings'" @nav-item-click="onShellNav" />
+        <OpportunitiesDealsShell v-if="activePageId === 'opportunities'" @nav-item-click="onShellNav" />
       </div>
     </div>
   </div>

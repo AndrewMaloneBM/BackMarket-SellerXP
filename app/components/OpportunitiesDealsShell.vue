@@ -5,6 +5,13 @@ const TABS = ['Deals', 'Pricing', 'Inventory'] as const
 
 const activeNavItem = ref<string>('Opportunities')
 const activeTab = ref<string>('Deals')
+
+const emit = defineEmits<{ navItemClick: [item: string] }>()
+
+function onNavClick(item: string) {
+  activeNavItem.value = item
+  emit('navItemClick', item)
+}
 </script>
 
 <template>
@@ -15,7 +22,7 @@ const activeTab = ref<string>('Deals')
     page-title="Opportunities"
     :tabs="TABS"
     :active-tab="activeTab"
-    @nav-item-click="activeNavItem = $event"
+    @nav-item-click="onNavClick"
     @update:active-tab="activeTab = $event"
   >
     <div class="py-8">

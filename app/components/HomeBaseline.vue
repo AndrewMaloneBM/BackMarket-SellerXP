@@ -4,8 +4,11 @@ const SELLER_NAME = 'Merchant'
 
 const activeNavItem = ref<string>('Home')
 
+const emit = defineEmits<{ navItemClick: [item: string] }>()
+
 function onNavClick(item: string) {
   activeNavItem.value = item
+  emit('navItemClick', item)
 }
 </script>
 
