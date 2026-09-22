@@ -3,10 +3,17 @@ import dealCampaignsJson from './deals-step-one/deal_campaigns.json'
 
 const SELLER_NAME = 'Merchant'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
-const TABS = ['Pricing', 'Deals'] as const
 
 const activeNavItem = ref<string>('Opportunities')
 const activeTab = ref<string>('Deals')
+
+// Only Home, Listings and Opportunities are in scope for this test; Deals is
+// the only sub-tab with content. Disabled items show "Not available in this
+// test" on hover and are neither clickable nor keyboard-focusable.
+const ENABLED_NAV = ['Home', 'Listings', 'Opportunities']
+const disabledNavItems = NAV_ITEMS.filter((item) => !ENABLED_NAV.includes(item))
+const TABS = ['Deals', 'Pricing', 'Inventory'] as const
+const disabledTabs = ['Pricing', 'Inventory']
 
 const emit = defineEmits<{ navItemClick: [item: string] }>()
 
@@ -153,6 +160,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     page-title="Opportunities"
     :tabs="TABS"
     :active-tab="activeTab"
+    :disabled-nav-items="disabledNavItems"
+    :disabled-tabs="disabledTabs"
     @nav-item-click="onNavClick"
     @update:active-tab="activeTab = $event"
   >

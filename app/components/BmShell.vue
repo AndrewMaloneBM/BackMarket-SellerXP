@@ -8,12 +8,17 @@ withDefaults(defineProps<{
   activeTab?: string
   navDotPredicate?: (item: string) => boolean
   tabDotPredicate?: (tab: string) => boolean
+  /** Items rendered as disabled (not clickable, not focusable, tooltip). */
+  disabledNavItems?: readonly string[]
+  disabledTabs?: readonly string[]
 }>(), {
   pageTitle: undefined,
   tabs: undefined,
   activeTab: undefined,
   navDotPredicate: undefined,
   tabDotPredicate: undefined,
+  disabledNavItems: () => [],
+  disabledTabs: () => [],
 })
 
 const emit = defineEmits<{
@@ -53,8 +58,16 @@ const emit = defineEmits<{
           <button
             v-for="item in navItems"
             :key="item"
-            :class="['relative px-4 py-3 text-sm transition-colors border-b-2 whitespace-nowrap', item === activeNavItem ? 'font-semibold text-bm-text-hi border-bm-text-hi' : 'font-normal text-bm-text-muted border-transparent hover:text-bm-text-mid hover:border-bm-gray-300']"
-            @click="emit('navItemClick', item)"
+            :class="['relative px-4 py-3 text-sm transition-colors border-b-2 whitespace-nowrap',
+              disabledNavItems.includes(item)
+                ? 'font-normal text-bm-text-muted/40 border-transparent cursor-not-allowed'
+                : item === activeNavItem
+                  ? 'font-semibold text-bm-text-hi border-bm-text-hi'
+                  : 'font-normal text-bm-text-muted border-transparent hover:text-bm-text-mid hover:border-bm-gray-300']"
+            :aria-disabled="disabledNavItems.includes(item) ? 'true' : undefined"
+            :tabindex="disabledNavItems.includes(item) ? -1 : undefined"
+            :title="disabledNavItems.includes(item) ? 'Not available in this test' : undefined"
+            @click="disabledNavItems.includes(item) ? undefined : emit('navItemClick', item)"
           >
             {{ item }}
             <span
@@ -79,8 +92,16 @@ const emit = defineEmits<{
           <button
             v-for="tab in tabs"
             :key="tab"
-            :class="['px-5 py-3 text-sm whitespace-nowrap transition-colors border-b-2 -mb-px', tab === activeTab ? 'font-semibold text-bm-text-hi border-bm-text-hi' : 'font-normal text-bm-text-muted border-transparent hover:text-bm-text-mid hover:border-bm-gray-300']"
-            @click="emit('update:activeTab', tab)"
+            :class="['px-5 py-3 text-sm whitespace-nowrap transition-colors border-b-2 -mb-px',
+              disabledTabs.includes(tab)
+                ? 'font-normal text-bm-text-muted/40 border-transparent cursor-not-allowed'
+                : tab === activeTab
+                  ? 'font-semibold text-bm-text-hi border-bm-text-hi'
+                  : 'font-normal text-bm-text-muted border-transparent hover:text-bm-text-mid hover:border-bm-gray-300']"
+            :aria-disabled="disabledTabs.includes(tab) ? 'true' : undefined"
+            :tabindex="disabledTabs.includes(tab) ? -1 : undefined"
+            :title="disabledTabs.includes(tab) ? 'Not available in this test' : undefined"
+            @click="disabledTabs.includes(tab) ? undefined : emit('update:activeTab', tab)"
           >
             <span class="inline-flex items-center gap-1.5">
               {{ tab }}
