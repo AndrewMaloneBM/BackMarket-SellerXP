@@ -228,11 +228,6 @@ function onViewDeals() {
 
           <!-- Deals card — dark navy, count of listings above deal target from deal_campaigns.json -->
           <div class="relative overflow-hidden rounded-xl p-5 flex flex-col" style="background: #1F2A4A;">
-            <!-- Decorative faint "%" graphic, clipped to the card -->
-            <svg class="absolute -right-8 -bottom-10 w-56 h-56 pointer-events-none" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m9-4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.3 19.7l14-14a1.125 1.125 0 0 0-1.6-1.6l-14 14a1.125 1.125 0 0 0 1.6 1.6" fill="#FFFFFF" fill-opacity="0.06"/>
-            </svg>
-
             <div class="relative flex items-center gap-2">
               <img :src="iconSrc('IconDealFilled')" alt="" class="w-5 h-5" style="filter: brightness(0) invert(1);" />
               <span class="text-sm font-semibold text-white">Deals</span>
