@@ -150,6 +150,17 @@ function onKeydown(event: KeyboardEvent) {
 
 onMounted(() => window.addEventListener('keydown', onKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onKeydown))
+
+// Lock the page behind the open drawer (tester mode scrolls in a wrapper,
+// the hub scrolls in an inner pane — locking both cover the common body).
+watch(drawerOpen, (open) => {
+  if (import.meta.client) {
+    document.body.style.overflow = open ? 'hidden' : ''
+  }
+})
+onUnmounted(() => {
+  if (import.meta.client) document.body.style.overflow = ''
+})
 </script>
 
 <template>

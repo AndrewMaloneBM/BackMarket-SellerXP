@@ -82,7 +82,7 @@ function resetDismissedUi() {
 
 <template>
   <!-- Tester mode: no hub sidebar/panel, prototype fills the full width. -->
-  <div v-if="testerMode" class="h-screen overflow-hidden font-body bg-bm-surface">
+  <div v-if="testerMode" class="h-screen overflow-y-auto font-body bg-bm-surface">
     <HomeBaseline v-if="activePageId === 'home'" @nav-item-click="onShellNav" />
     <ListingsBaseline v-else-if="activePageId === 'listings'" @nav-item-click="onShellNav" />
     <OpportunitiesDealsShell v-else-if="activePageId === 'opportunities'" @nav-item-click="onShellNav" />
