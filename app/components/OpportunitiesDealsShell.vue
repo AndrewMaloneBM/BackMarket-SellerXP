@@ -351,8 +351,15 @@ onUnmounted(() => {
                         <div v-if="isRowLoading(i)" class="h-10 flex items-center">
                           <span class="inline-block w-4 h-4 border-2 border-bm-border border-t-bm-text-hi rounded-full animate-spin" aria-label="Updating price" />
                         </div>
-                        <template v-else-if="isRowUpdated(i) || model.price != null">
+                        <template v-else-if="isRowUpdated(i)">
                           <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
+                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
+                        </template>
+                        <template v-else-if="model.price != null">
+                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
+                          <p v-if="model.price - model.targetPrice > 0" class="mt-1 text-xs whitespace-nowrap text-bm-warning">
+                            {{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target
+                          </p>
                           <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                         </template>
                         <template v-else>
@@ -372,8 +379,13 @@ onUnmounted(() => {
                             v-if="!isRowUpdated(i) && model.status !== 'in-target'"
                             type="button"
                             :disabled="isRowLoading(i)"
-                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors w-full disabled:opacity-80 disabled:cursor-default"
-                            @click="onUpdatePrice(i)"
+                            :aria-disabled="model.status === 'not-listed' ? 'true' : undefined"
+                            :title="model.status === 'not-listed' ? 'Not available in this test' : undefined"
+                            :class="['inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white w-full',
+                              model.status === 'not-listed'
+                                ? 'cursor-not-allowed'
+                                : 'cursor-pointer hover:bg-bm-gray-700 transition-colors disabled:opacity-80 disabled:cursor-default']"
+                            @click="model.status === 'not-listed' ? undefined : onUpdatePrice(i)"
                           >
                             <span v-if="isRowLoading(i)" class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" aria-label="Updating price" />
                             <template v-else>{{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}</template>
