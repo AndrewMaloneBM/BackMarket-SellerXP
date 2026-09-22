@@ -41,6 +41,7 @@ const STATUS_TONE: Record<DealStatus, 'success' | 'warning' | 'danger' | 'neutra
 
 interface DealModel {
   name: string
+  sku: string
   grade: string
   offerType: string | null
   market: string
@@ -99,6 +100,12 @@ function formatPrice(value: number, currency: string) {
   return `${symbol}${value.toFixed(2)}`
 }
 
+const baseHref = useRuntimeConfig().app.baseURL
+
+function iconSrc(name: string) {
+  return `${baseHref}icons/${name}.svg`
+}
+
 const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c) => ({
   id: c.id,
   name: c.name,
@@ -108,6 +115,7 @@ const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c) => ({
   markets: c.markets,
   models: c.products.map((p) => ({
     name: p.name,
+    sku: p.sku,
     grade: p.grade,
     offerType: p.offerType,
     market: p.market,
@@ -229,25 +237,35 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                   <thead>
                     <tr class="bg-bm-gray-100">
                       <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 38%;">Product</th>
-                      <th class="text-right px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 22%;">Price</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 22%;">Price</th>
                       <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Status</th>
-                      <th class="text-right px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 24%;">Actions</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 24%;">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white">
                     <tr v-for="(model, i) in activeCampaign.models" :key="`${activeCampaign.id}-${i}`" class="border-b border-bm-border align-middle">
                       <td class="px-4 py-4">
-                        <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
+                        <p class="text-sm font-semibold text-bm-text-hi leading-snug underline underline-offset-2">{{ model.name }}</p>
+                        <p class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
                         <div class="mt-2 flex items-center gap-1.5 flex-wrap">
-                          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">{{ model.grade }}</span>
-                          <span v-if="model.offerType" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">{{ model.offerType }}</span>
+                          <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
+                            <img :src="iconSrc('IconGrade')" alt="" class="w-3.5 h-3.5" />
+                            {{ model.grade }}
+                          </span>
+                          <span
+                            v-if="model.offerType === 'New battery'"
+                            class="inline-flex items-center justify-center rounded-full w-5 h-5 bg-[hsl(145,83%,77%)] text-[hsl(156,100%,21%)] cursor-help"
+                            title="New battery"
+                          >
+                            <img :src="iconSrc('IconBoltFilled')" alt="New battery" class="w-3 h-3" />
+                          </span>
                           <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
                             <FlagChip :code="model.market" :height="8" />
                             {{ model.market }}
                           </span>
                         </div>
                       </td>
-                      <td class="px-4 py-4 text-right whitespace-nowrap">
+                      <td class="px-4 py-4 whitespace-nowrap">
                         <template v-if="model.price != null">
                           <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
                           <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.targetPrice > 0 ? 'text-bm-warning' : 'text-bm-text-low'">
@@ -267,15 +285,15 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                         </span>
                       </td>
                       <td class="px-4 py-4">
-                        <div class="flex flex-col items-end gap-2">
+                        <div class="flex flex-col gap-2 w-40">
                           <button
                             v-if="model.status !== 'in-target'"
                             type="button"
-                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors"
+                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors w-full"
                           >
                             {{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}
                           </button>
-                          <button v-if="model.status !== 'not-listed'" type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
+                          <button v-if="model.status !== 'not-listed'" type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors w-full">
                             View listing
                           </button>
                         </div>

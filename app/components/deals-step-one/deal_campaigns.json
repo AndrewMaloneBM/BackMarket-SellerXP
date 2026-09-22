@@ -13,7 +13,8 @@
       "currency": "EUR",
       "products": [
         {
-          "name": "Apple iPhone 14 128GB",
+          "name": "iPhone 14 - 128GB - Midnight",
+          "sku": "10137-V-MI",
           "grade": "Very Good",
           "offerType": null,
           "market": "DE",
@@ -21,7 +22,8 @@
           "targetPrice": 519.99
         },
         {
-          "name": "Apple iPhone 13 128GB",
+          "name": "iPhone 13 - 128GB - Blue",
+          "sku": "10274-G-BL",
           "grade": "Good",
           "offerType": null,
           "market": "IT",
@@ -29,15 +31,17 @@
           "targetPrice": 399.99
         },
         {
-          "name": "Apple iPhone 15 Pro 256GB",
+          "name": "iPhone 15 Pro - 256GB - Natural Titanium",
+          "sku": "10411-E-NT",
           "grade": "Excellent",
-          "offerType": "Outlet",
+          "offerType": null,
           "market": "DE",
           "price": 999.99,
           "targetPrice": 879.99
         },
         {
-          "name": "Apple Watch Series 9 45mm",
+          "name": "Apple Watch Series 9 - 45mm - Midnight",
+          "sku": "10548-E-MI",
           "grade": "Excellent",
           "offerType": null,
           "market": "DE",
@@ -45,7 +49,8 @@
           "targetPrice": 289.99
         },
         {
-          "name": "Apple Watch SE 40mm",
+          "name": "Apple Watch SE - 40mm - Starlight",
+          "sku": "10685-V-ST",
           "grade": "Very Good",
           "offerType": "New battery",
           "market": "IT",
@@ -53,7 +58,8 @@
           "targetPrice": 169.99
         },
         {
-          "name": "Samsung Galaxy S23 256GB",
+          "name": "Samsung Galaxy S23 - 256GB - Phantom Black",
+          "sku": "10822-V-PB",
           "grade": "Very Good",
           "offerType": null,
           "market": "DE",
@@ -61,7 +67,8 @@
           "targetPrice": 459.99
         },
         {
-          "name": "Samsung Galaxy A54 5G 128GB",
+          "name": "Samsung Galaxy A54 5G - 128GB - Awesome Graphite",
+          "sku": "10959-G-AG",
           "grade": "Good",
           "offerType": null,
           "market": "IT",
@@ -69,7 +76,8 @@
           "targetPrice": 229.99
         },
         {
-          "name": "Google Pixel 8 128GB",
+          "name": "Google Pixel 8 - 128GB - Obsidian",
+          "sku": "11096-E-OB",
           "grade": "Excellent",
           "offerType": null,
           "market": "DE",
@@ -77,7 +85,8 @@
           "targetPrice": 399.99
         },
         {
-          "name": "Apple iPhone 12 64GB",
+          "name": "iPhone 12 - 64GB - Purple",
+          "sku": "11233-G-PU",
           "grade": "Good",
           "offerType": null,
           "market": "IT",
@@ -85,7 +94,8 @@
           "targetPrice": 279.99
         },
         {
-          "name": "Samsung Galaxy S24 Ultra 512GB",
+          "name": "Samsung Galaxy S24 Ultra - 512GB - Titanium Black",
+          "sku": "11370-E-TB",
           "grade": "Excellent",
           "offerType": null,
           "market": "DE",
@@ -106,7 +116,8 @@
       "currency": "EUR",
       "products": [
         {
-          "name": "Apple iPad 10th gen 64GB Wi-Fi",
+          "name": "iPad 10th gen Wi-Fi - 64GB - Blue",
+          "sku": "11507-V-BL",
           "grade": "Very Good",
           "offerType": null,
           "market": "FR",
@@ -114,7 +125,8 @@
           "targetPrice": 329.99
         },
         {
-          "name": "Apple iPad Air 5 256GB Wi-Fi",
+          "name": "iPad Air 5 Wi-Fi - 256GB - Starlight",
+          "sku": "11644-E-ST",
           "grade": "Excellent",
           "offerType": null,
           "market": "ES",
@@ -122,15 +134,17 @@
           "targetPrice": 559.99
         },
         {
-          "name": "Apple iPad Pro 11\" M2 128GB",
+          "name": "iPad Pro 11\" M2 - 128GB - Space Gray",
+          "sku": "11781-E-SG",
           "grade": "Excellent",
-          "offerType": "Outlet",
+          "offerType": null,
           "market": "FR",
           "price": 859.99,
           "targetPrice": 749.99
         },
         {
-          "name": "Apple iPad mini 6 64GB",
+          "name": "iPad mini 6 - 64GB - Starlight",
+          "sku": "11918-G-ST",
           "grade": "Good",
           "offerType": null,
           "market": "ES",
@@ -138,7 +152,8 @@
           "targetPrice": 379.99
         },
         {
-          "name": "Apple iPad 9th gen 64GB Wi-Fi",
+          "name": "iPad 9th gen Wi-Fi - 64GB - Space Gray",
+          "sku": "12055-G-SG",
           "grade": "Good",
           "offerType": null,
           "market": "FR",
@@ -146,7 +161,8 @@
           "targetPrice": 219.99
         },
         {
-          "name": "Apple iPad Air 4 64GB",
+          "name": "iPad Air 4 - 64GB - Silver",
+          "sku": "12192-V-SI",
           "grade": "Very Good",
           "offerType": null,
           "market": "ES",
@@ -154,7 +170,8 @@
           "targetPrice": 349.99
         },
         {
-          "name": "Apple iPad Pro 12.9\" M1 256GB",
+          "name": "iPad Pro 12.9\" M1 - 256GB - Silver",
+          "sku": "12329-V-SI",
           "grade": "Very Good",
           "offerType": null,
           "market": "FR",
@@ -162,7 +179,8 @@
           "targetPrice": 829.99
         },
         {
-          "name": "Apple iPad 10th gen 256GB Cellular",
+          "name": "iPad 10th gen Cellular - 256GB - Silver",
+          "sku": "12466-E-SI",
           "grade": "Excellent",
           "offerType": null,
           "market": "ES",
@@ -183,7 +201,8 @@
       "currency": "EUR",
       "products": [
         {
-          "name": "Apple iPhone 14 Pro 128GB",
+          "name": "iPhone 14 Pro - 128GB - Deep Purple",
+          "sku": "12603-V-DP",
           "grade": "Very Good",
           "offerType": "New battery",
           "market": "FR",
@@ -191,7 +210,8 @@
           "targetPrice": 689.99
         },
         {
-          "name": "Apple iPhone 13 256GB",
+          "name": "iPhone 13 - 256GB - Midnight",
+          "sku": "12740-G-MI",
           "grade": "Good",
           "offerType": null,
           "market": "ES",
@@ -199,7 +219,8 @@
           "targetPrice": 449.99
         },
         {
-          "name": "Apple iPhone 15 128GB",
+          "name": "iPhone 15 - 128GB - Blue",
+          "sku": "12877-E-BL",
           "grade": "Excellent",
           "offerType": null,
           "market": "FR",
@@ -207,7 +228,8 @@
           "targetPrice": 629.99
         },
         {
-          "name": "Apple iPhone 11 64GB",
+          "name": "iPhone 11 - 64GB - White",
+          "sku": "13014-G-WH",
           "grade": "Good",
           "offerType": null,
           "market": "ES",
@@ -215,7 +237,8 @@
           "targetPrice": 229.99
         },
         {
-          "name": "Apple iPhone 14 Plus 256GB",
+          "name": "iPhone 14 Plus - 256GB - Purple",
+          "sku": "13151-E-PU",
           "grade": "Excellent",
           "offerType": null,
           "market": "FR",
@@ -223,7 +246,8 @@
           "targetPrice": 639.99
         },
         {
-          "name": "Apple iPad Air 5 64GB",
+          "name": "iPad Air 5 - 64GB - Space Gray",
+          "sku": "13288-V-SG",
           "grade": "Very Good",
           "offerType": null,
           "market": "ES",
@@ -231,15 +255,17 @@
           "targetPrice": 449.99
         },
         {
-          "name": "Apple iPad 10th gen 64GB Wi-Fi",
+          "name": "iPad 10th gen Wi-Fi - 64GB - Silver",
+          "sku": "13425-G-SI",
           "grade": "Good",
-          "offerType": "Outlet",
+          "offerType": null,
           "market": "FR",
           "price": 389.99,
           "targetPrice": 319.99
         },
         {
-          "name": "Apple iPhone SE 2022 64GB",
+          "name": "iPhone SE 2022 - 64GB - Midnight",
+          "sku": "13562-V-MI",
           "grade": "Very Good",
           "offerType": null,
           "market": "ES",
@@ -247,7 +273,8 @@
           "targetPrice": 209.99
         },
         {
-          "name": "Apple iPad mini 6 256GB",
+          "name": "iPad mini 6 - 256GB - Purple",
+          "sku": "13699-E-PU",
           "grade": "Excellent",
           "offerType": null,
           "market": "FR",
@@ -255,7 +282,8 @@
           "targetPrice": 499.99
         },
         {
-          "name": "Apple iPhone 15 Pro Max 256GB",
+          "name": "iPhone 15 Pro Max - 256GB - Blue Titanium",
+          "sku": "13836-E-BT",
           "grade": "Excellent",
           "offerType": null,
           "market": "ES",
@@ -275,7 +303,8 @@
       "currency": "GBP",
       "products": [
         {
-          "name": "Apple MacBook Air 13\" M2 256GB",
+          "name": "MacBook Air 13\" M2 - 256GB - Midnight",
+          "sku": "13973-V-MI",
           "grade": "Very Good",
           "offerType": null,
           "market": "GB",
@@ -283,15 +312,17 @@
           "targetPrice": 699.99
         },
         {
-          "name": "Apple MacBook Pro 14\" M3 512GB",
+          "name": "MacBook Pro 14\" M3 - 512GB - Space Gray",
+          "sku": "14110-E-SG",
           "grade": "Excellent",
-          "offerType": "Outlet",
+          "offerType": null,
           "market": "GB",
           "price": 1499.99,
           "targetPrice": 1299.99
         },
         {
-          "name": "Apple iPhone 14 128GB",
+          "name": "iPhone 14 - 128GB - Blue",
+          "sku": "14247-G-BL",
           "grade": "Good",
           "offerType": null,
           "market": "GB",
@@ -299,7 +330,8 @@
           "targetPrice": 419.99
         },
         {
-          "name": "Apple iPhone 15 Pro 128GB",
+          "name": "iPhone 15 Pro - 128GB - White Titanium",
+          "sku": "14384-E-WT",
           "grade": "Excellent",
           "offerType": null,
           "market": "GB",
@@ -307,7 +339,8 @@
           "targetPrice": 729.99
         },
         {
-          "name": "Apple Watch Series 8 41mm",
+          "name": "Apple Watch Series 8 - 41mm - Silver",
+          "sku": "14521-V-SI",
           "grade": "Very Good",
           "offerType": null,
           "market": "GB",
@@ -315,7 +348,8 @@
           "targetPrice": 199.99
         },
         {
-          "name": "Apple iPad Air 5 64GB",
+          "name": "iPad Air 5 - 64GB - Starlight",
+          "sku": "14658-G-ST",
           "grade": "Good",
           "offerType": null,
           "market": "GB",
@@ -323,7 +357,8 @@
           "targetPrice": 379.99
         },
         {
-          "name": "Samsung Galaxy S23 128GB",
+          "name": "Samsung Galaxy S23 - 128GB - Lavender",
+          "sku": "14795-V-LA",
           "grade": "Very Good",
           "offerType": "New battery",
           "market": "GB",
@@ -331,7 +366,8 @@
           "targetPrice": 379.99
         },
         {
-          "name": "Google Pixel 8 Pro 128GB",
+          "name": "Google Pixel 8 Pro - 128GB - Bay",
+          "sku": "14932-E-BA",
           "grade": "Excellent",
           "offerType": null,
           "market": "GB",
@@ -339,7 +375,8 @@
           "targetPrice": 459.99
         },
         {
-          "name": "Samsung Galaxy A54 5G 128GB",
+          "name": "Samsung Galaxy A54 5G - 128GB - Awesome White",
+          "sku": "15069-E-AW",
           "grade": "Excellent",
           "offerType": null,
           "market": "GB",
@@ -347,7 +384,8 @@
           "targetPrice": 299.99
         },
         {
-          "name": "Apple MacBook Air 15\" M3 256GB",
+          "name": "MacBook Air 15\" M3 - 256GB - Silver",
+          "sku": "15206-E-SI",
           "grade": "Excellent",
           "offerType": null,
           "market": "GB",
