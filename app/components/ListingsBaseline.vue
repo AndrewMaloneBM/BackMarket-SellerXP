@@ -13,6 +13,10 @@ function onNavClick(item: string) {
   emit('navItemClick', item)
 }
 
+function onViewDeals() {
+  emit('navItemClick', 'Opportunities')
+}
+
 const showMoreFilters = ref(false)
 const expandAll = ref(false)
 const expandedRows = ref<Set<string>>(new Set())
@@ -199,6 +203,19 @@ defineExpose({
     </template>
 
     <div class="py-8">
+      <aside class="mb-6 flex items-center gap-4 rounded-bm-lg px-6 py-4" style="background: #0A1740;" aria-label="Reduced commission deals">
+        <div class="flex items-center gap-3 min-w-0">
+          <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L9.5 9.5L4 12L9.5 14.5L12 20L14.5 14.5L20 12L14.5 9.5Z" fill="#E2F77E" /></svg>
+          <p class="text-sm font-semibold truncate" style="color: #E2F77E;">Pay less, profit more with reduced commission deals</p>
+          <span class="inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold shrink-0" style="background: #96F5BD; color: #006D42;">3 active</span>
+        </div>
+        <p class="hidden lg:block text-sm text-white/85 truncate">Lock in limited-time reduced commission rates on selected products.</p>
+        <div class="ml-auto flex items-center gap-4 shrink-0">
+          <button type="button" class="text-sm font-semibold text-white underline underline-offset-2 hover:opacity-90 transition-opacity cursor-pointer">See how it works</button>
+          <button type="button" class="rounded-bm px-3 py-1.5 text-sm font-semibold cursor-pointer transition-opacity hover:opacity-90" style="background: #E2F77E; color: #0A1740;" @click="onViewDeals">View deals</button>
+        </div>
+      </aside>
+
       <form class="md:flex md:items-start">
         <div class="grow">
           <div class="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-5">

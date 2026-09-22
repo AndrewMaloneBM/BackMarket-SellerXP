@@ -17,6 +17,28 @@ function onNavClick(item: string) {
 
 type DealStatus = 'in-target' | 'near-target' | 'far-target' | 'not-listed'
 
+// RevTag filled-variation tokens (Revolve): tinted bg + tone text, radius.xs
+const DRAWER_STATUS: Record<DealStatus, { label: string; tone: 'success' | 'warning' | 'danger' | 'neutral' }> = {
+  'in-target': { label: 'In target', tone: 'success' },
+  'near-target': { label: 'Near target', tone: 'warning' },
+  'far-target': { label: 'Far target', tone: 'danger' },
+  'not-listed': { label: 'Not listed', tone: 'neutral' },
+}
+
+const STATUS_TAG: Record<'success' | 'warning' | 'danger' | 'neutral', string> = {
+  success: 'bg-[hsl(145,83%,77%)] text-[hsl(156,100%,21%)]',
+  warning: 'bg-[hsl(38,90%,84%)] text-[hsl(42,75%,27%)]',
+  danger: 'bg-[hsl(3,100%,92%)] text-[hsl(351,84%,39%)]',
+  neutral: 'bg-[hsl(220,19%,94%)] text-[hsl(225,21%,7%)]',
+}
+
+const STATUS_TONE: Record<DealStatus, 'success' | 'warning' | 'danger' | 'neutral'> = {
+  'in-target': 'success',
+  'near-target': 'warning',
+  'far-target': 'danger',
+  'not-listed': 'neutral',
+}
+
 interface DealModel {
   id: string
   name: string
@@ -77,13 +99,6 @@ const campaigns: Campaign[] = [
     ],
   },
 ]
-
-const DRAWER_STATUS: Record<DealStatus, { label: string; tone: 'success' | 'warning' | 'danger' | 'neutral' }> = {
-  'in-target': { label: 'In target', tone: 'success' },
-  'near-target': { label: 'Near target', tone: 'warning' },
-  'far-target': { label: 'Far target', tone: 'danger' },
-  'not-listed': { label: 'Not listed', tone: 'neutral' },
-}
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`
@@ -174,7 +189,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     <Transition name="drawer-fade">
       <div v-if="drawerOpen && activeCampaign" class="fixed inset-0 z-50 flex justify-end bg-black/30" role="presentation" @click.self="closeDrawer">
         <Transition name="drawer-slide" appear>
-          <aside class="h-full w-[560px] max-w-[92vw] bg-white shadow-xl flex flex-col" role="dialog" aria-modal="true" :aria-label="`Campaign details: ${activeCampaign.name}`">
+          <aside class="h-full w-[640px] max-w-[92vw] bg-white shadow-xl flex flex-col" role="dialog" aria-modal="true" :aria-label="`Campaign details: ${activeCampaign.name}`">
             <div class="flex items-center justify-between px-6 h-14 border-b border-bm-border shrink-0">
               <h2 class="text-base font-semibold text-bm-text-hi">Campaign details</h2>
               <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-bm-text-muted hover:bg-bm-gray-100 transition-colors cursor-pointer" aria-label="Close" @click="closeDrawer">
@@ -233,18 +248,20 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                         </template>
                       </td>
                       <td class="px-4 py-4">
-                        <BmStatusBadge :label="DRAWER_STATUS[model.status].label" :tone="DRAWER_STATUS[model.status].tone" />
+                        <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG[STATUS_TONE[model.status]]]">
+                          {{ DRAWER_STATUS[model.status].label }}
+                        </span>
                       </td>
                       <td class="px-4 py-4">
                         <div class="flex flex-col items-start gap-2">
                           <button
                             v-if="model.status !== 'in-target'"
                             type="button"
-                            class="cursor-pointer inline-flex items-center justify-center h-[26px] px-3 rounded-md text-xs font-semibold bg-bm-text-hi text-white hover:opacity-90 transition-opacity"
+                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors"
                           >
                             {{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}
                           </button>
-                          <button type="button" class="cursor-pointer inline-flex items-center justify-center h-[26px] px-3 rounded-md text-xs font-semibold bg-white border border-bm-text-hi text-bm-text-hi hover:bg-bm-gray-100 transition-colors">
+                          <button type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-[5px] text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
                             View listing
                           </button>
                         </div>
