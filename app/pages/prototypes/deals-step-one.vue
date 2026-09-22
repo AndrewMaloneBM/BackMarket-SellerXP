@@ -32,7 +32,11 @@ const conceptMeta: readonly PrototypeConcept[] = [
         id: 'opportunities',
         label: 'Opportunities',
         navItem: 'Opportunities',
-        changes: ['Opportunities shell with Deals tab placeholder'],
+        changes: [
+          'Deals tab with three example active deal campaigns',
+          'Clicking a campaign card opens a drawer with the deal criteria',
+          'Per-listing table: price vs deal target, status, next action',
+        ],
       },
     ],
   },
