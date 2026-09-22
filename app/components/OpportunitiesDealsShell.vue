@@ -41,7 +41,7 @@ const STATUS_TONE: Record<DealStatus, 'success' | 'warning' | 'danger' | 'neutra
 
 interface DealModel {
   name: string
-  sku: string
+  sku: string | null
   grade: string
   offerType: string | null
   market: string
@@ -246,7 +246,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     <tr v-for="(model, i) in activeCampaign.models" :key="`${activeCampaign.id}-${i}`" class="border-b border-bm-border align-middle">
                       <td class="px-4 py-4">
                         <p class="text-sm font-semibold text-bm-text-hi leading-snug underline underline-offset-2">{{ model.name }}</p>
-                        <p class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
+                        <p v-if="model.sku != null" class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
                         <div class="mt-2 flex items-center gap-1.5 flex-wrap">
                           <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
                             <img :src="iconSrc('IconGrade')" alt="" class="w-3.5 h-3.5" />
@@ -257,7 +257,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                             class="inline-flex items-center justify-center rounded-full w-5 h-5 bg-[hsl(145,83%,77%)] text-[hsl(156,100%,21%)] cursor-help"
                             title="New battery"
                           >
-                            <img :src="iconSrc('IconBoltFilled')" alt="New battery" class="w-3 h-3" />
+                            <img :src="iconSrc('IconBattery')" alt="New battery" class="w-3 h-3" />
                           </span>
                           <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
                             <FlagChip :code="model.market" :height="8" />
@@ -268,9 +268,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                       <td class="px-4 py-4 whitespace-nowrap">
                         <template v-if="model.price != null">
                           <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
-                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.targetPrice > 0 ? 'text-bm-warning' : 'text-bm-text-low'">
-                            <template v-if="model.price - model.targetPrice > 0">{{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target</template>
-                            <template v-else>At target</template>
+                          <p v-if="model.price - model.targetPrice > 0" class="mt-1 text-xs whitespace-nowrap text-bm-warning">
+                            {{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target
                           </p>
                           <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                         </template>

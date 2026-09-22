@@ -68,7 +68,7 @@
         },
         {
           "name": "Samsung Galaxy A54 5G - 128GB - Awesome Graphite",
-          "sku": "10959-G-AG",
+          "sku": null,
           "grade": "Good",
           "offerType": null,
           "market": "IT",
@@ -95,7 +95,7 @@
         },
         {
           "name": "Samsung Galaxy S24 Ultra - 512GB - Titanium Black",
-          "sku": "11370-E-TB",
+          "sku": null,
           "grade": "Excellent",
           "offerType": null,
           "market": "DE",
@@ -162,7 +162,7 @@
         },
         {
           "name": "iPad Air 4 - 64GB - Silver",
-          "sku": "12192-V-SI",
+          "sku": null,
           "grade": "Very Good",
           "offerType": null,
           "market": "ES",
@@ -238,7 +238,7 @@
         },
         {
           "name": "iPhone 14 Plus - 256GB - Purple",
-          "sku": "13151-E-PU",
+          "sku": null,
           "grade": "Excellent",
           "offerType": null,
           "market": "FR",
@@ -274,7 +274,7 @@
         },
         {
           "name": "iPad mini 6 - 256GB - Purple",
-          "sku": "13699-E-PU",
+          "sku": null,
           "grade": "Excellent",
           "offerType": null,
           "market": "FR",
@@ -349,7 +349,7 @@
         },
         {
           "name": "iPad Air 5 - 64GB - Starlight",
-          "sku": "14658-G-ST",
+          "sku": null,
           "grade": "Good",
           "offerType": null,
           "market": "GB",
@@ -376,7 +376,7 @@
         },
         {
           "name": "Samsung Galaxy A54 5G - 128GB - Awesome White",
-          "sku": "15069-E-AW",
+          "sku": null,
           "grade": "Excellent",
           "offerType": null,
           "market": "GB",
