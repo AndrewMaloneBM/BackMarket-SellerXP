@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BmStatusBadge from '~/components/prototypes/BmStatusBadge.vue'
 
 const SELLER_NAME = 'Merchant'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
@@ -155,7 +154,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
               <div class="min-w-0">
                 <div class="flex items-center gap-3">
                   <h2 class="text-[15px] font-semibold text-bm-text-hi truncate">{{ campaign.name }}</h2>
-                  <BmStatusBadge label="Active" tone="success" />
+                  <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG.success]">Active</span>
                 </div>
                 <div class="mt-2 flex items-center gap-2 text-sm text-bm-text-mid">
                   <span>{{ campaign.timeLabel }}</span>
@@ -189,22 +188,24 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
     <Transition name="drawer-fade">
       <div v-if="drawerOpen && activeCampaign" class="fixed inset-0 z-50 flex justify-end bg-black/30" role="presentation" @click.self="closeDrawer">
         <Transition name="drawer-slide" appear>
-          <aside class="h-full w-[640px] max-w-[92vw] bg-white shadow-xl flex flex-col" role="dialog" aria-modal="true" :aria-label="`Campaign details: ${activeCampaign.name}`">
-            <div class="flex items-center justify-between px-6 h-14 border-b border-bm-border shrink-0">
+          <aside class="h-full w-[976px] min-w-[976px] max-w-[94vw] flex flex-col shadow-xl" style="background: #F8F9FC; border-radius: 12px 0 0 12px;" role="dialog" aria-modal="true" :aria-label="`Campaign details: ${activeCampaign.name}`">
+            <div class="relative flex items-center justify-center h-[60px] border-b border-bm-border bg-white shrink-0" style="border-radius: 12px 0 0 0;">
               <h2 class="text-base font-semibold text-bm-text-hi">Campaign details</h2>
-              <button type="button" class="w-8 h-8 rounded-full flex items-center justify-center text-bm-text-muted hover:bg-bm-gray-100 transition-colors cursor-pointer" aria-label="Close" @click="closeDrawer">
+              <button type="button" class="absolute right-6 w-8 h-8 rounded-full flex items-center justify-center text-bm-text-muted hover:bg-bm-gray-100 transition-colors cursor-pointer" aria-label="Close" @click="closeDrawer">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>
             </div>
 
-            <div class="flex-1 overflow-y-auto px-6 py-6">
+            <div class="flex-1 overflow-y-auto px-12 py-8">
               <div class="flex items-start justify-between gap-4">
-                <div>
-                  <BmStatusBadge label="Active" tone="success" />
-                  <h3 class="mt-2 text-xl font-bold text-bm-text-hi leading-snug">{{ activeCampaign.name }}</h3>
-                </div>
-                <span class="shrink-0 text-sm font-medium text-bm-text-mid">{{ activeCampaign.timeLabel }}</span>
+                <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG.success]">Active</span>
+                <span class="inline-flex items-center gap-1.5 text-sm font-medium text-bm-text-mid">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" /></svg>
+                  {{ activeCampaign.timeLabel }}
+                </span>
               </div>
+
+              <h3 class="mt-2 text-2xl font-bold text-bm-text-hi leading-snug">{{ activeCampaign.name }}</h3>
 
               <p class="mt-3 text-sm text-bm-text-mid leading-relaxed">
                 Price your eligible listings at the deal target price to qualify for reduced commission.
@@ -214,17 +215,17 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                 <FlagChip v-for="code in activeCampaign.markets" :key="code" :code="code" :height="10" />
               </div>
 
-              <div class="mt-6 overflow-x-auto">
+              <div class="mt-8 overflow-x-auto rounded-bm-sm">
                 <table class="w-full border-collapse">
                   <thead>
-                    <tr class="border-b border-bm-border">
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi">Product</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi">Price</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi">Status</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi">Actions</th>
+                    <tr class="bg-bm-gray-100">
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 34%;">Product</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Price</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Status</th>
+                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 34%;">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="bg-white">
                     <tr v-for="model in activeCampaign.models" :key="model.id" class="border-b border-bm-border align-top">
                       <td class="px-4 py-4">
                         <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
@@ -239,11 +240,11 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                       <td class="px-4 py-4">
                         <template v-if="model.price != null">
                           <p class="text-sm font-semibold text-bm-text-hi">{{ formatPrice(model.price) }}</p>
-                          <p class="mt-1 text-xs text-bm-danger">{{ aboveTarget(model) }}</p>
+                          <p class="mt-1 text-xs" :class="model.price - model.target > 40 ? 'text-bm-danger' : 'text-bm-warning'">{{ aboveTarget(model) }}</p>
                           <p class="mt-1 text-xs text-bm-text-low">Target: {{ formatPrice(model.target) }}</p>
                         </template>
                         <template v-else>
-                          <p class="text-sm text-bm-text-low">Not listed</p>
+                          <p class="text-sm text-bm-text-low italic">Not listed</p>
                           <p class="mt-1 text-xs text-bm-text-low">Target: {{ formatPrice(model.target) }}</p>
                         </template>
                       </td>
@@ -261,7 +262,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                           >
                             {{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}
                           </button>
-                          <button type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-[5px] text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
+                          <button type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
                             View listing
                           </button>
                         </div>
