@@ -144,6 +144,64 @@ function closeDrawer() {
   drawerOpen.value = false
 }
 
+/**
+ * Simulated "Update price" — prototype-only interaction, stored entirely in
+ * this drawer's local state. After a 3s loading state the row behaves as if
+ * the price had been set to the Deal target (In target). Overrides are keyed
+ * by row index and reset when the drawer closes; pending timers are cancelled
+ * so reopening any campaign shows the original data.
+ */
+const UPDATE_PRICE_DELAY_MS = 3000
+
+type RowOverrideState = 'loading' | 'updated' | 'flash'
+
+const rowOverrides = ref<Record<number, RowOverrideState>>({})
+const overrideTimers = new Map<number, ReturnType<typeof setTimeout>>()
+const flashTimers = new Map<number, ReturnType<typeof setTimeout>>()
+
+function isRowLoading(i: number) {
+  return rowOverrides.value[i] === 'loading'
+}
+
+function isRowUpdated(i: number) {
+  return rowOverrides.value[i] === 'updated' || rowOverrides.value[i] === 'flash'
+}
+
+function isRowFlashing(i: number) {
+  return rowOverrides.value[i] === 'flash'
+}
+
+function onUpdatePrice(i: number) {
+  if (isRowLoading(i) || isRowUpdated(i)) return
+  rowOverrides.value[i] = 'loading'
+  const timer = setTimeout(() => {
+    overrideTimers.delete(i)
+    rowOverrides.value[i] = 'updated'
+    // Pale-green flash that fades out over ~1s
+    requestAnimationFrame(() => {
+      rowOverrides.value[i] = 'flash'
+      const flash = setTimeout(() => {
+        flashTimers.delete(i)
+        rowOverrides.value[i] = 'updated'
+      }, 1000)
+      flashTimers.set(i, flash)
+    })
+  }, UPDATE_PRICE_DELAY_MS)
+  overrideTimers.set(i, timer)
+}
+
+function resetOverrides() {
+  overrideTimers.forEach(clearTimeout)
+  flashTimers.forEach(clearTimeout)
+  overrideTimers.clear()
+  flashTimers.clear()
+  rowOverrides.value = {}
+}
+
+watch(drawerOpen, (open) => {
+  if (!open) resetOverrides()
+})
+
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') closeDrawer()
 }
@@ -263,7 +321,11 @@ onUnmounted(() => {
                     </tr>
                   </thead>
                   <tbody class="bg-white">
-                    <tr v-for="(model, i) in activeCampaign.models" :key="`${activeCampaign.id}-${i}`" class="border-b border-bm-border align-middle">
+                    <tr
+                      v-for="(model, i) in activeCampaign.models"
+                      :key="`${activeCampaign.id}-${i}`"
+                      :class="['border-b border-bm-border align-middle transition-colors duration-1000', isRowFlashing(i) ? 'bg-[hsl(145,83%,93%)]' : '']"
+                    >
                       <td class="px-4 py-4">
                         <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
                         <p v-if="model.sku != null" class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
@@ -286,11 +348,11 @@ onUnmounted(() => {
                         </div>
                       </td>
                       <td class="px-4 py-4 whitespace-nowrap">
-                        <template v-if="model.price != null">
-                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
-                          <p v-if="model.price - model.targetPrice > 0" class="mt-1 text-xs whitespace-nowrap text-bm-warning">
-                            {{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target
-                          </p>
+                        <div v-if="isRowLoading(i)" class="h-10 flex items-center">
+                          <span class="inline-block w-4 h-4 border-2 border-bm-border border-t-bm-text-hi rounded-full animate-spin" aria-label="Updating price" />
+                        </div>
+                        <template v-else-if="isRowUpdated(i) || model.price != null">
+                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                           <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                         </template>
                         <template v-else>
@@ -299,20 +361,29 @@ onUnmounted(() => {
                         </template>
                       </td>
                       <td class="px-4 py-4">
-                        <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG[STATUS_TONE[model.status]]]">
-                          {{ DRAWER_STATUS[model.status].label }}
+                        <span v-if="isRowLoading(i)" class="inline-block w-4 h-4 border-2 border-bm-border border-t-bm-text-hi rounded-full animate-spin" aria-label="Updating price" />
+                        <span v-else :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG[isRowUpdated(i) ? 'success' : STATUS_TONE[model.status]]]">
+                          {{ isRowUpdated(i) ? DRAWER_STATUS['in-target'].label : DRAWER_STATUS[model.status].label }}
                         </span>
                       </td>
                       <td class="px-4 py-4">
                         <div class="flex flex-col gap-2 w-40">
                           <button
-                            v-if="model.status !== 'in-target'"
+                            v-if="!isRowUpdated(i) && model.status !== 'in-target'"
                             type="button"
-                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors w-full"
+                            :disabled="isRowLoading(i)"
+                            class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white hover:bg-bm-gray-700 transition-colors w-full disabled:opacity-80 disabled:cursor-default"
+                            @click="onUpdatePrice(i)"
                           >
-                            {{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}
+                            <span v-if="isRowLoading(i)" class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" aria-label="Updating price" />
+                            <template v-else>{{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}</template>
                           </button>
-                          <button v-if="model.status !== 'not-listed'" type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors w-full">
+                          <button
+                            v-if="!isRowLoading(i) && model.status !== 'not-listed'"
+                            type="button"
+                            :disabled="isRowLoading(i)"
+                            class="cursor-pointer disabled:cursor-default disabled:opacity-60 inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors w-full"
+                          >
                             View listing
                           </button>
                         </div>
