@@ -80,6 +80,22 @@ const inProgress: Prototype[] = [
     accent: '#5B6CFF',
   },
   {
+    title: 'Deals Step One Testing',
+    description: 'A scoped first step of the Deals Adoption experience. Unlike the North Star prototype, this starts as a bare Back Office shell (Home, Listings, Opportunities placeholder) and builds up feature by feature based on live tester feedback.',
+    problemStatement: 'The North Star deals prototype is a million miles down the road. This is step one.',
+    author: 'Andrew Malone',
+    date: 'September 2026',
+    status: 'In progress',
+    concepts: [
+      { n: 1, name: 'Step One shell', pages: ['Home', 'Listings', 'Opportunities'] },
+    ],
+    scope: 'Home, Listings, Opportunities',
+    goal: 'Test a scoped step-one deals experience with external sellers',
+    impact: 'Tester round starting 23 September 2026',
+    link: '/prototypes/deals-step-one',
+    accent: '#0D99FF',
+  },
+  {
     title: 'Seller Cash Flow Optimization via a 6-Tier Risk Model Migration',
     description: 'The current 4-tier deferred payout system holds 100% of Future Refunds as deposit for 76% of sellers, with no realistic path to better cash flow terms. This prototype explores how to surface the new 6-tier risk model in the seller Back Office: where the tier dashboard lives on the Money page, how deposit adjustments are communicated, and how proactive progression guidance helps sellers reach the next tier.',
     problemStatement: 'Mid-performing sellers are stuck in Tier 1 with no visible path to unlock the cash they are owed.',
