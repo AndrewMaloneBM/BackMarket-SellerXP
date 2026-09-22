@@ -245,7 +245,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                   <tbody class="bg-white">
                     <tr v-for="(model, i) in activeCampaign.models" :key="`${activeCampaign.id}-${i}`" class="border-b border-bm-border align-middle">
                       <td class="px-4 py-4">
-                        <p class="text-sm font-semibold text-bm-text-hi leading-snug underline underline-offset-2">{{ model.name }}</p>
+                        <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
                         <p v-if="model.sku != null" class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
                         <div class="mt-2 flex items-center gap-1.5 flex-wrap">
                           <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
