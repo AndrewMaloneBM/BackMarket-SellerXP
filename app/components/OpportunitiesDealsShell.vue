@@ -250,7 +250,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                       <td class="px-4 py-4 text-right whitespace-nowrap">
                         <template v-if="model.price != null">
                           <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
-                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.targetPrice > 0 ? 'text-bm-danger' : 'text-bm-text-low'">
+                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.targetPrice > 0 ? 'text-bm-warning' : 'text-bm-text-low'">
                             <template v-if="model.price - model.targetPrice > 0">{{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target</template>
                             <template v-else>At target</template>
                           </p>

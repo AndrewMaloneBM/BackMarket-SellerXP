@@ -12,9 +12,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
       'Scoped starting point, one feature at a time based on tester feedback',
       'Baseline Home and Listings pages match today\'s Back Office',
     ],
-    cons: [
-      'Deals content deliberately not included yet',
-    ],
+    cons: [],
     pages: [
       {
         id: 'home',
@@ -33,7 +31,7 @@ const conceptMeta: readonly PrototypeConcept[] = [
         label: 'Opportunities',
         navItem: 'Opportunities',
         changes: [
-          'Deals tab with three example active deal campaigns',
+          'Deals tab with four active deal campaigns with real campaign names and markets',
           'Clicking a campaign card opens a drawer with the deal criteria',
           'Per-listing table: price vs deal target, status, next action',
         ],
