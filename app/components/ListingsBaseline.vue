@@ -6,6 +6,13 @@ const TABS = ['Active', 'On hold', 'Archived'] as const
 const activeNavItem = ref<string>('Listings')
 const activeTab = ref<string>('Active')
 
+// Only Home, Listings and Opportunities are in scope for this test. The
+// disabled treatment (styling, tooltip, aria) lives in BmShell.
+const ENABLED_NAV = ['Home', 'Listings', 'Opportunities']
+const disabledNavItems = NAV_ITEMS.filter((item) => !ENABLED_NAV.includes(item))
+const ENABLED_TABS = ['Active']
+const disabledTabs = TABS.filter((tab) => !ENABLED_TABS.includes(tab))
+
 const emit = defineEmits<{ navItemClick: [item: string] }>()
 
 function onNavClick(item: string) {
@@ -16,6 +23,8 @@ function onNavClick(item: string) {
 function onViewDeals() {
   emit('navItemClick', 'Opportunities')
 }
+
+import dealCampaignsJson from './deals-step-one/deal_campaigns.json'
 
 const showMoreFilters = ref(false)
 const expandAll = ref(false)
@@ -191,6 +200,8 @@ defineExpose({
     page-title="Your listings"
     :tabs="TABS"
     :active-tab="activeTab"
+    :disabled-nav-items="disabledNavItems"
+    :disabled-tabs="disabledTabs"
     @nav-item-click="onNavClick"
     @update:active-tab="activeTab = $event"
   >
@@ -207,7 +218,7 @@ defineExpose({
         <div class="flex items-center gap-3 min-w-0">
           <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4L9.5 9.5L4 12L9.5 14.5L12 20L14.5 14.5L20 12L14.5 9.5Z" fill="#E2F77E" /></svg>
           <p class="text-sm font-semibold truncate" style="color: #E2F77E;">Pay less, profit more with reduced commission deals</p>
-          <span class="inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold shrink-0" style="background: #96F5BD; color: #006D42;">3 active</span>
+          <span class="inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold shrink-0" style="background: #96F5BD; color: #006D42;">{{ dealCampaignsJson.campaigns.length }} active</span>
         </div>
         <p class="hidden lg:block text-sm text-white/85 truncate">Lock in limited-time reduced commission rates on selected products.</p>
         <div class="ml-auto flex items-center gap-4 shrink-0">

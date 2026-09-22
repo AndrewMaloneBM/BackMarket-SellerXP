@@ -4,6 +4,11 @@ const SELLER_NAME = 'Merchant'
 
 const activeNavItem = ref<string>('Home')
 
+// Only Home, Listings and Opportunities are in scope for this test. The
+// disabled treatment (styling, tooltip, aria) lives in BmShell.
+const ENABLED_NAV = ['Home', 'Listings', 'Opportunities']
+const disabledNavItems = NAV_ITEMS.filter((item) => !ENABLED_NAV.includes(item))
+
 const emit = defineEmits<{ navItemClick: [item: string] }>()
 
 function onNavClick(item: string) {
@@ -17,6 +22,7 @@ function onNavClick(item: string) {
     :nav-items="NAV_ITEMS"
     :active-nav-item="activeNavItem"
     :seller-name="SELLER_NAME"
+    :disabled-nav-items="disabledNavItems"
     @nav-item-click="onNavClick"
   >
     <template #custom>
