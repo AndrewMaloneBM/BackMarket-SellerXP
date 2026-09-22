@@ -40,6 +40,9 @@ const conceptMeta: readonly PrototypeConcept[] = [
   },
 ]
 
+const { public: publicConfig } = useRuntimeConfig()
+const testerMode = publicConfig.testerMode as boolean
+
 const {
   sidebarOpen,
   previewMode,
@@ -54,6 +57,11 @@ previewMode.value = 'after'
 const activePageId = computed(() => activePages.value[activeConcept.value - 1] ?? '')
 function setActivePage(id: string) {
   activePages.value[activeConcept.value - 1] = id
+}
+
+// Tester mode starts directly on the Back Office Home.
+if (testerMode) {
+  activePages.value[activeConcept.value - 1] = 'home'
 }
 
 const NAV_TO_PAGE: Record<string, string> = {
@@ -73,7 +81,14 @@ function resetDismissedUi() {
 </script>
 
 <template>
-  <div :class="['flex h-screen overflow-hidden font-body', showHotspots ? 'prototype-hotspots' : '']" @click="flashHotspots">
+  <!-- Tester mode: no hub sidebar/panel, prototype fills the full width. -->
+  <div v-if="testerMode" class="h-screen overflow-hidden font-body bg-bm-surface">
+    <HomeBaseline v-if="activePageId === 'home'" @nav-item-click="onShellNav" />
+    <ListingsBaseline v-else-if="activePageId === 'listings'" @nav-item-click="onShellNav" />
+    <OpportunitiesDealsShell v-else-if="activePageId === 'opportunities'" @nav-item-click="onShellNav" />
+  </div>
+
+  <div v-else :class="['flex h-screen overflow-hidden font-body', showHotspots ? 'prototype-hotspots' : '']" @click="flashHotspots">
     <PrototypeSidebar
       title="Deals Step One Testing"
       :concepts="conceptMeta"

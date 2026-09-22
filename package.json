@@ -9,6 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "new-prototype": "node scripts/new-prototype.mjs",
+    "publish:tester": "bash scripts/publish-tester.sh",
     "setup": "node scripts/setup.mjs"
   },
   "dependencies": {
