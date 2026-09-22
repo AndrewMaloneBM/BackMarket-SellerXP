@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import dealCampaignsJson from './deals-step-one/deal_campaigns.json'
 
 const SELLER_NAME = 'Merchant'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
@@ -39,74 +40,82 @@ const STATUS_TONE: Record<DealStatus, 'success' | 'warning' | 'danger' | 'neutra
 }
 
 interface DealModel {
-  id: string
   name: string
-  conditions: string[]
+  grade: string
+  offerType: string | null
   market: string
   price: number | null
-  target: number
+  targetPrice: number
   status: DealStatus
 }
 
 interface Campaign {
   id: string
   name: string
+  currency: string
   timeLabel: string
   modelCount: number
   markets: string[]
   models: DealModel[]
 }
 
-const campaigns: Campaign[] = [
-  {
-    id: 'apple-samsung',
-    name: 'Apple iPhones & Samsung Galaxies - selected models',
-    timeLabel: 'Today',
-    modelCount: 6,
-    markets: ['FR', 'DE', 'ES', 'GB'],
-    models: [
-      { id: 'm1', name: 'Apple iPhone 14 Pro 128GB', conditions: ['Very Good'], market: 'FR', price: 749.99, target: 699.99, status: 'in-target' },
-      { id: 'm2', name: 'Apple iPhone 13 256GB', conditions: ['Eco'], market: 'DE', price: 479.99, target: 449.99, status: 'near-target' },
-      { id: 'm3', name: 'Samsung Galaxy S23 Ultra 512GB', conditions: ['Premium', 'Outlet'], market: 'ES', price: 999.99, target: 899.99, status: 'far-target' },
-      { id: 'm4', name: 'Samsung Galaxy A54 5G 128GB', conditions: ['Flawless'], market: 'GB', price: null, target: 299.99, status: 'not-listed' },
-    ],
-  },
-  {
-    id: 'google-pixel',
-    name: 'Google Pixel 8 & 9 - reduced commission',
-    timeLabel: '8 days left',
-    modelCount: 12,
-    markets: ['FR', 'DE', 'IT'],
-    models: [
-      { id: 'm1', name: 'Apple iPhone 14 Pro 128GB', conditions: ['Very Good'], market: 'FR', price: 749.99, target: 689.99, status: 'in-target' },
-      { id: 'm2', name: 'Apple iPhone 13 256GB', conditions: ['Eco'], market: 'DE', price: 479.99, target: 449.99, status: 'near-target' },
-      { id: 'm3', name: 'Samsung Galaxy S23 Ultra 512GB', conditions: ['Premium', 'Outlet'], market: 'ES', price: 999.99, target: 899.99, status: 'far-target' },
-      { id: 'm4', name: 'Samsung Galaxy A54 5G 128GB', conditions: ['Flawless'], market: 'GB', price: null, target: 299.99, status: 'not-listed' },
-    ],
-  },
-  {
-    id: 'macbook-air',
-    name: 'MacBook Air M3 - back to school promo',
-    timeLabel: '3 days left',
-    modelCount: 4,
-    markets: ['FR', 'ES', 'BE', 'NL', 'GB'],
-    models: [
-      { id: 'm1', name: 'Apple iPhone 14 Pro 128GB', conditions: ['Very Good'], market: 'FR', price: 749.99, target: 689.99, status: 'in-target' },
-      { id: 'm2', name: 'Apple iPhone 13 256GB', conditions: ['Eco'], market: 'DE', price: 479.99, target: 449.99, status: 'near-target' },
-      { id: 'm3', name: 'Samsung Galaxy S23 Ultra 512GB', conditions: ['Premium', 'Outlet'], market: 'ES', price: 999.99, target: 899.99, status: 'far-target' },
-      { id: 'm4', name: 'Samsung Galaxy A54 5G 128GB', conditions: ['Flawless'], market: 'GB', price: null, target: 299.99, status: 'not-listed' },
-    ],
-  },
-]
+/**
+ * Real campaign data from deal_campaigns.json (the only data source).
+ * Status, time label and price formatting are derived at render time
+ * from the JSON's own `today` reference date.
+ */
+const DATA_TODAY = dealCampaignsJson.today
 
-function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`
+const NEAR_TARGET_THRESHOLD = 1.1
+
+function computeStatus(price: number | null, targetPrice: number): DealStatus {
+  if (price == null) return 'not-listed'
+  if (price <= targetPrice) return 'in-target'
+  if (price <= targetPrice * NEAR_TARGET_THRESHOLD) return 'near-target'
+  return 'far-target'
 }
 
-function aboveTarget(model: DealModel) {
-  if (model.price == null) return null
-  return `€${(model.price - model.target).toFixed(2)} above target`
+function isoToDate(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y, m - 1, d)
 }
+
+function daysLeftLabel(endDateIso: string): string {
+  const today = isoToDate(DATA_TODAY)
+  const end = isoToDate(endDateIso)
+  const diffDays = Math.round((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+  if (diffDays <= 0) return 'Today'
+  if (diffDays === 1) return '1 day left'
+  return `${diffDays} days left`
+}
+
+const CURRENCY_SYMBOL: Record<string, string> = {
+  EUR: '€',
+  GBP: '£',
+}
+
+function formatPrice(value: number, currency: string) {
+  const symbol = CURRENCY_SYMBOL[currency] ?? ''
+  return `${symbol}${value.toFixed(2)}`
+}
+
+const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c) => ({
+  id: c.id,
+  name: c.name,
+  currency: c.currency,
+  timeLabel: daysLeftLabel(c.endDate),
+  modelCount: c.products.length,
+  markets: c.markets,
+  models: c.products.map((p) => ({
+    name: p.name,
+    grade: p.grade,
+    offerType: p.offerType,
+    market: p.market,
+    price: p.price,
+    targetPrice: p.targetPrice,
+    status: computeStatus(p.price, p.targetPrice),
+  })),
+}))
 
 const activeCampaign = ref<Campaign | null>(null)
 const drawerOpen = ref(false)
@@ -226,11 +235,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                     </tr>
                   </thead>
                   <tbody class="bg-white">
-                    <tr v-for="model in activeCampaign.models" :key="model.id" class="border-b border-bm-border align-middle">
+                    <tr v-for="(model, i) in activeCampaign.models" :key="`${activeCampaign.id}-${i}`" class="border-b border-bm-border align-middle">
                       <td class="px-4 py-4">
                         <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
                         <div class="mt-2 flex items-center gap-1.5 flex-wrap">
-                          <span v-for="condition in model.conditions" :key="condition" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">{{ condition }}</span>
+                          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">{{ model.grade }}</span>
+                          <span v-if="model.offerType" class="inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">{{ model.offerType }}</span>
                           <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
                             <FlagChip :code="model.market" :height="8" />
                             {{ model.market }}
@@ -239,13 +249,16 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                       </td>
                       <td class="px-4 py-4 text-right whitespace-nowrap">
                         <template v-if="model.price != null">
-                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price) }}</p>
-                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.target > 40 ? 'text-bm-danger' : 'text-bm-warning'">{{ aboveTarget(model) }}</p>
-                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.target) }}</p>
+                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
+                          <p class="mt-1 text-xs whitespace-nowrap" :class="model.price - model.targetPrice > 0 ? 'text-bm-danger' : 'text-bm-text-low'">
+                            <template v-if="model.price - model.targetPrice > 0">{{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target</template>
+                            <template v-else>At target</template>
+                          </p>
+                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                         </template>
                         <template v-else>
                           <p class="text-sm text-bm-text-low italic whitespace-nowrap">Not listed</p>
-                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.target) }}</p>
+                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
                         </template>
                       </td>
                       <td class="px-4 py-4">
@@ -262,7 +275,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
                           >
                             {{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}
                           </button>
-                          <button type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
+                          <button v-if="model.status !== 'not-listed'" type="button" class="cursor-pointer inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors">
                             View listing
                           </button>
                         </div>

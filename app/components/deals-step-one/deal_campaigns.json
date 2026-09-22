@@ -1,0 +1,360 @@
+{
+  "today": "2026-09-22",
+  "campaigns": [
+    {
+      "id": "deal_EU_20260801_002",
+      "name": "Android Phones & Apple Watches & Apple iPhones - selected models",
+      "startDate": "2026-07-30",
+      "endDate": "2026-09-30",
+      "markets": [
+        "DE",
+        "IT"
+      ],
+      "currency": "EUR",
+      "products": [
+        {
+          "name": "Apple iPhone 14 128GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "DE",
+          "price": 519.99,
+          "targetPrice": 519.99
+        },
+        {
+          "name": "Apple iPhone 13 128GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "IT",
+          "price": 424.99,
+          "targetPrice": 399.99
+        },
+        {
+          "name": "Apple iPhone 15 Pro 256GB",
+          "grade": "Excellent",
+          "offerType": "Outlet",
+          "market": "DE",
+          "price": 999.99,
+          "targetPrice": 879.99
+        },
+        {
+          "name": "Apple Watch Series 9 45mm",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "DE",
+          "price": 289.99,
+          "targetPrice": 289.99
+        },
+        {
+          "name": "Apple Watch SE 40mm",
+          "grade": "Very Good",
+          "offerType": "New battery",
+          "market": "IT",
+          "price": 184.99,
+          "targetPrice": 169.99
+        },
+        {
+          "name": "Samsung Galaxy S23 256GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "DE",
+          "price": 519.99,
+          "targetPrice": 459.99
+        },
+        {
+          "name": "Samsung Galaxy A54 5G 128GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "IT",
+          "price": null,
+          "targetPrice": 229.99
+        },
+        {
+          "name": "Google Pixel 8 128GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "DE",
+          "price": 399.99,
+          "targetPrice": 399.99
+        },
+        {
+          "name": "Apple iPhone 12 64GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "IT",
+          "price": 299.99,
+          "targetPrice": 279.99
+        },
+        {
+          "name": "Samsung Galaxy S24 Ultra 512GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "DE",
+          "price": null,
+          "targetPrice": 999.99
+        }
+      ]
+    },
+    {
+      "id": "deal_EU_20260901_002",
+      "name": "Apple iPads - selected models",
+      "startDate": "2026-09-04",
+      "endDate": "2026-09-30",
+      "markets": [
+        "ES",
+        "FR"
+      ],
+      "currency": "EUR",
+      "products": [
+        {
+          "name": "Apple iPad 10th gen 64GB Wi-Fi",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "FR",
+          "price": 329.99,
+          "targetPrice": 329.99
+        },
+        {
+          "name": "Apple iPad Air 5 256GB Wi-Fi",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "ES",
+          "price": 589.99,
+          "targetPrice": 559.99
+        },
+        {
+          "name": "Apple iPad Pro 11\" M2 128GB",
+          "grade": "Excellent",
+          "offerType": "Outlet",
+          "market": "FR",
+          "price": 859.99,
+          "targetPrice": 749.99
+        },
+        {
+          "name": "Apple iPad mini 6 64GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "ES",
+          "price": 379.99,
+          "targetPrice": 379.99
+        },
+        {
+          "name": "Apple iPad 9th gen 64GB Wi-Fi",
+          "grade": "Good",
+          "offerType": null,
+          "market": "FR",
+          "price": 259.99,
+          "targetPrice": 219.99
+        },
+        {
+          "name": "Apple iPad Air 4 64GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "ES",
+          "price": null,
+          "targetPrice": 349.99
+        },
+        {
+          "name": "Apple iPad Pro 12.9\" M1 256GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "FR",
+          "price": 854.99,
+          "targetPrice": 829.99
+        },
+        {
+          "name": "Apple iPad 10th gen 256GB Cellular",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "ES",
+          "price": 499.99,
+          "targetPrice": 499.99
+        }
+      ]
+    },
+    {
+      "id": "deal_EU_20260901_003",
+      "name": "Apple iPads & Apple iPhones - selected models",
+      "startDate": "2026-09-17",
+      "endDate": "2026-09-30",
+      "markets": [
+        "ES",
+        "FR"
+      ],
+      "currency": "EUR",
+      "products": [
+        {
+          "name": "Apple iPhone 14 Pro 128GB",
+          "grade": "Very Good",
+          "offerType": "New battery",
+          "market": "FR",
+          "price": 749.99,
+          "targetPrice": 689.99
+        },
+        {
+          "name": "Apple iPhone 13 256GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "ES",
+          "price": 479.99,
+          "targetPrice": 449.99
+        },
+        {
+          "name": "Apple iPhone 15 128GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "FR",
+          "price": 629.99,
+          "targetPrice": 629.99
+        },
+        {
+          "name": "Apple iPhone 11 64GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "ES",
+          "price": 229.99,
+          "targetPrice": 229.99
+        },
+        {
+          "name": "Apple iPhone 14 Plus 256GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "FR",
+          "price": null,
+          "targetPrice": 639.99
+        },
+        {
+          "name": "Apple iPad Air 5 64GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "ES",
+          "price": 474.99,
+          "targetPrice": 449.99
+        },
+        {
+          "name": "Apple iPad 10th gen 64GB Wi-Fi",
+          "grade": "Good",
+          "offerType": "Outlet",
+          "market": "FR",
+          "price": 389.99,
+          "targetPrice": 319.99
+        },
+        {
+          "name": "Apple iPhone SE 2022 64GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "ES",
+          "price": 214.99,
+          "targetPrice": 209.99
+        },
+        {
+          "name": "Apple iPad mini 6 256GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "FR",
+          "price": null,
+          "targetPrice": 499.99
+        },
+        {
+          "name": "Apple iPhone 15 Pro Max 256GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "ES",
+          "price": 1099.99,
+          "targetPrice": 1019.99
+        }
+      ]
+    },
+    {
+      "id": "deal_GB_20260801_001",
+      "name": "Android Phones & Apple MacBooks & Apple Watches & Apple iPads & Apple iPhones - selected models",
+      "startDate": "2026-07-30",
+      "endDate": "2026-09-30",
+      "markets": [
+        "GB"
+      ],
+      "currency": "GBP",
+      "products": [
+        {
+          "name": "Apple MacBook Air 13\" M2 256GB",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "GB",
+          "price": 749.99,
+          "targetPrice": 699.99
+        },
+        {
+          "name": "Apple MacBook Pro 14\" M3 512GB",
+          "grade": "Excellent",
+          "offerType": "Outlet",
+          "market": "GB",
+          "price": 1499.99,
+          "targetPrice": 1299.99
+        },
+        {
+          "name": "Apple iPhone 14 128GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "GB",
+          "price": 419.99,
+          "targetPrice": 419.99
+        },
+        {
+          "name": "Apple iPhone 15 Pro 128GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "GB",
+          "price": 764.99,
+          "targetPrice": 729.99
+        },
+        {
+          "name": "Apple Watch Series 8 41mm",
+          "grade": "Very Good",
+          "offerType": null,
+          "market": "GB",
+          "price": 199.99,
+          "targetPrice": 199.99
+        },
+        {
+          "name": "Apple iPad Air 5 64GB",
+          "grade": "Good",
+          "offerType": null,
+          "market": "GB",
+          "price": null,
+          "targetPrice": 379.99
+        },
+        {
+          "name": "Samsung Galaxy S23 128GB",
+          "grade": "Very Good",
+          "offerType": "New battery",
+          "market": "GB",
+          "price": 449.99,
+          "targetPrice": 379.99
+        },
+        {
+          "name": "Google Pixel 8 Pro 128GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "GB",
+          "price": 479.99,
+          "targetPrice": 459.99
+        },
+        {
+          "name": "Samsung Galaxy A54 5G 128GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "GB",
+          "price": null,
+          "targetPrice": 299.99
+        },
+        {
+          "name": "Apple MacBook Air 15\" M3 256GB",
+          "grade": "Excellent",
+          "offerType": null,
+          "market": "GB",
+          "price": 1049.99,
+          "targetPrice": 1049.99
+        }
+      ]
+    }
+  ]
+}
