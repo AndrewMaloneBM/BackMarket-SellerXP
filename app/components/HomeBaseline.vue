@@ -84,19 +84,19 @@ function onViewDeals() {
                 <p class="text-xs text-bm-text-low mb-3">Orders received</p>
                 <div class="flex items-baseline justify-between mb-2">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-bm-text-hi">845</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -27%</span>
+                    <span class="text-2xl font-bold text-bm-text-hi">1,291</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +11%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between mb-2">
-                  <span class="text-sm text-bm-text-mid">1163</span>
+                  <span class="text-sm text-bm-text-mid">1,163</span>
                   <span class="text-xs text-bm-text-low">Aug 17 – 23, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-sm text-bm-text-mid">1291</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -35%</span>
+                    <span class="text-sm text-bm-text-mid">1,015</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +27%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>
@@ -106,8 +106,8 @@ function onViewDeals() {
                 <p class="text-xs text-bm-text-low mb-3">Sales revenue from shipped orders (shipping incl.)</p>
                 <div class="flex items-baseline justify-between mb-2">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-base font-bold text-bm-text-hi">€289,601.55</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -25.17%</span>
+                    <span class="text-base font-bold text-bm-text-hi">€474,142.38</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +22.52%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
@@ -117,8 +117,8 @@ function onViewDeals() {
                 </div>
                 <div class="flex items-baseline justify-between">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-sm text-bm-text-mid">€474,142.38</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -38.92%</span>
+                    <span class="text-sm text-bm-text-mid">€289,601.55</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +63.72%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>
@@ -129,7 +129,7 @@ function onViewDeals() {
                 <div class="flex items-baseline justify-between mb-2">
                   <div class="flex items-baseline gap-2">
                     <span class="text-base font-bold text-bm-text-hi">€5,430.22</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -61.31%</span>
+                    <span class="text-xs text-bm-success font-medium">↓ -61.31%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
@@ -140,7 +140,7 @@ function onViewDeals() {
                 <div class="flex items-baseline justify-between">
                   <div class="flex items-baseline gap-2">
                     <span class="text-sm text-bm-text-mid">€54,867.35</span>
-                    <span class="text-xs text-red-500 font-medium">↓ -90.1%</span>
+                    <span class="text-xs text-bm-success font-medium">↓ -90.1%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>

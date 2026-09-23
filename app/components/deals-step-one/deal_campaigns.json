@@ -5,7 +5,7 @@
       "id": "deal_EU_20260801_002",
       "name": "Android Phones & Apple Watches & Apple iPhones - selected models",
       "startDate": "2026-07-30",
-      "endDate": "2026-09-30",
+      "endDate": "2026-09-22",
       "markets": [
         "DE",
         "IT"
@@ -108,7 +108,7 @@
       "id": "deal_EU_20260901_002",
       "name": "Apple iPads - selected models",
       "startDate": "2026-09-04",
-      "endDate": "2026-09-30",
+      "endDate": "2026-09-25",
       "markets": [
         "ES",
         "FR"
@@ -296,7 +296,7 @@
       "id": "deal_GB_20260801_001",
       "name": "Android Phones & Apple MacBooks & Apple Watches & Apple iPads & Apple iPhones - selected models",
       "startDate": "2026-07-30",
-      "endDate": "2026-09-30",
+      "endDate": "2026-10-06",
       "markets": [
         "GB"
       ],
