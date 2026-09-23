@@ -84,8 +84,8 @@ function onViewDeals() {
                 <p class="text-xs text-bm-text-low mb-3">Orders received</p>
                 <div class="flex items-baseline justify-between mb-2">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-bm-text-hi">1,291</span>
-                    <span class="text-xs text-bm-success font-medium">↑ +11%</span>
+                    <span class="text-2xl font-bold text-bm-text-hi">1,211</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +4%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
@@ -95,8 +95,8 @@ function onViewDeals() {
                 </div>
                 <div class="flex items-baseline justify-between">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-sm text-bm-text-mid">1,015</span>
-                    <span class="text-xs text-bm-success font-medium">↑ +27%</span>
+                    <span class="text-sm text-bm-text-mid">1,092</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +11%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>
@@ -106,19 +106,19 @@ function onViewDeals() {
                 <p class="text-xs text-bm-text-low mb-3">Sales revenue from shipped orders (shipping incl.)</p>
                 <div class="flex items-baseline justify-between mb-2">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-base font-bold text-bm-text-hi">€474,142.38</span>
-                    <span class="text-xs text-bm-success font-medium">↑ +22.52%</span>
+                    <span class="text-base font-bold text-bm-text-hi">€412,380.50</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +4.34%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between mb-2">
-                  <span class="text-sm text-bm-text-mid">€387,001.76</span>
+                  <span class="text-sm text-bm-text-mid">€395,210.75</span>
                   <span class="text-xs text-bm-text-low">Aug 17 – 23, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between">
                   <div class="flex items-baseline gap-2">
-                    <span class="text-sm text-bm-text-mid">€289,601.55</span>
-                    <span class="text-xs text-bm-success font-medium">↑ +63.72%</span>
+                    <span class="text-sm text-bm-text-mid">€371,640.20</span>
+                    <span class="text-xs text-bm-success font-medium">↑ +10.96%</span>
                   </div>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>
@@ -127,21 +127,15 @@ function onViewDeals() {
               <div class="bg-white rounded-lg border border-bm-border p-4">
                 <p class="text-xs text-bm-text-low mb-3">Total refunds (shipping incl.)</p>
                 <div class="flex items-baseline justify-between mb-2">
-                  <div class="flex items-baseline gap-2">
-                    <span class="text-base font-bold text-bm-text-hi">€5,430.22</span>
-                    <span class="text-xs text-bm-success font-medium">↓ -61.31%</span>
-                  </div>
+                  <span class="text-base font-bold text-bm-text-hi">€5,430.22</span>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between mb-2">
-                  <span class="text-sm text-bm-text-mid">€14,036.00</span>
+                  <span class="text-sm text-bm-text-mid">€5,812.40</span>
                   <span class="text-xs text-bm-text-low">Aug 17 – 23, '26</span>
                 </div>
                 <div class="flex items-baseline justify-between">
-                  <div class="flex items-baseline gap-2">
-                    <span class="text-sm text-bm-text-mid">€54,867.35</span>
-                    <span class="text-xs text-bm-success font-medium">↓ -90.1%</span>
-                  </div>
+                  <span class="text-sm text-bm-text-mid">€6,120.00</span>
                   <span class="text-xs text-bm-text-low">Aug 24 – 30, '25</span>
                 </div>
               </div>
