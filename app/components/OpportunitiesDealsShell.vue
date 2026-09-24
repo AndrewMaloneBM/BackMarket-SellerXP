@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import dealCampaignsJson from './deals-step-one/deal_campaigns.json'
+import dealCampaignsCsv from './deals-step-one/deal_campaigns_export.csv?raw'
 
 const SELLER_NAME = 'Merchant'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
@@ -111,6 +112,23 @@ const baseHref = useRuntimeConfig().app.baseURL
 
 function iconSrc(name: string) {
   return `${baseHref}icons/${name}.svg`
+}
+
+/**
+ * Download CSV: serves the bundled deal_campaigns_export.csv (built from the
+ * prototype's deal_campaigns.json, seller columns removed) as a real file
+ * download, like the actual Back Office export.
+ */
+function onDownloadCsv() {
+  const blob = new Blob([dealCampaignsCsv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'seller_deal_campaigns_aug_sep_2026.csv'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 
 const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c) => ({
@@ -238,6 +256,16 @@ onUnmounted(() => {
       <div class="max-w-7xl mx-auto px-6">
         <!-- ========== DEALS TAB ========== -->
         <template v-if="activeTab === 'Deals'">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold text-bm-text-hi">Active Deals</h2>
+            <button
+              type="button"
+              class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors"
+              @click="onDownloadCsv"
+            >
+              Download CSV
+            </button>
+          </div>
           <div class="flex flex-col gap-4">
             <button
               v-for="campaign in campaigns"

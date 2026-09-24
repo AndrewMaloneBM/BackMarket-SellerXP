@@ -1,0 +1,8 @@
+DEAL_CAMPAIGN_ID,DEAL_CAMPAIGN_NAME,DEAL_CAMPAIGN_START_DATE,DEAL_CAMPAIGN_END_DATE,MARKET,MARKET_NAME,MARKETPLACE
+deal_EU_20260801_002,"Android Phones & Apple Watches & Apple iPhones - selected models",2026-07-30,2026-09-22,DE,Germany,EU
+deal_EU_20260801_002,"Android Phones & Apple Watches & Apple iPhones - selected models",2026-07-30,2026-09-22,IT,Italy,EU
+deal_EU_20260901_002,"Apple iPads - selected models",2026-09-04,2026-09-25,ES,Spain,EU
+deal_EU_20260901_002,"Apple iPads - selected models",2026-09-04,2026-09-25,FR,France,EU
+deal_EU_20260901_003,"Apple iPads & Apple iPhones - selected models",2026-09-17,2026-09-30,ES,Spain,EU
+deal_EU_20260901_003,"Apple iPads & Apple iPhones - selected models",2026-09-17,2026-09-30,FR,France,EU
+deal_GB_20260801_001,"Android Phones & Apple MacBooks & Apple Watches & Apple iPads & Apple iPhones - selected models",2026-07-30,2026-10-06,GB,United Kingdom,EU
