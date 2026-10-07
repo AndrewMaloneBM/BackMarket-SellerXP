@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hub home on a phone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+a{color:hsl(225,21%,7%)}a:hover{color:hsl(231,7%,21%)}
+a:focus-visible,button:focus-visible{outline:2px solid hsl(225,100%,60%);outline-offset:2px}
+.card{box-shadow:0 2px 4px 0 rgba(0,0,0,0.05)}
+.cardlink{color:inherit;text-decoration:none}
+.cardlink::after{content:'';position:absolute;inset:0;border-radius:12px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</helmet>
+<div style="background: hsl(228, 24%, 96%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px">
+
+<header style="padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 12px">
+<img src="/_blob/1f247960984c811e5e10e0953f3ec26c" alt="Back Market" style="display: block; width: 32px; height: 32px">
+<span style="font-weight: 600">SellerXP</span>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<a href="Add.dc.html" style="display: inline-flex; align-items: center; min-height: 48px; font-size: 14px; line-height: 20px; font-weight: 600">How to set up</a>
+<a href="Add.dc.html" aria-label="Add a prototype" style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 6px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+</a>
+</div>
+</header>
+
+<main style="padding: 8px 16px 48px; display: flex; flex-direction: column; gap: 16px">
+
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 42px; line-height: 48px">Prototype Hub</h1>
+
+<a href="WhatsNew.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin: -12px 0; font-size: 14px; line-height: 20px; font-weight: 600; text-decoration: none"><span style="text-decoration: underline">What's new</span><span style="padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(70, 88%, 73%); color: hsl(225, 21%, 7%)">New</span></a>
+
+<div style="position: relative">
+<label for="ph-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">Search prototypes</label>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="position: absolute; left: 16px; top: 15px; color: hsl(223, 4%, 33%)"><circle cx="9" cy="9" r="5.5"></circle><path d="M13.5 13.5L17 17"></path></svg>
+<input id="ph-q" type="search" placeholder="Search prototypes" style="width: 100%; padding: 12px 16px 12px 44px; box-sizing: border-box; border: 1px solid hsl(223, 3%, 52%); border-radius: 6px; background: hsl(0, 0%, 100%); font: inherit; color: hsl(225, 21%, 7%)">
+</div>
+
+<div role="group" aria-label="Filters" style="display: flex; gap: 8px; margin: 0 -16px; padding: 0 16px; overflow-x: auto; white-space: nowrap">
+<button type="button" aria-pressed="true" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); border: 1px solid hsl(225, 21%, 7%)">All</button>
+<button type="button" aria-pressed="false" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Home</button>
+<button type="button" aria-pressed="false" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Listings</button>
+<button type="button" aria-pressed="false" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Opportunities</button>
+<button type="button" aria-pressed="false" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Money</button>
+<button type="button" aria-pressed="false" style="flex: none; height: 48px; padding: 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Cross-page</button>
+<button type="button" style="flex: none; display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 12px 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">
+Status
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+<button type="button" style="flex: none; display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 12px 0 16px; border-radius: 9999px; font: inherit; line-height: 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">
+Built by
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<p style="margin: 0; color: hsl(223, 4%, 37%)">8 prototypes</p>
+<button type="button" style="display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0; border: 0; background: transparent; color: hsl(225, 21%, 7%); font: inherit; font-size: 14px; line-height: 20px">
+<span style="color: hsl(223, 4%, 37%)">Sort</span>
+<span style="font-weight: 600">Last updated</span>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<sc-for list="{{cards}}" as="card" hint-placeholder-count="3">
+<article class="card" style="position: relative; display: flex; flex-direction: column; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); border-radius: 12px">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: {{card.stBg}}; color: {{card.stFg}}">{{card.status}}</span>
+<sc-if value="{{card.hasRound}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 12px; line-height: 16px; font-weight: 600; color: hsl(42, 75%, 27%)">{{card.round}}</span>
+</sc-if>
+</div>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Updated {{card.updated}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 class="clamp2" style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600; overflow-wrap: anywhere"><a class="cardlink" href="Prototype.dc.html">{{card.name}}</a></h2>
+<p class="clamp3" style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 7%, 20%)">{{card.problem}}</p>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 20px">
+<div style="display: flex; gap: 12px">
+<dt style="flex: none; width: 48px; color: hsl(223, 4%, 37%)">Goal</dt>
+<dd class="clamp2" style="margin: 0; min-width: 0">{{card.goal}}</dd>
+</div>
+<div style="display: flex; gap: 12px">
+<dt style="flex: none; width: 48px; color: hsl(223, 4%, 37%)">Pages</dt>
+<dd style="margin: 0; min-width: 0">{{card.pagesText}}</dd>
+</div>
+</dl>
+</div>
+<div style="padding: 4px 16px; border-top: 1px solid hsl(225, 15%, 89%); display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 20px">
+<div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+<span aria-hidden="true" style="flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 9999px; background: hsl(220, 19%, 94%); font-size: 12px; line-height: 16px; font-weight: 600">A</span>
+<span>Andrew Malone, Design</span>
+</div>
+<a href="Detail.dc.html" style="position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 48px; font-weight: 600">Details</a>
+</div>
+</article>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 12px; padding: 12px 16px; border-radius: 12px; background: hsl(221, 86%, 92%); color: hsl(219, 27%, 40%); font-size: 14px; line-height: 20px">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none"><circle cx="10" cy="10" r="7.5"></circle><path d="M10 9v5M10 6.2v.1"></path></svg>
+<span>Prototypes are built for a laptop screen. You can read the cards here and open them later on desktop.</span>
+</div>
+
+</main>
+
+<footer style="padding: 24px 16px; display: flex; justify-content: space-between; gap: 8px 24px; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">
+<span>Internal only</span>
+<span>Seller Experience</span>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = 'hsl(225, 21%, 7%)';
+    const neutral = 'hsl(220, 19%, 94%)';
+    const cards = [
+      { name: 'Home page rethink', problem: 'The first page every seller lands on is the one they have least reason to read.', goal: 'Cut the share of Home sessions with zero interaction', pagesText: 'Home', status: 'Exploring', updated: 'Sep 2026', round: '', hasRound: false, stBg: neutral, stFg: ink },
+      { name: 'Deals step one', problem: 'The North Star deals prototype is a long way down the road. This is step one.', goal: 'Test a scoped step-one deals experience with external sellers', pagesText: 'Home, Listings, Opportunities', status: 'In testing', updated: 'Sep 2026', round: 'Round 1b', hasRound: true, stBg: 'hsl(38, 90%, 84%)', stFg: 'hsl(42, 75%, 27%)' },
+      { name: 'Proactive seller insights', problem: 'The chatbot only helps when sellers already know what to ask.', goal: 'Test whether sellers notice, understand and explore proactive insights', pagesText: 'Cross-page', status: 'Exploring', updated: 'Sep 2026', round: '', hasRound: false, stBg: neutral, stFg: ink }
+    ];
+    return { cards: cards };
+  }
+}
+</script>
+</body>
+</html>

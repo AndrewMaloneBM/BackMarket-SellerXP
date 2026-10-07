@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What's new</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+a{color:hsl(225,21%,7%)}a:hover{color:hsl(231,7%,21%)}
+a:focus-visible,button:focus-visible{outline:2px solid hsl(225,100%,60%);outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100%; background: hsl(228, 24%, 96%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px">
+
+<header style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+<a href="Main.dc.html" style="display: inline-flex"><img src="/_blob/cc203931b12b1d6e47799daf37a57d7e" alt="Back Market Prototype Hub home" style="display: block; height: 28px; width: auto"></a>
+<span aria-hidden="true" style="width: 1px; height: 24px; background: hsl(223, 4%, 68%)"></span>
+<span style="font-weight: 600">SellerXP</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+<a href="WhatsNew.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">What's new</a>
+<a href="Add.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">How to set up</a>
+<a href="Add.dc.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px 12px 12px; border-radius: 6px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+Add a prototype
+</a>
+</div>
+</header>
+
+<main style="max-width: 720px; margin: 0 auto; padding: 16px 24px 72px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+
+<a href="Main.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; line-height: 20px; font-weight: 600">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>
+All prototypes
+</a>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 28px; line-height: 40px">What's new</h1>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">Changes to the Prototype Hub itself, newest first.</p>
+</div>
+
+<div role="list" style="background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); border-radius: 12px; box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05); overflow: hidden">
+<sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+<div role="listitem" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 16px; padding: 16px; border-top: {{e.border}}">
+<span style="flex: none; width: 96px; font-size: 14px; line-height: 24px; color: hsl(223, 4%, 37%)">{{e.date}}</span>
+<div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-weight: 600">{{e.title}}</span>
+<span style="font-size: 14px; line-height: 20px; color: hsl(223, 7%, 20%)">{{e.line}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+
+</main>
+
+<footer style="max-width: 1240px; margin: 0 auto; padding: 24px; box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">
+<span>Internal only</span>
+<span>Seller Experience</span>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const raw = [
+      { date: '6 Oct 2026', title: 'Before and After switch', line: 'Inside any prototype, flip between what sellers see today and a new version.' },
+      { date: '[date]', title: 'Pick a version by its picture', line: 'Versions now have plain names and a small preview.' },
+      { date: '[date]', title: 'List view and sorting', line: 'See prototypes as cards or a list, sorted by last updated, name or status.' },
+      { date: '[date]', title: 'The new Prototype Hub', line: 'Search, filters and one card for every prototype.' }
+    ];
+    const entries = raw.map((e, i) => ({
+      date: e.date, title: e.title, line: e.line,
+      border: i === 0 ? '0' : '1px solid hsl(225, 15%, 89%)'
+    }));
+    return { entries };
+  }
+}
+</script>
+</body>
+</html>

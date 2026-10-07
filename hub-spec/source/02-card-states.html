@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Card template states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/4e4eceb1ce0172b4afaa7ad96828d6d5) format('opentype');font-weight:400;font-style:italic;font-display:swap}
+body{margin:0}
+a{color:hsl(225,21%,7%)}a:hover{color:hsl(231,7%,21%)}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1360px; box-sizing: border-box; padding: 56px; background: hsl(228, 24%, 96%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 36px">
+
+<div>
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 28px; line-height: 40px">Card template</h1>
+<p style="margin: 8px 0 0; color: hsl(223, 4%, 37%)">Six statuses and three edge cases. The name opens the prototype; Details opens its page. Empty fields are hidden, and long text is cut at two or three lines.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 24px">
+<sc-for list="{{samples}}" as="c" hint-placeholder-count="9">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 600; color: hsl(223, 4%, 37%)">{{c.caption}}</span>
+<div style="flex: 1; display: flex; flex-direction: column; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); border-radius: 12px; box-shadow: {{c.shadow}}; outline: {{c.outline}}; outline-offset: 2px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 16px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: {{c.stBg}}; color: {{c.stFg}}; border: 1px solid {{c.stBd}}">{{c.status}}</span>
+<sc-if value="{{c.hasRound}}" hint-placeholder-val="{{false}}">
+<span style="font-size: 12px; line-height: 16px; font-weight: 600; color: hsl(42, 75%, 27%)">{{c.round}}</span>
+</sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<sc-if value="{{c.isNew}}" hint-placeholder-val="{{false}}">
+<span style="padding: 0 2px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(221, 86%, 92%); color: hsl(219, 27%, 40%)">New</span>
+</sc-if>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Updated {{c.updated}}</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 class="clamp2" style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600; overflow-wrap: anywhere; color: {{c.nameFg}}">{{c.name}}</h2>
+<sc-if value="{{c.hasProblem}}" hint-placeholder-val="{{true}}">
+<p class="clamp3" style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 7%, 20%)">{{c.problem}}</p>
+</sc-if>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column; gap: 4px; font-size: 14px; line-height: 20px">
+<sc-if value="{{c.hasGoal}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 12px">
+<dt style="flex: none; width: 48px; color: hsl(223, 4%, 37%)">Goal</dt>
+<dd class="clamp2" style="margin: 0; min-width: 0">{{c.goal}}</dd>
+</div>
+</sc-if>
+<div style="display: flex; gap: 12px">
+<dt style="flex: none; width: 48px; color: hsl(223, 4%, 37%)">Pages</dt>
+<dd style="margin: 0; min-width: 0">{{c.pagesText}}</dd>
+</div>
+</dl>
+</div>
+<div style="padding: 16px; border-top: 1px solid hsl(225, 15%, 89%); display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 20px">
+<div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+<span aria-hidden="true" style="flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 9999px; background: hsl(220, 19%, 94%); font-size: 12px; line-height: 16px; font-weight: 600">{{c.initial}}</span>
+<span>{{c.byline}}</span>
+</div>
+<a href="Detail.dc.html" style="font-weight: 600">Details</a>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1360}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = 'hsl(225, 21%, 7%)';
+    const low = 'hsl(223, 4%, 37%)';
+    const neutral = 'hsl(220, 19%, 94%)';
+
+    const tone = {
+      'Exploring': { bg: neutral, fg: ink, bd: neutral },
+      'Ready to test': { bg: 'hsl(221, 86%, 92%)', fg: 'hsl(219, 27%, 40%)', bd: 'hsl(221, 86%, 92%)' },
+      'In testing': { bg: 'hsl(38, 90%, 84%)', fg: 'hsl(42, 75%, 27%)', bd: 'hsl(38, 90%, 84%)' },
+      'Tested': { bg: 'hsl(145, 83%, 77%)', fg: 'hsl(156, 100%, 21%)', bd: 'hsl(145, 83%, 77%)' },
+      'Shipped': { bg: 'hsl(70, 88%, 73%)', fg: ink, bd: 'hsl(70, 88%, 73%)' },
+      'Archived': { bg: 'transparent', fg: ink, bd: 'hsl(223, 4%, 68%)' }
+    };
+
+    const raw = [
+      { caption: 'Exploring', status: 'Exploring', name: 'Home page rethink', problem: 'The first page every seller lands on is the one they have least reason to read.', goal: 'Cut the share of Home sessions with zero interaction', pages: ['Home'], updated: 'Sep 2026', byline: 'Andrew Malone, Design', initial: 'A' },
+      { caption: 'Ready to test', status: 'Ready to test', name: '6-tier risk model', problem: 'Mid-performing sellers are stuck in Tier 1 with no visible path to unlock the cash they are owed.', goal: 'Make tier progression and deposit releases transparent', pages: ['Home', 'Money'], updated: 'Aug 2026', byline: 'Andrew Malone, Design', initial: 'A' },
+      { caption: 'In testing, with the round beside the status', status: 'In testing', name: 'Deals step one', problem: 'The North Star deals prototype is a long way down the road. This is step one.', goal: 'Test a scoped step-one deals experience with external sellers', pages: ['Home', 'Listings', 'Opportunities'], updated: 'Sep 2026', byline: 'Andrew Malone, Design', initial: 'A', round: 'Round 1b' },
+      { caption: 'Tested', status: 'Tested', name: 'BackFunds self-onboarding', problem: "A service that could pay sellers six days faster is invisible to 89% of the people it's built for.", goal: 'Lift BackFunds adoption from 11% to 40%', pages: ['Home', 'Money'], updated: 'Apr 2026', byline: 'Andrew Malone, Design', initial: 'A' },
+      { caption: 'Shipped', status: 'Shipped', name: 'Support AI in the Back Office', problem: 'From answering questions to driving performance: Support AI is the foundation for a smarter Back Office.', goal: 'Reduce support volume and unlock proactive seller performance', pages: ['Cross-page'], updated: 'May 2026', byline: 'Andrew Malone, Design', initial: 'A' },
+      { caption: 'Archived, hidden unless filtered for', status: 'Archived', name: 'Deals adoption', problem: "A deal that could earn a seller more is invisible to 60% of the people it's built for.", goal: 'Lift deal adoption from 35–40% to 50–60%', pages: ['Home', 'Listings'], updated: 'Aug 2026', byline: 'Andrew Malone, Design', initial: 'A', muted: true },
+      { caption: 'Name and pages only', status: 'Exploring', name: 'Listings page explorations', problem: '', goal: '', pages: ['Listings'], updated: 'May 2026', byline: 'Andrew Malone, Design', initial: 'A' },
+      { caption: 'Too much text, two authors, new since last visit', status: 'Exploring', name: 'A prototype name that runs well past the forty characters the publish step asks for', problem: 'A problem statement that keeps going past the suggested length, the way real ones do when nobody edits them, so the card has to cut it off after three lines without breaking the layout of the row it sits in.', goal: 'A goal that also runs long, from the number today to the number wanted, with extra context nobody asked for', pages: ['Opportunities', 'Customer Care', 'Seller Support'], updated: '3 days ago', byline: '[Author name] +1, PM', initial: 'P', isNew: true },
+      { caption: 'Hover and keyboard focus', status: 'Exploring', name: 'Proactive seller insights', problem: 'The chatbot only helps when sellers already know what to ask.', goal: 'Test whether sellers notice, understand and explore proactive insights', pages: ['Cross-page'], updated: 'Sep 2026', byline: 'Andrew Malone, Design', initial: 'A', focused: true }
+    ];
+
+    const samples = raw.map((c) => {
+      const t = tone[c.status];
+      return {
+        caption: c.caption,
+        status: c.status,
+        name: c.name,
+        nameFg: c.muted ? low : ink,
+        problem: c.problem,
+        goal: c.goal,
+        updated: c.updated,
+        round: c.round || '',
+        initial: c.initial,
+        byline: c.byline,
+        pagesText: c.pages.join(', '),
+        stBg: t.bg,
+        stFg: t.fg,
+        stBd: t.bd,
+        shadow: c.focused ? '0 8px 16px 0 rgba(0, 0, 0, 0.12)' : '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+        outline: c.focused ? '2px solid hsl(225, 100%, 60%)' : 'none',
+        hasProblem: !!c.problem,
+        hasGoal: !!c.goal,
+        hasRound: !!c.round,
+        isNew: !!c.isNew
+      };
+    });
+
+    return { samples: samples };
+  }
+}
+</script>
+</body>
+</html>

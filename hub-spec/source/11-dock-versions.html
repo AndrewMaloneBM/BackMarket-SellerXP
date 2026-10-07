@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dock: few or many versions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 580px; height: 1840px; box-sizing: border-box; padding: 24px 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 32px">
+
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 32px; line-height: 40px">1. Few or many versions</h1>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Everyday view</h2>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">Arrows switch version. Nothing moves the page.</p>
+<div style="position: relative; height: 240px; border-radius: 12px; overflow: hidden; border: 1px solid hsl(225, 15%, 89%); background: hsl(228, 24%, 96%)">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 14px; height: 32px; padding: 0 14px; background: hsl(0, 0%, 100%); border-bottom: 1px solid hsl(225, 15%, 89%)"><span style="width: 48px; height: 10px; border-radius: 3px; background: hsl(225, 15%, 89%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 36px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="margin-left: auto; padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">Prototype</span></div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; padding: 14px"><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="grid-column: 1 / -1; height: 140px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center"><dc-import name="Dock" mode="full" menu="none" zoom="0.62" hint-size="540px,72px"></dc-import></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Tap the name</h2>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">A picture of every version, each with one plain line.</p>
+<div style="position: relative; height: 440px; border-radius: 12px; overflow: hidden; border: 1px solid hsl(225, 15%, 89%); background: hsl(228, 24%, 96%)">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 14px; height: 32px; padding: 0 14px; background: hsl(0, 0%, 100%); border-bottom: 1px solid hsl(225, 15%, 89%)"><span style="width: 48px; height: 10px; border-radius: 3px; background: hsl(225, 15%, 89%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 36px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="margin-left: auto; padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">Prototype</span></div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; padding: 14px"><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="grid-column: 1 / -1; height: 340px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center"><dc-import name="Dock" mode="full" menu="versions" zoom="0.62" hint-size="540px,380px"></dc-import></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Only one version</h2>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">The switcher disappears. The bar gets shorter.</p>
+<div style="position: relative; height: 200px; border-radius: 12px; overflow: hidden; border: 1px solid hsl(225, 15%, 89%); background: hsl(228, 24%, 96%)">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 14px; height: 32px; padding: 0 14px; background: hsl(0, 0%, 100%); border-bottom: 1px solid hsl(225, 15%, 89%)"><span style="width: 48px; height: 10px; border-radius: 3px; background: hsl(225, 15%, 89%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 36px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="margin-left: auto; padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">Prototype</span></div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; padding: 14px"><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="grid-column: 1 / -1; height: 100px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center"><dc-import name="Dock" mode="single" menu="none" zoom="0.62" hint-size="360px,72px"></dc-import></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Twelve versions</h2>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">The bar is the same size. Only the picker grows: it gets a search and scrolls.</p>
+<div style="position: relative; height: 460px; border-radius: 12px; overflow: hidden; border: 1px solid hsl(225, 15%, 89%); background: hsl(228, 24%, 96%)">
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 14px; height: 32px; padding: 0 14px; background: hsl(0, 0%, 100%); border-bottom: 1px solid hsl(225, 15%, 89%)"><span style="width: 48px; height: 10px; border-radius: 3px; background: hsl(225, 15%, 89%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 36px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="width: 30px; height: 6px; border-radius: 3px; background: hsl(220, 19%, 94%)"></span><span style="margin-left: auto; padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">Prototype</span></div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; padding: 14px"><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="height: 72px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div><div style="grid-column: 1 / -1; height: 360px; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div></div>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center"><dc-import name="Dock" mode="full" menu="many" zoom="0.62" hint-size="540px,400px"></dc-import></div>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":580,"height":1840}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

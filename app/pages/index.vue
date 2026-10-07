@@ -6,19 +6,8 @@ const runtimeConfig = useRuntimeConfig()
 const baseHref = (runtimeConfig.app.baseURL ?? '/').replace(/\/$/, '')
 const withBase = (path: string) => `${baseHref}${path}`
 
-const scrolled = ref(false)
-let scrollHandler: () => void
-
 useHead({
-  title: `${hub.teamName} Prototype Hub`,
-  link: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap'
-    }
-  ]
+  title: `${hub.teamName} Prototype Hub`
 })
 
 interface Concept {
@@ -33,42 +22,23 @@ interface Prototype {
   problemStatement?: string
   author: string
   date: string
-  status: 'In progress' | 'Complete projects' | 'Backlog'
+  updated: string
+  status: 'In progress' | 'Complete' | 'Backlog'
   concepts: Concept[]
   scope: string
   goal?: string
   impact?: string
   link: string
-  accent: string
 }
 
-const inProgress: Prototype[] = [
-  {
-    title: 'Rethinking the seller Back Office Home page',
-    description: 'The Home page is the first thing a seller sees and the least used surface in the Back Office. Today it is a masonry grid of oversized cards showing raw totals rather than actionable exceptions. This prototype tests five different bets about what Home is actually for, each switchable against today\'s layout as a control.',
-    problemStatement: 'The first page every seller lands on is the one they have least reason to read.',
-    author: 'Andrew Malone',
-    date: 'September 2026',
-    status: 'In progress',
-    concepts: [
-      { n: 1, name: 'Triage', pages: ['Home'] },
-      { n: 2, name: 'Cash flow', pages: ['Home'] },
-      { n: 3, name: 'Scoreboard', pages: ['Home'] },
-      { n: 4, name: 'Next best action', pages: ['Home'] },
-      { n: 5, name: 'Bounded hybrid', pages: ['Home'] },
-    ],
-    scope: 'Home',
-    goal: 'Cut the share of Home sessions with zero interaction',
-    impact: '69% of integrator sellers still use the BO; 58% found features only via a survey',
-    link: '/prototypes/home-explorations',
-    accent: '#C0392B',
-  },
+const prototypes: Prototype[] = [
   {
     title: 'Deals Adoption',
     description: 'Deal adoption in FR/ES sits at 35-40% vs a 50-60% target. 100-200 daily instances where a seller could adopt a deal at no margin cost and doesn\'t. This prototype explores how to help sellers discover, assess, act on, and track Back Market Deals within the workflows they already use.',
     problemStatement: 'A deal that could earn a seller more is invisible to 60% of the people it\'s built for, and unclear to the rest.',
     author: 'Andrew Malone',
     date: 'August 2026',
+    updated: '2026-08-15',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Hackathon V1', pages: ['Listings'] },
@@ -77,7 +47,6 @@ const inProgress: Prototype[] = [
     goal: 'Lift adoption from 35-40% to 50-60%',
     impact: '100-200 daily missed deal instances, +9% GMV uplift when sellers participate',
     link: '/prototypes/deals-adoption',
-    accent: '#5B6CFF',
   },
   {
     title: 'Deals Step One Testing',
@@ -85,6 +54,7 @@ const inProgress: Prototype[] = [
     problemStatement: 'The North Star deals prototype is a million miles down the road. This is step one.',
     author: 'Andrew Malone',
     date: 'September 2026',
+    updated: '2026-09-22',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Step One shell', pages: ['Home', 'Listings', 'Opportunities'] },
@@ -93,7 +63,6 @@ const inProgress: Prototype[] = [
     goal: 'Test a scoped step-one deals experience with external sellers',
     impact: 'Tester round starting 23 September 2026',
     link: '/prototypes/deals-step-one',
-    accent: '#0D99FF',
   },
   {
     title: 'Seller Cash Flow Optimization via a 6-Tier Risk Model Migration',
@@ -101,6 +70,7 @@ const inProgress: Prototype[] = [
     problemStatement: 'Mid-performing sellers are stuck in Tier 1 with no visible path to unlock the cash they are owed.',
     author: 'Andrew Malone',
     date: 'August 2026',
+    updated: '2026-08-20',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Full dashboard below wallet', pages: ['Money'] },
@@ -111,7 +81,6 @@ const inProgress: Prototype[] = [
     goal: 'Make tier progression and deposit releases transparent for all 1,408 sellers',
     impact: '€4.84M cash released to 512 sellers',
     link: '/prototypes/tier-dashboard',
-    accent: '#1A9C5B',
   },
   {
     title: 'Bring AI into the seller Back Office to reduce support friction and help sellers perform better',
@@ -119,6 +88,7 @@ const inProgress: Prototype[] = [
     problemStatement: 'From answering questions to driving performance — Support AI is the foundation for a smarter Back Office.',
     author: 'Andrew Malone',
     date: 'May 2026',
+    updated: '2026-05-10',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'In development',      pages: ['Home'] },
@@ -128,7 +98,6 @@ const inProgress: Prototype[] = [
     goal: 'Reduce support volume + unlock proactive seller performance',
     impact: 'Lower support costs, higher seller engagement, faster feature adoption',
     link: '/prototypes/support-ai',
-    accent: '#6B5CE7',
   },
   {
     title: 'Proactive Seller Insights in Support AI',
@@ -136,6 +105,7 @@ const inProgress: Prototype[] = [
     problemStatement: 'Sellers need to discover operational opportunities and risks across multiple Back Office areas, but the chatbot only helps when they already know what to ask.',
     author: 'Andrew Malone',
     date: 'September 2026',
+    updated: '2026-09-18',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Proactive Insights MVP', pages: ['Home'] },
@@ -144,7 +114,6 @@ const inProgress: Prototype[] = [
     goal: 'Test whether sellers notice, understand, and explore proactive insights',
     impact: 'Badge counts attention items; Deal flow is the first executable action in Support AI',
     link: '/prototypes/proactive-seller-insights',
-    accent: '#6B5CE7',
   },
   {
     title: 'Increase Sellers BackFunds adoption through a dedicated micro service and self-onboarding experience',
@@ -152,6 +121,7 @@ const inProgress: Prototype[] = [
     problemStatement: 'A service that could pay sellers six days faster is invisible to 89% of the people it\'s built for.',
     author: 'Andrew Malone',
     date: 'April 2026',
+    updated: '2026-04-18',
     status: 'In progress',
     concepts: [
       { n: 1, name: 'Banner',        pages: ['Home', 'Money'] },
@@ -163,923 +133,160 @@ const inProgress: Prototype[] = [
     goal: 'Lift adoption from 11% to 40%',
     impact: '€915K/year today, €1.4–1.9M potential',
     link: '/prototypes/money-tab',
-    accent: '#D4860A',
-  },
-  {
-    title: 'Listing Page explorations',
-    description: 'A workspace for rethinking the seller Listings page — from catalogue browsing and bulk actions to listing health, visibility, and the path from draft to live.',
-    problemStatement: 'TBD — exploration just kicking off; starting from a faithful replica of today\'s Listings page.',
-    author: 'Andrew Malone',
-    date: 'May 2026',
-    status: 'In progress',
-    concepts: [
-      { n: 1, name: 'Inline margin', pages: ['Listings'] },
-      { n: 2, name: 'Recommended action', pages: ['Listings'] },
-      { n: 3, name: 'Earnings-aware BackPricer', pages: ['Listings'] },
-    ],
-    scope: 'Listings',
-    goal: 'TBD',
-    impact: 'TBD',
-    link: '/prototypes/listing-page-explorations',
-    accent: '#2E7CB8',
   },
 ]
 
 const shipped: Prototype[] = []
 
-onMounted(() => {
-  scrollHandler = () => { scrolled.value = window.scrollY > 20 }
-  window.addEventListener('scroll', scrollHandler, { passive: true })
+const search = ref('')
+const scopeFilter = ref('All')
+
+const allScopes = computed(() => {
+  const scopes = new Set<string>()
+  for (const p of prototypes) {
+    for (const part of p.scope.split(',').map(s => s.trim())) scopes.add(part)
+  }
+  return ['All', ...Array.from(scopes).sort()]
 })
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', scrollHandler)
+const filtered = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  return prototypes.filter((p) => {
+    if (scopeFilter.value !== 'All' && !p.scope.split(',').map(s => s.trim()).includes(scopeFilter.value)) return false
+    if (!q) return true
+    const haystack = `${p.title} ${p.description} ${p.scope} ${p.author} ${p.concepts.map(c => c.name).join(' ')}`.toLowerCase()
+    return haystack.includes(q)
+  })
 })
+
+const statusTone: Record<Prototype['status'], string> = {
+  'In progress': 'bg-bm-green-50 text-bm-green-700 border-bm-green-200',
+  'Complete': 'bg-bm-gray-100 text-bm-text-mid border-bm-border',
+  'Backlog': 'bg-bm-gray-100 text-bm-text-low border-bm-border',
+}
+
 </script>
 
 <template>
-  <div class="wb-grid-bg"></div>
-
-  <nav class="wb-nav" :class="{ 'wb-nav--scrolled': scrolled }">
-    <div class="wb-nav-inner">
-      <div class="wb-nav-left">
-        <img :src="withBase('/bm-wordmark.svg')" alt="Back Market" class="wb-nav-logo" />
-        <span class="wb-nav-sep">/</span>
-        <span class="wb-nav-sub">{{ hub.slug }} · prototypes</span>
-      </div>
-      <div class="wb-nav-right">
-        <span v-if="hub.designerName" class="wb-nav-name">{{ hub.designerName }}</span>
-      </div>
-    </div>
-  </nav>
-
-  <main class="wb-main">
-
-    <header class="wb-header">
-      <h1 class="wb-title"><span class="wb-title-prefix">{{ hub.teamName }}</span><br><em>Prototype</em> Hub</h1>
-    </header>
-
-    <section class="wb-section">
-      <div class="wb-section-head">
-        <div class="wb-section-label">
-          <span class="wb-dot wb-dot-amber wb-dot-pulse"></span>
-          In progress
+  <div class="min-h-screen bg-bm-surface">
+    <!-- Back Office chrome -->
+    <div class="sticky top-0 z-30 bg-bm-white">
+      <header class="border-b border-bm-border">
+        <div class="flex items-center gap-4 px-8 h-14">
+          <img :src="withBase('/bm-logo.svg')" alt="Back Market" class="h-8 w-auto select-none" />
+          <div class="flex items-center gap-3 ml-6">
+            <span class="text-sm text-bm-text-mid">Prototype Hub</span>
+          </div>
+          <div class="ml-auto flex items-center gap-2">
+            <button class="ml-1 w-8 h-8 rounded-full bg-bm-gray-100 border border-bm-border flex items-center justify-center hover:bg-bm-gray-200 transition-colors">
+              <svg class="w-4 h-4 text-bm-text-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+            </button>
+          </div>
         </div>
-        <div class="wb-section-line"></div>
-        <span class="wb-section-count">{{ inProgress.length }}</span>
+      </header>
+    </div>
+
+    <main class="max-w-6xl mx-auto px-8 py-10">
+      <!-- Page heading -->
+      <div class="flex items-end justify-between gap-6 flex-wrap mb-8">
+        <div>
+          <h1 class="font-display text-4xl text-bm-text-hi">Prototype Hub</h1>
+          <p class="text-sm text-bm-text-low mt-2">
+            {{ hub.teamName }} · {{ prototypes.length }} prototypes · fully mocked, safe to explore
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="relative">
+            <svg class="w-4 h-4 text-bm-text-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" /></svg>
+            <input
+              v-model="search"
+              type="search"
+              placeholder="Search prototypes"
+              class="w-64 pl-9 pr-3 py-2 text-sm bg-bm-white border border-bm-border rounded-bm-sm focus:outline-none focus:border-bm-green-500 transition-colors"
+            />
+          </label>
+          <select
+            v-model="scopeFilter"
+            class="py-2 px-3 text-sm bg-bm-white border border-bm-border rounded-bm-sm text-bm-text-mid focus:outline-none focus:border-bm-green-500"
+          >
+            <option v-for="s in allScopes" :key="s" :value="s">{{ s === 'All' ? 'All scopes' : s }}</option>
+          </select>
+        </div>
       </div>
 
-      <div class="wb-bento">
+      <!-- Cards -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <article
-          v-for="(p, i) in inProgress"
+          v-for="p in filtered"
           :key="p.link"
-          class="wb-card wb-card-project"
-          :style="{ '--accent': p.accent, animationDelay: `${i * 60}ms` }"
+          class="group bg-bm-white border border-bm-border rounded-bm-lg p-6 flex flex-col hover:border-bm-border-action hover:shadow-[0_2px_8px_rgba(20,22,30,0.06)] transition-all"
         >
-          <div class="wb-card-strip"></div>
-
-          <div class="wb-project-top">
-            <div class="wb-project-top-main">
-              <span class="wb-meta">{{ p.date }}</span>
-              <h2 class="wb-card-title">{{ p.title }}</h2>
-              <p v-if="p.problemStatement" class="wb-problem-statement">{{ p.problemStatement }}</p>
-              <p class="wb-card-desc">{{ p.description }}</p>
-
-              <div class="wb-meta-strip">
-                <span v-if="p.goal" class="wb-meta-strip-item">
-                  <span class="wb-meta-strip-key">Goal</span>
-                  <span class="wb-meta-strip-val">{{ p.goal }}</span>
-                </span>
-                <span class="wb-meta-strip-sep"></span>
-                <span v-if="p.impact" class="wb-meta-strip-item">
-                  <span class="wb-meta-strip-key">Impact</span>
-                  <span class="wb-meta-strip-val">{{ p.impact }}</span>
-                </span>
-                <span class="wb-meta-strip-sep"></span>
-                <span class="wb-meta-strip-item">
-                  <span class="wb-meta-strip-key">Scope</span>
-                  <span class="wb-meta-strip-val">{{ p.scope }}</span>
-                </span>
-              </div>
-            </div>
-
-            <div class="wb-project-top-aside">
-              <div class="wb-aside-row">
-                <span class="wb-aside-label">Concepts</span>
-                <span class="wb-aside-value">{{ p.concepts.length }}</span>
-              </div>
-              <a :href="withBase(p.link)" class="wb-aside-cta">
-                Open prototype <span class="wb-arrow">→</span>
-              </a>
-            </div>
+          <div class="flex items-start justify-between gap-4">
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-bm-xl border text-xs font-medium"
+              :class="statusTone[p.status]"
+            >
+              <span v-if="p.status === 'In progress'" class="w-1.5 h-1.5 rounded-full bg-bm-green-500 animate-pulse"></span>
+              {{ p.status }}
+            </span>
+            <span class="text-xs text-bm-text-muted mt-1">{{ p.date }}</span>
           </div>
 
+          <h2 class="font-display text-xl text-bm-text-hi mt-3 leading-snug">{{ p.title }}</h2>
+          <p v-if="p.problemStatement" class="text-sm text-bm-text-mid mt-2 italic leading-relaxed">{{ p.problemStatement }}</p>
+
+          <div class="flex flex-wrap gap-1.5 mt-4">
+            <span
+              v-for="scope in p.scope.split(',').map(s => s.trim())"
+              :key="scope"
+              class="px-2 py-0.5 rounded-bm-sm bg-bm-gray-100 border border-bm-border text-xs text-bm-text-low"
+            >{{ scope }}</span>
+          </div>
+
+          <div class="flex items-center justify-between mt-5 pt-4 border-t border-bm-border">
+            <span class="text-xs text-bm-text-low">
+              {{ p.concepts.length }} concept{{ p.concepts.length > 1 ? 's' : '' }}
+            </span>
+            <a
+              :href="withBase(p.link)"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-bm bg-bm-green-600 text-white text-sm font-medium hover:bg-bm-green-700 transition-colors"
+            >
+              Open prototype
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12l-7.5 7.5M21 12H3" /></svg>
+            </a>
+          </div>
         </article>
-      </div>
-    </section>
 
-    <section class="wb-section">
-      <div class="wb-section-head">
-        <div class="wb-section-label">
-          <span class="wb-dot wb-dot-green"></span>
-          Complete projects
+        <!-- Empty state -->
+        <div v-if="filtered.length === 0" class="md:col-span-2 bg-bm-white border border-bm-border rounded-bm-lg p-12 text-center">
+          <p class="text-sm text-bm-text-low">No prototypes match your search.</p>
+          <button
+            class="mt-4 text-sm text-bm-green-700 hover:underline"
+            @click="search = ''; scopeFilter = 'All'"
+          >Clear filters</button>
         </div>
-        <div class="wb-section-line"></div>
-        <span class="wb-section-count">{{ shipped.length }}</span>
-      </div>
+      </section>
 
-      <div class="wb-bento">
-        <div class="wb-card wb-card-empty">
-          <div class="wb-empty-icon">+</div>
-          <p class="wb-empty-text">No complete projects yet</p>
+      <!-- Shipped -->
+      <section v-if="shipped.length" class="mt-12">
+        <h2 class="font-display text-2xl text-bm-text-hi mb-4">Complete projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <article
+            v-for="p in shipped"
+            :key="p.link"
+            class="bg-bm-white border border-bm-border rounded-bm-lg p-6"
+          >
+            <span class="inline-flex px-2.5 py-0.5 rounded-bm-xl border text-xs font-medium" :class="statusTone[p.status]">{{ p.status }}</span>
+            <h3 class="font-display text-lg text-bm-text-hi mt-3">{{ p.title }}</h3>
+            <a :href="withBase(p.link)" class="text-sm text-bm-green-700 hover:underline mt-3 inline-block">Open prototype</a>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+      <footer class="mt-14 pt-6 border-t border-bm-border flex items-center justify-between text-xs text-bm-text-muted">
+        <span>{{ hub.teamName }} Prototype Hub · internal only · Okta gated</span>
+        <span>Seller Experience squad</span>
+      </footer>
+    </main>
+  </div>
 </template>
-
-<style>
-:root {
-  --ink: #2F3137;
-  --bg: #F8F9FC;
-  --surface: #FFFFFF;
-  --green: #1A9C5B;
-  --green-light: #E6F5EF;
-  --amber: #D4860A;
-  --amber-light: #FDF3E3;
-  --muted: #9EA3AF;
-  --border: #DDDFE4;
-  --radius: 20px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #F0F1F5;
-    --bg: #18191E;
-    --surface: #23252B;
-    --green: #2DC87A;
-    --green-light: rgba(45,200,122,0.12);
-    --amber: #F0A030;
-    --amber-light: rgba(240,160,48,0.12);
-    --muted: #6B7280;
-    --border: rgba(255,255,255,0.1);
-  }
-}
-
-body { background: var(--bg); }
-
-.wb-grid-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, rgba(47,49,55,0.25) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .wb-grid-bg {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
-  }
-}
-
-.wb-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  height: 56px;
-  border-bottom: 1px solid transparent;
-  transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
-}
-
-.wb-nav--scrolled {
-  background: rgba(248,249,252,0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom-color: var(--border);
-}
-
-@media (prefers-color-scheme: dark) {
-  .wb-nav--scrolled {
-    background: rgba(24,25,30,0.85);
-  }
-}
-
-.wb-nav-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  height: 100%;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0;
-}
-
-.wb-nav-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.wb-nav-logo {
-  height: 15px;
-  width: auto;
-  display: block;
-}
-
-@media (prefers-color-scheme: dark) {
-  .wb-nav-logo {
-    filter: brightness(0) invert(1);
-  }
-}
-
-.wb-nav-sep {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  line-height: 1;
-  color: var(--border);
-}
-
-.wb-nav-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  line-height: 1;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.wb-nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.wb-nav-name {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.wb-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--ink);
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--bg);
-  flex-shrink: 0;
-}
-
-.wb-main {
-  position: relative;
-  z-index: 1;
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 120px 24px 96px;
-}
-
-.wb-header {
-  margin-bottom: 72px;
-}
-
-.wb-title {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: clamp(42px, 5.5vw, 64px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--green);
-  margin-bottom: 0;
-}
-
-.wb-title-prefix {
-  color: var(--ink);
-}
-
-.wb-title em {
-  font-style: italic;
-}
-
-.wb-tagline {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.wb-section {
-  margin-bottom: 64px;
-}
-
-.wb-section-head {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.wb-section-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.wb-section-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.wb-section-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.wb-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.wb-dot-amber { background: var(--amber); }
-.wb-dot-green { background: var(--green); }
-.wb-dot-gray  { background: var(--muted); }
-
-.wb-dot-pulse {
-  animation: dotPulse 2s ease-in-out infinite;
-}
-
-@keyframes dotPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.7); }
-}
-
-.wb-bento {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 16px;
-}
-
-.wb-card {
-  position: relative;
-  border-radius: var(--radius);
-  border: 1.5px solid rgba(47,49,55,0.12);
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  animation: fadeUp 0.45s ease both;
-}
-
-@media (prefers-color-scheme: dark) {
-  .wb-card {
-    border-color: rgba(255,255,255,0.08);
-  }
-}
-
-.wb-card-strip {
-  height: 3px;
-  background: var(--accent, var(--green));
-}
-
-.wb-card-inner {
-  padding: 24px;
-}
-
-.wb-card-project {
-  grid-column: span 12;
-  background: #1E2025;
-  border-color: rgba(255,255,255,0.07);
-  display: flex;
-  flex-direction: column;
-}
-
-.wb-project-top {
-  display: flex;
-  gap: 0;
-  align-items: stretch;
-}
-
-.wb-project-top-main {
-  flex: 1;
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-
-.wb-project-top-aside {
-  width: 220px;
-  flex-shrink: 0;
-  border-left: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.02);
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.wb-aside-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.wb-aside-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.28);
-}
-
-.wb-aside-value {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 56px;
-  line-height: 1;
-  color: rgba(255,255,255,0.92);
-}
-
-.wb-aside-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent, var(--green));
-  text-decoration: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.03);
-  transition: background 0.2s ease, border-color 0.2s ease, gap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  justify-content: space-between;
-}
-
-.wb-aside-cta:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-  gap: 10px;
-}
-
-.wb-meta-strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-
-.wb-meta-strip-item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.wb-meta-strip-key {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.3);
-}
-
-.wb-meta-strip-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.72);
-}
-
-.wb-meta-strip-sep {
-  width: 1px;
-  height: 10px;
-  background: rgba(255,255,255,0.12);
-}
-
-.wb-concepts-table {
-  border-top: 1px solid rgba(255,255,255,0.08);
-  background: rgba(0,0,0,0.15);
-  padding: 8px 32px 16px;
-}
-
-.wb-concepts-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.wb-concepts-head-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.4);
-}
-
-.wb-concepts-head-hint {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.25);
-}
-
-.wb-concept-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.15s ease, padding 0.2s ease;
-  border-radius: 6px;
-}
-
-.wb-concept-row:last-child {
-  border-bottom: none;
-}
-
-.wb-concept-row:hover {
-  background: rgba(255,255,255,0.03);
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.wb-concept-n {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.25);
-  width: 24px;
-  flex-shrink: 0;
-  letter-spacing: 0.04em;
-}
-
-.wb-concept-name {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: rgba(255,255,255,0.82);
-  width: 160px;
-  flex-shrink: 0;
-}
-
-.wb-concept-pages {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
-}
-
-.wb-concept-page {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.5);
-  border: 1px solid rgba(255,255,255,0.1);
-  letter-spacing: 0.03em;
-}
-
-.wb-concept-page-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  flex-shrink: 0;
-}
-
-.wb-concept-open {
-  margin-left: auto;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: #4ADE80;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: color 0.2s ease, gap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.wb-concept-row:hover .wb-concept-open {
-  color: #86EFAC;
-  gap: 8px;
-}
-
-@media (max-width: 760px) {
-  .wb-project-top { flex-direction: column; }
-  .wb-project-top-aside {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    flex-direction: row;
-    align-items: center;
-  }
-  .wb-aside-value { font-size: 36px; }
-  .wb-aside-cta { flex: 1; }
-  .wb-concepts-table { padding: 8px 20px 16px; }
-  .wb-concept-name { width: auto; flex: 1; }
-  .wb-concept-pages { flex: unset; }
-}
-
-.wb-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.wb-card-body {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-}
-
-.wb-card-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.wb-card-title {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-style: italic;
-  font-size: 22px;
-  line-height: 1.2;
-  color: rgba(255,255,255,0.92);
-}
-
-.wb-problem-statement {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-style: italic;
-  font-size: 15px;
-  line-height: 1.5;
-  color: rgba(255,255,255,0.72);
-  border-left: 2px solid var(--accent);
-  padding-left: 12px;
-}
-
-.wb-card-desc {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 1.65;
-  color: rgba(255,255,255,0.48);
-}
-
-.wb-meta {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255,255,255,0.28);
-}
-
-.wb-illo {
-  width: 200px;
-  flex-shrink: 0;
-  border: 1px dashed rgba(255,255,255,0.1);
-  border-radius: 8px;
-  padding: 12px;
-  background: rgba(255,255,255,0.02);
-}
-
-.wb-illo svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.wb-card-stat {
-  grid-column: span 4;
-  background: var(--surface);
-}
-
-.wb-stat-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-top: 16px;
-}
-
-.wb-card-stat .wb-card-inner > .wb-stat-label:first-child {
-  margin-top: 0;
-}
-
-.wb-stat-value {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 52px;
-  line-height: 1;
-  color: var(--ink);
-  margin-top: 4px;
-}
-
-.wb-stat-item {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--ink);
-  margin-top: 4px;
-}
-
-.wb-stat-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin-top: 14px;
-}
-
-.wb-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.wb-badge-amber {
-  background: rgba(212,134,10,0.18);
-  color: var(--amber);
-}
-
-.wb-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.wb-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  padding: 3px 9px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: rgba(47,49,55,0.035);
-  color: var(--muted);
-}
-
-.wb-tag-dark {
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.45);
-}
-
-.wb-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--green);
-  cursor: pointer;
-  transition: gap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.wb-arrow {
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.wb-card-empty {
-  grid-column: span 12;
-  border-style: dashed;
-  border-color: var(--border);
-  background: transparent;
-  padding: 48px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: default;
-}
-
-.wb-empty-icon {
-  font-family: 'DM Serif Display', Georgia, serif;
-  font-size: 28px;
-  color: var(--muted);
-  opacity: 0.4;
-}
-
-.wb-empty-text {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-}
-
-.wb-card-ghost {
-  grid-column: span 4;
-  background: transparent;
-  border-color: var(--border);
-  padding: 24px;
-  cursor: default;
-}
-
-.wb-ghost-illo {
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  height: 80px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wb-ghost-illo::after {
-  content: '+';
-  font-family: 'DM Serif Display', serif;
-  font-size: 24px;
-  color: var(--muted);
-  opacity: 0.3;
-}
-
-.wb-ghost-line {
-  height: 8px;
-  background: var(--border);
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.wb-ghost-line-short {
-  width: 60%;
-}
-
-.wb-sticker {
-  position: absolute;
-  top: -6px;
-  right: 20px;
-  background: var(--amber);
-  color: #fff;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 4px 10px;
-  border-radius: 4px;
-  transform: rotate(2deg);
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(212,134,10,0.35);
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 760px) {
-  .wb-card-stat,
-  .wb-card-ghost {
-    grid-column: span 12;
-  }
-
-  .wb-card-body {
-    flex-direction: column;
-  }
-
-  .wb-illo {
-    width: 100%;
-  }
-
-  .wb-title {
-    font-size: clamp(36px, 8vw, 48px);
-  }
-}
-</style>

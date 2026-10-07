@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sixty prototypes in list view</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+a{color:hsl(225,21%,7%)}a:hover{color:hsl(231,7%,21%)}
+a:focus-visible,button:focus-visible{outline:2px solid hsl(225,100%,60%);outline-offset:2px}
+.rowlink{color:inherit;text-decoration:none}
+.rowlink::after{content:'';position:absolute;inset:0}
+.row:hover{background:hsl(220,19%,94%)}
+</style>
+</helmet>
+<div style="background: hsl(228, 24%, 96%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px">
+
+<header style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+<img src="/_blob/cc203931b12b1d6e47799daf37a57d7e" alt="Back Market" style="display: block; height: 28px; width: auto">
+<span aria-hidden="true" style="width: 1px; height: 24px; background: hsl(223, 4%, 68%)"></span>
+<span style="font-weight: 600">SellerXP</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+<a href="WhatsNew.dc.html" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; text-decoration: none"><span style="text-decoration: underline">What's new</span><span style="padding: 0 4px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(70, 88%, 73%); color: hsl(225, 21%, 7%)">New</span></a>
+<a href="Add.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-weight: 600">How to set up</a>
+<a href="Add.dc.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px 12px 12px; border-radius: 6px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600; text-decoration: none">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+Add a prototype
+</a>
+</div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 24px 24px 72px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px">
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: clamp(42px, 5vw, 56px); line-height: 1.143">Prototype Hub</h1>
+<div style="position: relative; flex: 0 1 320px">
+<label for="l60-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">Search prototypes</label>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="position: absolute; left: 16px; top: 15px; color: hsl(223, 4%, 33%)"><circle cx="9" cy="9" r="5.5"></circle><path d="M13.5 13.5L17 17"></path></svg>
+<input id="l60-q" type="search" placeholder="Search prototypes" style="width: 100%; padding: 12px 16px 12px 44px; box-sizing: border-box; border: 1px solid hsl(223, 3%, 52%); border-radius: 6px; background: hsl(0, 0%, 100%); font: inherit; color: hsl(225, 21%, 7%)">
+</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<div role="group" aria-label="Filter by page" style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-pressed="true" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); border: 1px solid hsl(225, 21%, 7%)">All</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Home</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Insights</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Customer Care</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Listings</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Orders</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Opportunities</button>
+<button type="button" aria-pressed="false" style="height: 40px; padding: 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">Money</button>
+<button type="button" aria-expanded="false" style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">
+More
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+</div>
+<span aria-hidden="true" style="width: 1px; height: 24px; margin: 0 8px; background: hsl(223, 4%, 68%)"></span>
+<button type="button" style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">
+Status
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+<button type="button" style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; border-radius: 9999px; font: inherit; font-size: 16px; line-height: 20px; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); border: 1px solid hsl(223, 3%, 52%)">
+Built by
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px">
+<p style="margin: 0; color: hsl(223, 4%, 37%)">Showing 24 of 60 prototypes</p>
+<div style="display: flex; align-items: center; gap: 16px">
+<button type="button" style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0; border: 0; background: transparent; color: hsl(225, 21%, 7%); font: inherit; font-size: 14px; line-height: 20px; cursor: pointer">
+<span style="color: hsl(223, 4%, 37%)">Sort</span>
+<span style="font-weight: 600">Last updated</span>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg>
+</button>
+<div role="group" aria-label="View" style="display: inline-flex; border: 1px solid hsl(223, 3%, 52%); border-radius: 6px; overflow: hidden">
+<button type="button" aria-label="Grid view" aria-pressed="false" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; padding: 0; border: 0; cursor: pointer; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%)">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h5v5h-5zM11.5 3.5h5v5h-5zM3.5 11.5h5v5h-5zM11.5 11.5h5v5h-5z"></path></svg>
+</button>
+<button type="button" aria-label="List view" aria-pressed="true" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; padding: 0; border: 0; cursor: pointer; background: hsl(220, 19%, 94%); color: hsl(225, 21%, 7%)">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5h13M3.5 10h13M3.5 15h13"></path></svg>
+</button>
+</div>
+</div>
+</div>
+
+<div style="overflow-x: auto; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); border-radius: 12px; box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05)">
+<div role="list" style="min-width: 880px">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="24">
+<div role="listitem" class="row" style="position: relative; display: grid; grid-template-columns: 124px minmax(0, 2.2fr) minmax(0, 1.4fr) minmax(0, 1.2fr) 88px 60px; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid hsl(225, 15%, 89%); font-size: 14px; line-height: 20px">
+<span><span style="padding: 0 4px; border-radius: 2px; font-weight: 600; background: {{r.stBg}}; color: {{r.stFg}}; border: 1px solid {{r.stBd}}">{{r.status}}</span></span>
+<a class="rowlink" href="Prototype.dc.html" style="font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</a>
+<span style="color: hsl(223, 7%, 20%); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.pagesText}}</span>
+<span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.byline}}</span>
+<span style="color: hsl(223, 4%, 37%)">{{r.updated}}</span>
+<a href="Detail.dc.html" style="position: relative; z-index: 1; justify-self: end; font-weight: 600">Details</a>
+</div>
+</sc-for>
+</div>
+</div>
+
+<button type="button" style="align-self: center; padding: 11px 15px; border-radius: 6px; border: 1px solid hsl(223, 7%, 20%); background: transparent; color: hsl(225, 21%, 7%); font: inherit; font-weight: 600; cursor: pointer">Show 24 more</button>
+
+</div>
+
+</main>
+
+<footer style="max-width: 1240px; margin: 0 auto; padding: 24px; box-sizing: border-box; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">
+<span>Internal only</span>
+<span>Seller Experience</span>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ink = 'hsl(225, 21%, 7%)';
+    const neutral = 'hsl(220, 19%, 94%)';
+    const tone = {
+      'Exploring': { bg: neutral, fg: ink, bd: neutral },
+      'Ready to test': { bg: 'hsl(221, 86%, 92%)', fg: 'hsl(219, 27%, 40%)', bd: 'hsl(221, 86%, 92%)' },
+      'In testing': { bg: 'hsl(38, 90%, 84%)', fg: 'hsl(42, 75%, 27%)', bd: 'hsl(38, 90%, 84%)' },
+      'Tested': { bg: 'hsl(145, 83%, 77%)', fg: 'hsl(156, 100%, 21%)', bd: 'hsl(145, 83%, 77%)' },
+      'Shipped': { bg: 'hsl(70, 88%, 73%)', fg: ink, bd: 'hsl(70, 88%, 73%)' }
+    };
+
+    const real = [
+      { name: 'Home page rethink', pages: 'Home', status: 'Exploring', updated: 'Sep 2026' },
+      { name: 'Deals step one', pages: 'Home, Listings, Opportunities', status: 'In testing', updated: 'Sep 2026' },
+      { name: 'Proactive seller insights', pages: 'Cross-page', status: 'Exploring', updated: 'Sep 2026' },
+      { name: 'Deals adoption', pages: 'Home, Listings', status: 'Exploring', updated: 'Aug 2026' },
+      { name: '6-tier risk model', pages: 'Home, Money', status: 'Ready to test', updated: 'Aug 2026' },
+      { name: 'Support AI in the Back Office', pages: 'Cross-page', status: 'Exploring', updated: 'May 2026' },
+      { name: 'Listings page explorations', pages: 'Listings', status: 'Exploring', updated: 'May 2026' },
+      { name: 'BackFunds self-onboarding', pages: 'Home, Money', status: 'Exploring', updated: 'Apr 2026' }
+    ];
+
+    const fillerStatus = ['Exploring', 'Exploring', 'Tested', 'Exploring', 'Shipped', 'Exploring', 'Ready to test', 'Exploring'];
+    const filler = [];
+    for (let i = 0; i < 16; i += 1) {
+      filler.push({ name: '[Prototype name]', pages: '[Pages]', status: fillerStatus[i % 8], updated: '[date]', byline: '[Author], [discipline]' });
+    }
+
+    const rows = real.concat(filler).map((c) => {
+      const t = tone[c.status];
+      return {
+        name: c.name,
+        pagesText: c.pages,
+        status: c.status,
+        updated: c.updated,
+        byline: c.byline || 'Andrew Malone, Design',
+        stBg: t.bg,
+        stFg: t.fg,
+        stBd: t.bd
+      };
+    });
+
+    return { rows: rows };
+  }
+}
+</script>
+</body>
+</html>

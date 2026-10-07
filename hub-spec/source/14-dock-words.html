@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Clear words and a picture picker</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 580px; height: 1340px; box-sizing: border-box; padding: 24px 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 32px">
+
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 32px; line-height: 40px">Clear words</h1>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Say what you see, not the code name</h2>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 12px; background: hsl(6, 100%, 96%)">
+<span style="font-size: 14px; line-height: 20px; font-weight: 600; color: hsl(351, 84%, 39%)">Before</span>
+<div style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 8px; border-radius: 9999px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-size: 14px; line-height: 20px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>Hub</span>
+<span aria-hidden="true" style="width: 1px; height: 20px; background: hsl(223, 5%, 28%)"></span>
+<span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 36px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"></path></svg></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 8px; white-space: nowrap"><span style="font-weight: 600">A, Triage</span><span style="color: hsl(225, 7%, 78%)">2 of 6</span></span>
+<span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 36px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"></path></svg></span>
+</div>
+<span style="font-size: 14px; line-height: 20px; color: hsl(223, 7%, 20%)">"Triage" means nothing to a newcomer.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 12px; background: hsl(139, 85%, 90%)">
+<span style="font-size: 14px; line-height: 20px; font-weight: 600; color: hsl(156, 100%, 21%)">After</span>
+<div style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 8px; border-radius: 9999px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-size: 14px; line-height: 20px">
+<span style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 10px; font-weight: 600; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 8H3M7 4L3 8l4 4"></path></svg>All prototypes</span>
+<span aria-hidden="true" style="width: 1px; height: 20px; background: hsl(223, 5%, 28%)"></span>
+<span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 36px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"></path></svg></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 8px; white-space: nowrap"><span style="font-weight: 600">Version A</span><span>Urgent tasks first</span></span>
+<span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 36px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"></path></svg></span>
+</div>
+<span style="font-size: 14px; line-height: 20px; color: hsl(223, 7%, 20%)">A letter, plus what is different in plain words.</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Pick by picture</h2>
+<p style="margin: 0; color: hsl(223, 7%, 20%)">Tap the name and you see every version, not a list of words.</p>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.12)">
+<span style="font-weight: 600">5 versions of the Home page</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px solid hsl(225, 15%, 89%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: grid; grid-template-columns: 1fr 1fr; gap: 4px"><span style="border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span></div>
+<span style="font-size: 14px; line-height: 20px; font-weight: 600">Before</span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">What sellers see today</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 7px; border-radius: 8px; border: 2px solid hsl(225, 21%, 7%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: flex; flex-direction: column; gap: 4px"><span style="flex: 1; border-radius: 3px; background: hsl(38, 90%, 84%)"></span><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span></div>
+<span style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 20px; font-weight: 600">Version A<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">Urgent tasks first</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px solid hsl(225, 15%, 89%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: grid; grid-template-columns: 3fr 2fr; gap: 4px"><span style="border-radius: 3px; background: hsl(145, 83%, 77%)"></span><span style="display: flex; flex-direction: column; gap: 4px"><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span></span></div>
+<span style="font-size: 14px; line-height: 20px; font-weight: 600">Version B</span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">Money first</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px solid hsl(225, 15%, 89%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: flex; flex-direction: column; gap: 4px"><span style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; height: 26px"><span style="border-radius: 3px; background: hsl(221, 86%, 92%)"></span><span style="border-radius: 3px; background: hsl(221, 86%, 92%)"></span><span style="border-radius: 3px; background: hsl(221, 86%, 92%)"></span><span style="border-radius: 3px; background: hsl(221, 86%, 92%)"></span></span><span style="flex: 1; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span></div>
+<span style="font-size: 14px; line-height: 20px; font-weight: 600">Version C</span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">Sales numbers first</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px solid hsl(225, 15%, 89%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: flex; flex-direction: column; gap: 4px"><span style="flex: 1; display: flex; align-items: center; justify-content: flex-end; padding: 0 4px; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"><span style="width: 22px; height: 8px; border-radius: 2px; background: hsl(225, 21%, 7%)"></span></span><span style="flex: 1; display: flex; align-items: center; justify-content: flex-end; padding: 0 4px; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"><span style="width: 22px; height: 8px; border-radius: 2px; background: hsl(225, 21%, 7%)"></span></span><span style="flex: 1; display: flex; align-items: center; justify-content: flex-end; padding: 0 4px; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"><span style="width: 22px; height: 8px; border-radius: 2px; background: hsl(225, 21%, 7%)"></span></span></div>
+<span style="font-size: 14px; line-height: 20px; font-weight: 600">Version D</span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">Suggestions first</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 8px; border: 1px solid hsl(225, 15%, 89%)">
+<div aria-hidden="true" style="height: 92px; box-sizing: border-box; padding: 6px; border-radius: 4px; background: hsl(228, 24%, 96%); display: flex; flex-direction: column; gap: 4px"><span style="height: 30px; border-radius: 3px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></span><span style="flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px"><span style="border-radius: 3px; border: 1px dashed hsl(223, 3%, 52%)"></span><span style="border-radius: 3px; border: 1px dashed hsl(223, 3%, 52%)"></span><span style="border-radius: 3px; border: 1px dashed hsl(223, 3%, 52%)"></span><span style="border-radius: 3px; border: 1px dashed hsl(223, 3%, 52%)"></span></span></div>
+<span style="font-size: 14px; line-height: 20px; font-weight: 600">Version E</span>
+<span style="font-size: 12px; line-height: 16px; color: hsl(223, 7%, 20%)">A layout you can adjust</span>
+</div>
+
+</div>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">The small pictures are taken automatically from each version.</p>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">The words we use</h2>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 10px 8px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 600; color: hsl(223, 4%, 37%)">Instead of</span><span></span><span style="font-size: 14px; line-height: 20px; font-weight: 600; color: hsl(223, 4%, 37%)">We say</span>
+
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(228, 24%, 96%); color: hsl(223, 4%, 37%); text-decoration: line-through">Concept</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600">Version</span>
+
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(228, 24%, 96%); color: hsl(223, 4%, 37%); text-decoration: line-through">Triage</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600">Urgent tasks first</span>
+
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(228, 24%, 96%); color: hsl(223, 4%, 37%); text-decoration: line-through">Today</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600">Before</span>
+
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(228, 24%, 96%); color: hsl(223, 4%, 37%); text-decoration: line-through">Hub</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600">All prototypes</span>
+
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(228, 24%, 96%); color: hsl(223, 4%, 37%); text-decoration: line-through">2 of 6</span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<span style="padding: 10px 12px; border-radius: 8px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-weight: 600">Version A</span>
+</div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":580,"height":1340}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

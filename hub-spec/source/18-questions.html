@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The questions, kept under control</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+.row{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:12px;border:1px solid hsl(225,15%,89%)}
+.head{display:flex;align-items:center;gap:8px}
+.q{font-weight:600}
+.tag{flex:none;padding:0 4px;border-radius:2px;font-size:12px;line-height:16px;font-weight:600}
+.pick{background:hsl(221,86%,92%);color:hsl(219,27%,40%)}
+.typed{background:hsl(38,90%,84%);color:hsl(42,75%,27%)}
+.auto{background:hsl(145,83%,77%);color:hsl(156,100%,21%)}
+.ai{background:hsl(220,19%,94%);color:hsl(223,7%,20%)}
+.new{background:hsl(70,88%,73%);color:hsl(225,21%,7%)}
+.use{margin-left:auto;font-size:12px;line-height:16px;color:hsl(223,4%,37%);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9999px;border:1px solid hsl(223,3%,52%);background:hsl(0,0%,100%);font-size:14px;line-height:20px}
+.chip.on{background:hsl(225,21%,7%);border-color:hsl(225,21%,7%);color:hsl(0,0%,100%);font-weight:600}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:6px;border:1px solid hsl(223,3%,52%);font-size:14px;line-height:20px}
+.count{flex:none;font-size:12px;line-height:16px;color:hsl(223,4%,37%)}
+.note{font-size:14px;line-height:20px;color:hsl(223,7%,20%)}
+.av{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:9999px;background:hsl(220,19%,94%);color:hsl(225,21%,7%);font-size:10px;font-weight:600}
+</style>
+</helmet>
+<div style="width: 580px; height: 1740px; box-sizing: border-box; padding: 24px 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 12px">
+
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 32px; line-height: 40px">The questions, kept under control</h1>
+<p style="margin: 0 0 4px; color: hsl(223, 7%, 20%)">Anything that feeds a filter or a sort is picked from a list, never typed.</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 12px 16px; border-radius: 12px; background: hsl(228, 24%, 96%); font-size: 14px; line-height: 20px">
+<span style="display: inline-flex; align-items: center; gap: 6px"><span class="tag pick">Pick</span>from a fixed list</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span class="tag typed">Type</span>with a limit</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span class="tag auto">Automatic</span>nobody enters it</span>
+</div>
+
+<div class="row" style="border: 2px solid hsl(225, 21%, 7%); padding: 13px 15px">
+<div class="head"><span class="q">Got a PRD or research? Paste the link</span><span class="tag new">New, asked first</span></div>
+<div class="field"><span style="color: hsl(223, 4%, 37%)">Brief or PRD</span><span class="count">link</span></div>
+<div class="field"><span style="color: hsl(223, 4%, 37%)">Research findings</span><span class="count">link</span></div>
+<span class="note">Optional. First version: the links are kept and shown with the prototype. Later: the AI reads them through Dust and suggests the answers below.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">What is it called?</span><span class="tag typed">Type</span><span class="use">Search, sort by name</span></div>
+<div class="field"><span>Home page rethink</span><span class="count">17 of 40</span></div>
+<span class="note">No two prototypes can share a name.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">Which pages is it about?</span><span class="tag pick">Pick</span><span class="use">Page filter</span></div>
+<div class="chips"><span class="chip on">Home</span><span class="chip">Insights</span><span class="chip">Customer Care</span><span class="chip on">Listings</span><span class="chip">Orders</span><span class="chip on">Opportunities</span><span class="chip on">Money</span><span class="chip">Options</span><span class="chip">Seller Support</span><span class="chip">Onboarding</span><span class="chip">Seller Guide</span><span class="chip">Cross-page</span></div>
+<span class="note">As many as it touches. Every option is shown. The card shows three, then a count.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">Who is working on it with you?</span><span class="tag pick">Pick</span><span class="use">Built by filter</span></div>
+<div class="chips"><span class="chip on"><span class="av">A</span>Andrew Malone</span><span class="chip"><span class="av">?</span>[Teammate]</span><span class="chip"><span class="av">?</span>[Teammate]</span><span class="chip">Add someone</span></div>
+<span class="note">Names come from set-up. Each person joins the list once, with their role, the first time they set up.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">What is the problem for sellers?</span><span class="tag typed">Type</span><span class="use">Search</span></div>
+<div class="field"><span>The first page every seller lands on is the one they have least reason to read.</span><span class="count">79 of 140</span></div>
+<span class="note">One sentence. It becomes the line on the card.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">What is the goal?</span><span class="tag typed">Type</span><span class="use">Search</span></div>
+<div class="field"><span>Cut the share of Home sessions with zero interaction</span><span class="count">52 of 100</span></div>
+<span class="note">One line. Can be skipped and added later.</span>
+</div>
+
+<div class="row">
+<div class="head"><span class="q">What do you want to try?</span><span class="tag ai">For the AI only</span><span class="use">Not on the hub</span></div>
+<div class="field" style="min-height: 44px; align-items: flex-start"><span style="color: hsl(223, 4%, 37%)">As long as they like. This is the brief the AI builds from.</span></div>
+</div>
+
+<div class="row" style="background: hsl(228, 24%, 96%); border-color: transparent">
+<div class="head"><span class="q">Filled in for them</span><span class="tag auto">Automatic</span><span class="use">Sort, status filter</span></div>
+<div class="chips"><span class="chip">Their name</span><span class="chip">Their role</span><span class="chip">Date added</span><span class="chip">Last updated</span><span class="chip">Status: Exploring</span><span class="chip">The link</span></div>
+<span class="note">Role is asked once, at set-up, from a fixed list. Status is changed later from a fixed list too.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 12px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)">
+<span style="font-weight: 600">Three guards</span>
+<span style="font-size: 14px; line-height: 20px; color: hsl(225, 7%, 78%)">Nothing goes live without a name, a page and a status.</span>
+<span style="font-size: 14px; line-height: 20px; color: hsl(225, 7%, 78%)">No free tags. A new page or role is added by a hub owner.</span>
+<span style="font-size: 14px; line-height: 20px; color: hsl(225, 7%, 78%)">Nothing the AI suggests is saved until the person says yes.</span>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":580,"height":1740}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

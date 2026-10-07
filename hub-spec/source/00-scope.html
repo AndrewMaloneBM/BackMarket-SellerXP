@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MVP: what is in and what waits</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+.group{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:12px;border:1px solid hsl(225,15%,89%)}
+.head{display:flex;align-items:center;gap:10px}
+.num{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9999px;background:hsl(225,21%,7%);color:hsl(0,0%,100%);font-size:14px;line-height:20px;font-weight:600}
+.title{font-family:'BMDupletDSP','HelveticaDSP',sans-serif;font-size:20px;line-height:28px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;min-height:28px;padding:2px 10px;border-radius:6px;background:hsl(228,24%,96%);font-size:14px;line-height:20px}
+.later .chip{background:hsl(0,0%,100%);border:1px dashed hsl(223,4%,68%);color:hsl(223,7%,20%)}
+</style>
+</helmet>
+<div style="width: 580px; height: 1224px; box-sizing: border-box; padding: 24px 20px; background: hsl(0, 0%, 100%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 12px">
+
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 32px; line-height: 40px">The first version</h1>
+<p style="margin: 0 0 4px; color: hsl(223, 7%, 20%)">Built in this order. Each step is checked before the next one starts.</p>
+
+<div class="group">
+<div class="head"><span class="num">1</span><span class="title">Foundations</span></div>
+<div class="chips"><span class="chip">Save what is live</span><span class="chip">One hub folder, a folder per team</span><span class="chip">One publish command</span><span class="chip">Owners approve hub changes</span><span class="chip">AI rule: leave the hub alone</span></div>
+</div>
+
+<div class="group">
+<div class="head"><span class="num">2</span><span class="title">The hub</span></div>
+<div class="chips"><span class="chip">Home with cards and a list</span><span class="chip">Search</span><span class="chip">Page, status and built-by filters</span><span class="chip">Sort</span><span class="chip">Empty and no-results states</span><span class="chip">Phone layout</span><span class="chip">Add a prototype page</span><span class="chip">What's new</span></div>
+</div>
+
+<div class="group">
+<div class="head"><span class="num">3</span><span class="title">Adding a prototype</span></div>
+<div class="chips"><span class="chip">Questions asked at the start</span><span class="chip">Pages and people picked from lists</span><span class="chip">People list from set-up</span><span class="chip">PRD and research links</span><span class="chip">Publish checks the card is complete</span></div>
+</div>
+
+<div class="group">
+<div class="head"><span class="num">4</span><span class="title">Inside a prototype</span></div>
+<div class="chips"><span class="chip">The dock</span><span class="chip">Version picker with pictures</span><span class="chip">Before and After switch</span><span class="chip">Screens, Notes and More</span><span class="chip">Hide, and the phone sheet</span></div>
+</div>
+
+<div class="group">
+<div class="head"><span class="num">5</span><span class="title">Move the existing prototypes</span></div>
+<div class="chips"><span class="chip">All of them onto the dock</span><span class="chip">Plain version names for each</span><span class="chip">Old sidebar removed</span></div>
+</div>
+
+<div class="group later" style="background: hsl(228, 24%, 96%); border-color: transparent; margin-top: 8px">
+<div class="head"><span class="title">Waits until after</span></div>
+<div class="chips"><span class="chip">Catalog goes live, right after</span><span class="chip">Prototype detail page</span><span class="chip">Test rounds</span><span class="chip">PRD prefill through Dust</span><span class="chip">Guided building</span><span class="chip">Links for sellers outside the company</span><span class="chip">Side-by-side compare</span><span class="chip">Automatic publishing</span><span class="chip">Dock at the top of the page</span></div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":580,"height":1224}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

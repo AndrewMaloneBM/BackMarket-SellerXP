@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Components and states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'IvarSoft';src:url(/_blob/378238ed7e0f61bba55d8ef7e6a2d6fc) format('truetype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletDSP';src:url(/_blob/98f84036cf6a9c3ed3133e8f4dad15eb) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+a{color:hsl(225,21%,7%)}a:hover{color:hsl(231,7%,21%)}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1520px; box-sizing: border-box; padding: 56px; background: hsl(228, 24%, 96%); color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 16px; line-height: 24px; display: flex; flex-direction: column; gap: 40px">
+
+<div>
+<h1 style="margin: 0; font-family: 'IvarSoft', serif; font-weight: 600; font-size: 28px; line-height: 40px">Components and states</h1>
+<p style="margin: 8px 0 0; color: hsl(223, 4%, 37%)">Every control on the hub, named by the Revolve component it is built from, in each state it can be in.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 56px">
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Page filter</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevChip, medium. Several can be selected at once.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Default</span><span style="display: inline-flex; align-items: center; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%)">Listings</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Hover</span><span style="display: inline-flex; align-items: center; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(220, 19%, 94%); border: 1px solid hsl(223, 3%, 52%)">Listings</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Selected</span><span style="display: inline-flex; align-items: center; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); border: 1px solid hsl(225, 21%, 7%)">Listings</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Keyboard focus</span><span style="display: inline-flex; align-items: center; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%); outline: 2px solid hsl(225, 100%, 60%); outline-offset: 4px">Listings</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Overflow, past eight values</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%)">More<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg></span></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Search</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevInputText with a leading search icon and a clear button once filled.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Empty</span><span style="display: inline-flex; align-items: center; gap: 8px; width: 176px; padding: 12px 16px; box-sizing: border-box; border-radius: 6px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%); color: hsl(223, 4%, 33%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none"><circle cx="9" cy="9" r="5.5"></circle><path d="M13.5 13.5L17 17"></path></svg>Search</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Focused</span><span style="display: inline-flex; align-items: center; gap: 8px; width: 176px; padding: 12px 16px; box-sizing: border-box; border-radius: 6px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%); outline: 2px solid hsl(225, 7%, 78%); color: hsl(223, 4%, 33%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none"><circle cx="9" cy="9" r="5.5"></circle><path d="M13.5 13.5L17 17"></path></svg>Search</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Filled</span><span style="display: inline-flex; align-items: center; gap: 8px; width: 176px; padding: 12px 16px; box-sizing: border-box; border-radius: 6px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none; color: hsl(223, 4%, 33%)"><circle cx="9" cy="9" r="5.5"></circle><path d="M13.5 13.5L17 17"></path></svg><span style="flex: 1">deals</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none; color: hsl(223, 4%, 33%)"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"></path></svg></span></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Status and Built by</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevChip with a dropdown, opening a RevContextualMenu. One value at a time.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Nothing chosen</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(0, 0%, 100%); border: 1px solid hsl(223, 3%, 52%)">Status<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Value chosen</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); border: 1px solid hsl(225, 21%, 7%)">Status: Tested<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"></path></svg></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Open</span>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 16px; box-sizing: border-box; border-radius: 9999px; line-height: 20px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); border: 1px solid hsl(225, 21%, 7%)">Status<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5-5 5 5"></path></svg></span>
+<div style="width: 240px; padding: 4px 0; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px"><span>All active</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></div>
+<div style="padding: 12px 16px">Exploring</div>
+<div style="padding: 12px 16px; background: hsl(220, 19%, 94%)">Ready to test</div>
+<div style="padding: 12px 16px">In testing</div>
+<div style="padding: 12px 16px">Tested</div>
+<div style="padding: 12px 16px">Shipped</div>
+<div style="margin: 4px 0; border-top: 1px solid hsl(225, 15%, 89%)"></div>
+<div style="padding: 12px 16px">Archived</div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">More, Sort and View</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevContextualMenu with RevCheckbox rows for More. A plain menu for Sort. Two RevButtonIcon for View.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">More, open</span>
+<div style="width: 220px; padding: 4px 0; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.08)">
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px"><span style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 4px; border: 1px solid hsl(223, 3%, 52%)"></span>Options</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px"><span style="flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></span>Seller Support</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px"><span style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 4px; border: 1px solid hsl(223, 3%, 52%)"></span>Onboarding</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px"><span style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 4px; border: 1px solid hsl(223, 3%, 52%)"></span>Seller Guide</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px"><span style="flex: none; width: 20px; height: 20px; box-sizing: border-box; border-radius: 4px; border: 1px solid hsl(223, 3%, 52%)"></span>Cross-page</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Sort, open</span>
+<div style="width: 200px; padding: 4px 0; border-radius: 8px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%); box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px"><span>Last updated</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></div>
+<div style="padding: 12px 16px">Name</div>
+<div style="padding: 12px 16px">Status</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Grid chosen</span>
+<span style="display: inline-flex; border: 1px solid hsl(223, 3%, 52%); border-radius: 6px; overflow: hidden"><span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; background: hsl(220, 19%, 94%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h5v5h-5zM11.5 3.5h5v5h-5zM3.5 11.5h5v5h-5zM11.5 11.5h5v5h-5z"></path></svg></span><span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; background: hsl(0, 0%, 100%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5h13M3.5 10h13M3.5 15h13"></path></svg></span></span>
+<span style="margin-top: 8px; font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">List chosen</span>
+<span style="display: inline-flex; border: 1px solid hsl(223, 3%, 52%); border-radius: 6px; overflow: hidden"><span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; background: hsl(0, 0%, 100%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 3.5h5v5h-5zM11.5 3.5h5v5h-5zM3.5 11.5h5v5h-5zM11.5 11.5h5v5h-5z"></path></svg></span><span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; background: hsl(220, 19%, 94%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M3.5 5h13M3.5 10h13M3.5 15h13"></path></svg></span></span>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Buttons</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevButton primary, secondary and small. RevButtonIcon for copy link and the phone header.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Primary</span><span style="display: inline-flex; align-items: center; padding: 12px 16px; border-radius: 6px; font-weight: 600; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)">Add a prototype</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Hover</span><span style="display: inline-flex; align-items: center; padding: 12px 16px; border-radius: 6px; font-weight: 600; background: hsl(231, 7%, 21%); color: hsl(0, 0%, 100%)">Add a prototype</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Disabled</span><span style="display: inline-flex; align-items: center; padding: 12px 16px; border-radius: 6px; font-weight: 600; background: hsla(225, 21%, 7%, 0.05); color: hsl(223, 3%, 57%)">Add a prototype</span></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Secondary</span><span style="display: inline-flex; align-items: center; padding: 11px 15px; border-radius: 6px; font-weight: 600; border: 1px solid hsl(223, 7%, 20%)">Clear filters</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Hover</span><span style="display: inline-flex; align-items: center; padding: 11px 15px; border-radius: 6px; font-weight: 600; border: 1px solid hsl(223, 7%, 20%); background: hsla(225, 21%, 7%, 0.06)">Clear filters</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Small</span><span style="display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 6px; font-size: 14px; line-height: 20px; font-weight: 600; border: 1px solid hsl(223, 7%, 20%)">Open</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Icon, secondary</span><span style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; box-sizing: border-box; border-radius: 6px; border: 1px solid hsl(223, 3%, 52%)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 11.5a3 3 0 004.2 0l2.6-2.6a3 3 0 00-4.2-4.2l-.9.9"></path><path d="M11.5 8.5a3 3 0 00-4.2 0l-2.6 2.6a3 3 0 004.2 4.2l.9-.9"></path></svg></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Icon, primary</span><span style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 6px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg></span></div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Status and labels</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevTag, medium, one variant per status. RevTag small for New. RevAvatar small for the author.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">secondary</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: hsl(220, 19%, 94%)">Exploring</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">info</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: hsl(221, 86%, 92%); color: hsl(219, 27%, 40%)">Ready to test</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">warning</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">In testing</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">success</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: hsl(145, 83%, 77%); color: hsl(156, 100%, 21%)">Tested</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">primary</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; background: hsl(70, 88%, 73%)">Shipped</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">secondary, outline</span><span style="padding: 0 4px; border-radius: 2px; font-size: 14px; line-height: 20px; font-weight: 600; border: 1px solid hsl(223, 4%, 68%)">Archived</span></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">New since last visit</span><span style="padding: 0 2px; border-radius: 2px; font-size: 12px; line-height: 16px; font-weight: 600; background: hsl(221, 86%, 92%); color: hsl(219, 27%, 40%)">New</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Round, beside the status</span><span style="font-size: 12px; line-height: 16px; font-weight: 600; color: hsl(42, 75%, 27%)">Round 1b</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Author</span><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px"><span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 9999px; background: hsl(220, 19%, 94%); font-size: 12px; line-height: 16px; font-weight: 600">A</span>Andrew Malone, Design</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Link</span><span style="font-size: 14px; line-height: 20px; font-weight: 600; text-decoration: underline">Details</span></div>
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Breadcrumbs</span><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px"><span style="color: hsl(223, 4%, 33%)">Prototype Hub</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: hsl(223, 4%, 37%)"><path d="M6 3.5L10.5 8 6 12.5"></path></svg><span style="font-weight: 600">Deals step one</span></span></div>
+</div>
+</section>
+
+<section style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 16px">
+<div>
+<h2 style="margin: 0; font-family: 'BMDupletDSP', 'HelveticaDSP', sans-serif; font-size: 20px; line-height: 28px; font-weight: 600">Messages</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: hsl(223, 4%, 37%)">RevToast after a copy. RevInfoBlock inside a page. RevBanner under the header for an archived prototype.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 56px; align-items: start">
+<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Toast, success</span><span style="display: inline-flex; align-items: center; gap: 20px; min-width: 300px; box-sizing: border-box; padding: 12px 16px; border-radius: 12px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%); font-size: 14px; line-height: 20px; font-weight: 600; box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.12)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg>Link copied</span></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Banner</span><div style="padding: 16px; background: hsl(219, 65%, 82%); font-size: 14px; line-height: 20px">This prototype is archived. It stays here for reference and is no longer updated.</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Info block, default</span>
+<div style="display: flex; padding: 16px 8px 16px 16px; border-radius: 12px; background: hsl(220, 19%, 94%)">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-right: 12px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.1"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 20px"><span style="font-weight: 600">This card is unfinished</span><span style="color: hsl(223, 7%, 20%)">It has no problem or goal yet. The author can add them by running publish again.</span></div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; line-height: 16px; color: hsl(223, 4%, 37%)">Info block, info</span>
+<div style="display: flex; padding: 16px 8px 16px 16px; border-radius: 12px; background: hsl(221, 86%, 92%)">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true" style="flex: none; margin-right: 12px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.6v.1"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 20px"><span style="font-weight: 600">Best on a laptop</span><span style="color: hsl(223, 7%, 20%)">Prototypes are built for a laptop screen. You can read the cards here and open them later on desktop.</span></div>
+</div>
+</div>
+</div>
+</section>
+
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1520}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

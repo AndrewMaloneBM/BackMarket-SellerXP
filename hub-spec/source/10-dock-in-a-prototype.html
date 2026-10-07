@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inside a prototype</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/bf69dfa1e9ac2049f32f4bfcc66d139a) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'BMDupletTXT';src:url(/_blob/867be984d831c0bb2f78412467436014) format('opentype');font-weight:600;font-style:normal;font-display:swap}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; min-height: 900px; display: flex; flex-direction: column; color: hsl(225, 21%, 7%); font-family: 'BMDupletTXT', 'HelveticaTXT', sans-serif; font-size: 14px; line-height: 20px">
+
+<div aria-hidden="true" style="flex: 1; display: flex; flex-direction: column; background: hsl(0, 0%, 100%)">
+<div style="display: flex; align-items: center; gap: 28px; height: 56px; padding: 0 24px; border-bottom: 1px solid hsl(225, 15%, 89%)">
+<span style="width: 96px; height: 16px; border-radius: 4px; background: hsl(225, 15%, 89%)"></span>
+<span style="width: 56px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+<span style="width: 64px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+<span style="width: 88px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+<span style="width: 64px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+<span style="width: 56px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+<span style="width: 96px; height: 10px; border-radius: 5px; background: hsl(220, 19%, 94%)"></span>
+</div>
+<div style="flex: 1; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-content: start; gap: 24px; padding: 24px; background: hsl(228, 24%, 96%)">
+<div style="height: 260px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+<div style="height: 260px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+<div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+<div style="height: 180px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+<div style="height: 180px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+<div style="height: 180px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+</div>
+<div style="grid-column: 1 / -1; height: 248px; border-radius: 12px; background: hsl(0, 0%, 100%); border: 1px solid hsl(225, 15%, 89%)"></div>
+</div>
+</div>
+
+<div style="position: absolute; top: 18px; right: 24px; display: flex; gap: 8px; font-size: 12px; line-height: 20px; font-weight: 600">
+<sc-if value="{{isBefore}}" hint-placeholder-val="{{false}}">
+<span style="padding: 0 4px; border-radius: 2px; background: hsl(225, 21%, 7%); color: hsl(0, 0%, 100%)">Before</span>
+</sc-if>
+<span style="padding: 0 4px; border-radius: 2px; background: hsl(38, 90%, 84%); color: hsl(42, 75%, 27%)">Prototype</span>
+</div>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center">
+<dc-import name="Dock" mode="full" menu="{{menu}}" compare="{{compare}}" hint-size="860px,520px"></dc-import>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"menu":{"editor":"enum","options":["none","versions","more","first"],"default":"versions"},"compare":{"editor":"enum","options":["after","before","none"],"default":"after"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const compare = this.props.compare || 'after';
+    return { menu: this.props.menu || 'versions', compare, isBefore: compare === 'before' };
+  }
+}
+</script>
+</body>
+</html>
