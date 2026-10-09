@@ -1,0 +1,1 @@
+import{R as e,S as p,U as o,H as s}from"./Bo41Fg2T.js";const a=e({hub:{teamName:"SellerXP",designerName:"Andrew Malone",slug:"seller-xp"}}),i={nuxt:{}},t=p(a,i);function u(){const n=o();return n._appConfig||=s(t),n._appConfig}export{u};
