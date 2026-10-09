@@ -244,6 +244,18 @@ Full guidelines live at **`design-system/`** in this repo. Start with `design-sy
 - For any new prototype, apply the same font setup: `font-heading-primary`, `font-heading-secondary`, `font-body`
 - For icons: use `<RevIcon>` unless color inheritance is needed, in which case keep inline SVG
 
+### Revolve components you can use in this repo
+
+`app/components/rev/` holds local copies of the real Revolve components (styles copied from `@backmarket/design-system` 129.13.0). They are auto-imported, so use them directly instead of hand-styling buttons, tags, inputs and so on:
+
+`RevButton`, `RevButtonIcon`, `RevButtonCard`, `RevCard`, `RevTag`, `RevLink`, `RevTabs` + `RevTabItem`, `RevDrawer`, `RevTable`, `RevInputText`, `RevInputSelect`, `RevToggle`, `RevRating`, `RevTooltip`, `RevList` + `RevListItemAction`, `RevDivider`, `RevSpinner`, `RevCountryFlag`, `RevIcon`.
+
+- Each file starts with a short usage example. Props follow the docs in `design-system/components/`.
+- `app/assets/css/revolve.css` has the real tokens as CSS variables (`var(--rev-bg-static-default-mid)`), one utility class per token (`rev-text-static-default-low`, `rev-border-static-default-mid`), the text styles (`rev-heading-1`, `rev-body-1`, `rev-caption`...) and the moods (`rev-mood-inverse`, `rev-mood-tangaroa`).
+- Spacing: Revolve classes are in px (`p-24` = 24px). Here, use the normal Tailwind scale (`p-6` = 24px, `gap-2` = 8px).
+- `app/components/bo/` holds Back Office pieces built from those: `BoShell` (header + main navigation), `BoPage` (title row) and `BoPill` (grade, battery, market pills).
+- `deals-step-one` is the reference prototype for all of this. Older prototypes still use `BmShell` and hand-written styles.
+
 ---
 
 ## Vercel & MCP Setup
