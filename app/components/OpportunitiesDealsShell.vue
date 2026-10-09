@@ -5,12 +5,13 @@ import dealCampaignsCsv from './deals-step-one/deal_campaigns_export.csv?raw'
 const SELLER_NAME = 'Merchant'
 const NAV_ITEMS = ['Home', 'Insights', 'Customer Care', 'Listings', 'Orders', 'Opportunities', 'Money', 'Options', 'Seller Support'] as const
 
-const activeNavItem = ref<string>('Opportunities')
 const activeTab = ref<string>('Deals')
 
 // Only Home, Listings and Opportunities are in scope for this test; Deals is
 // the only sub-tab with content. Disabled items show "Not available in this
 // test" on hover and are neither clickable nor keyboard-focusable.
+// Layout and Revolve components are copied from front-apps
+// (apps/back-office-seller/app/scopes/opportunities/pages/tabs/deals).
 const ENABLED_NAV = ['Home', 'Listings', 'Opportunities']
 const disabledNavItems = NAV_ITEMS.filter((item) => !ENABLED_NAV.includes(item))
 const TABS = ['Deals', 'Pricing', 'Inventory'] as const
@@ -18,34 +19,27 @@ const disabledTabs = ['Pricing', 'Inventory']
 
 const emit = defineEmits<{ navItemClick: [item: string] }>()
 
-function onNavClick(item: string) {
-  activeNavItem.value = item
-  emit('navItemClick', item)
-}
-
 type DealStatus = 'in-target' | 'near-target' | 'far-target' | 'not-listed'
 
-// RevTag filled-variation tokens (Revolve): tinted bg + tone text, radius.xs
-const DRAWER_STATUS: Record<DealStatus, { label: string; tone: 'success' | 'warning' | 'danger' | 'neutral' }> = {
-  'in-target': { label: 'In target', tone: 'success' },
-  'near-target': { label: 'Near target', tone: 'warning' },
-  'far-target': { label: 'Far target', tone: 'danger' },
-  'not-listed': { label: 'Not listed', tone: 'neutral' },
+// Status -> RevTag label and variant, same mapping as the real Back Office
+// (front-apps StatusCell.constants).
+type TagVariant = 'success' | 'warning' | 'danger' | 'secondary'
+
+const STATUS_TAG: Record<DealStatus, { label: string; variant: TagVariant }> = {
+  'in-target': { label: 'In target', variant: 'success' },
+  'near-target': { label: 'Near target', variant: 'warning' },
+  'far-target': { label: 'Far target', variant: 'danger' },
+  'not-listed': { label: 'Not listed', variant: 'secondary' },
 }
 
-const STATUS_TAG: Record<'success' | 'warning' | 'danger' | 'neutral', string> = {
-  success: 'bg-[hsl(145,83%,77%)] text-[hsl(156,100%,21%)]',
-  warning: 'bg-[hsl(38,90%,84%)] text-[hsl(42,75%,27%)]',
-  danger: 'bg-[hsl(3,100%,92%)] text-[hsl(351,84%,39%)]',
-  neutral: 'bg-[hsl(220,19%,94%)] text-[hsl(225,21%,7%)]',
-}
+const DISABLED_HINT = 'Not available in this test'
 
-const STATUS_TONE: Record<DealStatus, 'success' | 'warning' | 'danger' | 'neutral'> = {
-  'in-target': 'success',
-  'near-target': 'warning',
-  'far-target': 'danger',
-  'not-listed': 'neutral',
-}
+const COLUMNS = [
+  { key: 'product', label: 'Product' },
+  { key: 'price', label: 'Price' },
+  { key: 'status', label: 'Status' },
+  { key: 'actions', label: 'Actions' },
+]
 
 interface DealModel {
   name: string
@@ -66,6 +60,8 @@ interface Campaign {
   modelCount: number
   markets: string[]
   models: DealModel[]
+  /** Commission discount for every product in the campaign, in percent. */
+  commissionSaving: number
 }
 
 /**
@@ -108,12 +104,6 @@ function formatPrice(value: number, currency: string) {
   return `${symbol}${value.toFixed(2)}`
 }
 
-const baseHref = useRuntimeConfig().app.baseURL
-
-function iconSrc(name: string) {
-  return `${baseHref}icons/${name}.svg`
-}
-
 /**
  * Download CSV: serves the bundled deal_campaigns_export.csv (built from the
  * prototype's deal_campaigns.json, seller columns removed) as a real file
@@ -131,13 +121,21 @@ function onDownloadCsv() {
   URL.revokeObjectURL(url)
 }
 
-const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c) => ({
+// ASSUMPTION (not confirmed yet): a campaign has ONE commission discount that
+// applies to every product in it, and campaigns differ from each other.
+// If the discount turns out to differ per product, it needs its own column
+// in the drawer table instead of the tag on the campaign.
+// PLACEHOLDER figures: deal_campaigns.json has no commission data.
+const CAMPAIGN_COMMISSION_SAVING = [3, 2, 4, 3]
+
+const campaigns: Campaign[] = dealCampaignsJson.campaigns.map((c, campaignIndex) => ({
   id: c.id,
   name: c.name,
   currency: c.currency,
   timeLabel: daysLeftLabel(c.endDate),
   modelCount: c.products.length,
   markets: c.markets,
+  commissionSaving: CAMPAIGN_COMMISSION_SAVING[campaignIndex % CAMPAIGN_COMMISSION_SAVING.length],
   models: c.products.map((p) => ({
     name: p.name,
     sku: p.sku,
@@ -220,244 +218,207 @@ watch(drawerOpen, (open) => {
   if (!open) resetOverrides()
 })
 
-function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') closeDrawer()
+/** Table rows for the open campaign: each model plus its row index (the key the price simulation uses). */
+const drawerRows = computed(() =>
+  (activeCampaign.value?.models ?? []).map((model, index) => ({
+    id: `${activeCampaign.value?.id}-${index}`,
+    index,
+    model,
+  })),
+)
+
+/** Pale-green flash on the row that was just updated (fades out through RevTable's row transition). */
+function rowStyle(row: { index: number }) {
+  return isRowFlashing(row.index) ? { backgroundColor: 'var(--rev-bg-static-success-low)' } : undefined
 }
-
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onUnmounted(() => window.removeEventListener('keydown', onKeydown))
-
-// Lock the page behind the open drawer (tester mode scrolls in a wrapper,
-// the hub scrolls in an inner pane — locking both cover the common body).
-watch(drawerOpen, (open) => {
-  if (import.meta.client) {
-    document.body.style.overflow = open ? 'hidden' : ''
-  }
-})
-onUnmounted(() => {
-  if (import.meta.client) document.body.style.overflow = ''
-})
 </script>
 
 <template>
-  <BmShell
-    :nav-items="NAV_ITEMS"
-    :active-nav-item="activeNavItem"
+  <BoShell
+    active-nav-item="Opportunities"
     :seller-name="SELLER_NAME"
-    page-title="Opportunities"
-    :tabs="TABS"
-    :active-tab="activeTab"
     :disabled-nav-items="disabledNavItems"
-    :disabled-tabs="disabledTabs"
-    @nav-item-click="onNavClick"
-    @update:active-tab="activeTab = $event"
+    @nav-item-click="emit('navItemClick', $event)"
   >
-    <div class="py-8">
-      <div class="max-w-7xl mx-auto px-6">
-        <!-- ========== DEALS TAB ========== -->
-        <template v-if="activeTab === 'Deals'">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-3xl font-bold text-bm-text-hi">Active Deals</h2>
-            <button
-              type="button"
-              class="rounded-bm-sm px-3 py-1.5 text-sm font-semibold cursor-pointer bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors"
-              @click="onDownloadCsv"
-            >
-              Download CSV
-            </button>
-          </div>
-          <div class="flex flex-col gap-4">
-            <button
-              v-for="campaign in campaigns"
-              :key="campaign.id"
-              type="button"
-              class="card text-left px-6 py-5 flex items-center justify-between gap-6 hover:border-bm-border-action hover:shadow transition-all cursor-pointer"
-              @click="openDrawer(campaign)"
-            >
-              <div class="min-w-0">
-                <div class="flex items-center gap-3">
-                  <h2 class="text-[15px] font-semibold text-bm-text-hi truncate">{{ campaign.name }}</h2>
-                  <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG.success]">Active</span>
+    <BoPage title="Opportunities">
+      <!-- id: "View eligible listings" on Home scrolls here -->
+      <RevTabs id="deals-section" class="mb-8 scroll-mt-4" label="Opportunities sections">
+        <RevTabItem
+          v-for="tab in TABS"
+          :key="tab"
+          :label="tab"
+          :active="tab === activeTab"
+          :disabled="disabledTabs.includes(tab)"
+          :title="disabledTabs.includes(tab) ? DISABLED_HINT : undefined"
+          @click="activeTab = tab"
+        />
+      </RevTabs>
+
+      <!-- ========== DEALS TAB ========== -->
+      <div v-if="activeTab === 'Deals'" class="p-6 md:p-8">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h2 class="rev-heading-2">Active Deals</h2>
+          <RevButton variant="secondary" size="small" icon="IconDownload" @click="onDownloadCsv">Download CSV</RevButton>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <RevButtonCard
+            v-for="campaign in campaigns"
+            :key="campaign.id"
+            class="w-full text-left"
+            @click="openDrawer(campaign)"
+          >
+            <div class="flex flex-col gap-4 p-6">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-2">
+                  <RevTag label="Active" variant="success" />
+                  <RevTag :label="`${campaign.commissionSaving}% less commission`" variant="info" icon="IconDealFilled" />
                 </div>
-                <div class="mt-2 flex items-center gap-2 text-sm text-bm-text-mid">
-                  <span>{{ campaign.timeLabel }}</span>
-                  <span class="text-bm-border">|</span>
-                  <span class="inline-flex items-center gap-1 font-medium text-bm-text-hi">
-                    {{ campaign.modelCount }} models
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" /></svg>
+
+                <div class="flex items-center gap-2">
+                  <RevIcon name="IconClock" size="16" />
+                  <span class="rev-body-2">{{ campaign.timeLabel }}</span>
+
+                  <span class="flex items-center gap-1 rounded-[1.25rem] border rev-border-static-default-mid px-2 py-1">
+                    <span class="rev-body-2">{{ campaign.modelCount }} models</span>
+                    <RevIcon name="IconChevronRight" size="16" />
                   </span>
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <FlagChip v-for="code in campaign.markets" :key="code" :code="code" :height="10" />
-              </div>
-            </button>
-          </div>
-        </template>
 
-        <!-- ========== PLACEHOLDER TABS ========== -->
-        <template v-else>
-          <div class="border border-dashed border-bm-border rounded-xl px-6 py-12 text-center">
-            <h2 class="text-lg font-semibold text-bm-text-hi">{{ activeTab }}</h2>
-            <p class="mt-2 text-sm text-bm-text-low">
-              This is the Opportunities shell. Content for the {{ activeTab }} tab will be added in the next iteration.
-            </p>
-          </div>
-        </template>
+              <div class="flex flex-wrap items-center gap-4">
+                <h3 class="rev-heading-3 grow">{{ campaign.name }}</h3>
+
+                <div class="flex flex-wrap gap-1.5">
+                  <BoPill v-for="code in campaign.markets" :key="code">
+                    <RevCountryFlag :country-code="code" size="extra-small" />
+                    <span>{{ code }}</span>
+                  </BoPill>
+                </div>
+              </div>
+            </div>
+          </RevButtonCard>
+        </div>
       </div>
-    </div>
+
+      <!-- ========== PLACEHOLDER TABS ========== -->
+      <div v-else class="p-6 md:p-8">
+        <RevCard class="px-6 py-12 text-center">
+          <h2 class="rev-heading-2">{{ activeTab }}</h2>
+          <p class="rev-body-1 rev-text-static-default-low mt-2">
+            This is the Opportunities shell. Content for the {{ activeTab }} tab will be added in the next iteration.
+          </p>
+        </RevCard>
+      </div>
+    </BoPage>
 
     <!-- ========== CAMPAIGN DETAILS DRAWER ========== -->
-    <Transition name="drawer-fade">
-      <div v-if="drawerOpen && activeCampaign" class="fixed inset-0 z-50 flex justify-end bg-black/30" role="presentation" @click.self="closeDrawer">
-        <Transition name="drawer-slide" appear>
-          <aside class="h-full w-[976px] min-w-[976px] max-w-[94vw] flex flex-col shadow-xl" style="background: #F8F9FC; border-radius: 12px 0 0 12px;" role="dialog" aria-modal="true" :aria-label="`Campaign details: ${activeCampaign.name}`">
-            <div class="relative flex items-center justify-center h-[60px] border-b border-bm-border bg-white shrink-0" style="border-radius: 12px 0 0 0;">
-              <h2 class="text-base font-semibold text-bm-text-hi">Campaign details</h2>
-              <button type="button" class="absolute right-6 w-8 h-8 rounded-full flex items-center justify-center text-bm-text-muted hover:bg-bm-gray-100 transition-colors cursor-pointer" aria-label="Close" @click="closeDrawer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
+    <RevDrawer :open="drawerOpen && activeCampaign !== null" title="Campaign details" size="large" @close="closeDrawer">
+      <div v-if="activeCampaign" class="flex flex-col gap-4">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <RevTag label="Active" variant="success" />
+            <RevTag :label="`${activeCampaign.commissionSaving}% less commission`" variant="info" icon="IconDealFilled" />
+          </div>
 
-            <div class="flex-1 overflow-y-auto px-12 py-8">
-              <div class="flex items-start justify-between gap-4">
-                <span :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG.success]">Active</span>
-                <span class="inline-flex items-center gap-1.5 text-sm font-medium text-bm-text-mid">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2" /></svg>
-                  {{ activeCampaign.timeLabel }}
+          <div class="flex items-center gap-2">
+            <RevIcon name="IconClock" size="16" />
+            <span class="rev-body-2">{{ activeCampaign.timeLabel }}</span>
+          </div>
+        </div>
+
+        <h2 class="rev-heading-2">{{ activeCampaign.name }}</h2>
+        <p class="rev-body-2 rev-text-static-default-low">
+          Price your eligible listings at the deal target price to pay {{ activeCampaign.commissionSaving }}% less commission.
+        </p>
+
+        <div class="flex flex-wrap gap-1.5">
+          <BoPill v-for="code in activeCampaign.markets" :key="code">
+            <RevCountryFlag :country-code="code" size="extra-small" />
+            <span>{{ code }}</span>
+          </BoPill>
+        </div>
+
+        <RevTable :collection="drawerRows" :columns="COLUMNS" striped-rows :row-style="rowStyle">
+          <template #body-product="{ item }">
+            <div class="flex flex-col gap-1">
+              <span class="rev-body-1-bold">{{ item.model.name }}</span>
+              <span v-if="item.model.sku != null" class="rev-body-2 rev-text-static-default-low">SKU: {{ item.model.sku }}</span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <BoPill tooltip-content="Grade">
+                  <RevIcon name="IconGrade" size="16" />
+                  <span>{{ item.model.grade }}</span>
+                </BoPill>
+                <BoPill v-if="item.model.offerType === 'New battery'" tone="new-battery" tooltip-content="New battery">
+                  <RevIcon name="IconBattery" size="16" />
+                </BoPill>
+                <BoPill>
+                  <RevCountryFlag :country-code="item.model.market" size="extra-small" />
+                  <span>{{ item.model.market }}</span>
+                </BoPill>
+              </div>
+            </div>
+          </template>
+
+          <template #body-price="{ item }">
+            <RevSpinner v-if="isRowLoading(item.index)" size="small" alternative-text="Updating price" />
+            <div v-else class="flex flex-col gap-0.5 whitespace-nowrap">
+              <template v-if="isRowUpdated(item.index)">
+                <span class="rev-body-1-bold">{{ formatPrice(item.model.targetPrice, activeCampaign.currency) }}</span>
+              </template>
+              <template v-else-if="item.model.price != null">
+                <span class="rev-body-1-bold">{{ formatPrice(item.model.price, activeCampaign.currency) }}</span>
+                <span v-if="item.model.price - item.model.targetPrice > 0" class="rev-body-2 rev-text-static-warning-hi">
+                  {{ formatPrice(item.model.price - item.model.targetPrice, activeCampaign.currency) }} above target
                 </span>
-              </div>
-
-              <h3 class="mt-2 text-2xl font-bold text-bm-text-hi leading-snug">{{ activeCampaign.name }}</h3>
-
-              <p class="mt-3 text-sm text-bm-text-mid leading-relaxed">
-                Price your eligible listings at the deal target price to qualify for reduced commission.
-              </p>
-
-              <div class="mt-4 flex items-center gap-1.5">
-                <FlagChip v-for="code in activeCampaign.markets" :key="code" :code="code" :height="10" />
-              </div>
-
-              <div class="mt-8 overflow-x-auto rounded-bm-sm">
-                <table class="w-full border-collapse">
-                  <thead>
-                    <tr class="bg-bm-gray-100">
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 38%;">Product</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 22%;">Price</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 16%;">Status</th>
-                      <th class="text-left px-4 py-3 text-sm font-semibold text-bm-text-hi" style="width: 24%;">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody class="bg-white">
-                    <tr
-                      v-for="(model, i) in activeCampaign.models"
-                      :key="`${activeCampaign.id}-${i}`"
-                      :class="['border-b border-bm-border align-middle transition-colors duration-1000', isRowFlashing(i) ? 'bg-[hsl(145,83%,93%)]' : '']"
-                    >
-                      <td class="px-4 py-4">
-                        <p class="text-sm font-semibold text-bm-text-hi leading-snug">{{ model.name }}</p>
-                        <p v-if="model.sku != null" class="mt-1 text-xs text-bm-text-low">SKU: {{ model.sku }}</p>
-                        <div class="mt-2 flex items-center gap-1.5 flex-wrap">
-                          <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
-                            <img :src="iconSrc('IconGrade')" alt="" class="w-3.5 h-3.5" />
-                            {{ model.grade }}
-                          </span>
-                          <span
-                            v-if="model.offerType === 'New battery'"
-                            class="inline-flex items-center justify-center rounded-full w-5 h-5 bg-[hsl(145,83%,77%)] text-[hsl(156,100%,21%)] cursor-help"
-                            title="New battery"
-                          >
-                            <img :src="iconSrc('IconBattery')" alt="New battery" class="w-3 h-3" />
-                          </span>
-                          <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs bg-bm-gray-100 text-bm-text-mid">
-                            <FlagChip :code="model.market" :height="8" />
-                            {{ model.market }}
-                          </span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-4 whitespace-nowrap">
-                        <div v-if="isRowLoading(i)" class="h-10 flex items-center">
-                          <span class="inline-block w-4 h-4 border-2 border-bm-border border-t-bm-text-hi rounded-full animate-spin" aria-label="Updating price" />
-                        </div>
-                        <template v-else-if="isRowUpdated(i)">
-                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
-                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
-                        </template>
-                        <template v-else-if="model.price != null">
-                          <p class="text-sm font-semibold text-bm-text-hi whitespace-nowrap">{{ formatPrice(model.price, activeCampaign.currency) }}</p>
-                          <p v-if="model.price - model.targetPrice > 0" class="mt-1 text-xs whitespace-nowrap text-bm-warning">
-                            {{ formatPrice(model.price - model.targetPrice, activeCampaign.currency) }} above target
-                          </p>
-                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
-                        </template>
-                        <template v-else>
-                          <p class="text-sm text-bm-text-low italic whitespace-nowrap">Not listed</p>
-                          <p class="mt-1 text-xs text-bm-text-low whitespace-nowrap">Target: {{ formatPrice(model.targetPrice, activeCampaign.currency) }}</p>
-                        </template>
-                      </td>
-                      <td class="px-4 py-4">
-                        <span v-if="isRowLoading(i)" class="inline-block w-4 h-4 border-2 border-bm-border border-t-bm-text-hi rounded-full animate-spin" aria-label="Updating price" />
-                        <span v-else :class="['inline-flex items-center rounded-[2px] px-2 py-0.5 text-xs font-semibold', STATUS_TAG[isRowUpdated(i) ? 'success' : STATUS_TONE[model.status]]]">
-                          {{ isRowUpdated(i) ? DRAWER_STATUS['in-target'].label : DRAWER_STATUS[model.status].label }}
-                        </span>
-                      </td>
-                      <td class="px-4 py-4">
-                        <div class="flex flex-col gap-2 w-40">
-                          <button
-                            v-if="!isRowUpdated(i) && model.status !== 'in-target'"
-                            type="button"
-                            :disabled="isRowLoading(i)"
-                            :aria-disabled="model.status === 'not-listed' ? 'true' : undefined"
-                            :title="model.status === 'not-listed' ? 'Not available in this test' : undefined"
-                            :class="['inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-bm-text-hi text-white w-full',
-                              model.status === 'not-listed'
-                                ? 'cursor-not-allowed'
-                                : 'cursor-pointer hover:bg-bm-gray-700 transition-colors disabled:opacity-80 disabled:cursor-default']"
-                            @click="model.status === 'not-listed' ? undefined : onUpdatePrice(i)"
-                          >
-                            <span v-if="isRowLoading(i)" class="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" aria-label="Updating price" />
-                            <template v-else>{{ model.status === 'not-listed' ? 'Create listing' : 'Update price' }}</template>
-                          </button>
-                          <button
-                            v-if="!isRowLoading(i) && model.status !== 'not-listed'"
-                            type="button"
-                            :disabled="isRowLoading(i)"
-                            class="cursor-pointer disabled:cursor-default disabled:opacity-60 inline-flex items-center justify-center rounded-bm px-3 py-1.5 text-sm font-semibold bg-white border border-bm-border-action text-bm-text-hi hover:bg-bm-gray-50 transition-colors w-full"
-                          >
-                            View listing
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              </template>
+              <span v-else class="rev-body-2 rev-text-static-default-low italic">Not listed</span>
+              <span class="rev-caption rev-text-static-default-low">Target: {{ formatPrice(item.model.targetPrice, activeCampaign.currency) }}</span>
             </div>
-          </aside>
-        </Transition>
+          </template>
+
+          <template #body-status="{ item }">
+            <RevSpinner v-if="isRowLoading(item.index)" size="small" alternative-text="Updating price" />
+            <RevTag
+              v-else
+              :label="STATUS_TAG[isRowUpdated(item.index) ? 'in-target' : item.model.status].label"
+              :variant="STATUS_TAG[isRowUpdated(item.index) ? 'in-target' : item.model.status].variant"
+            />
+          </template>
+
+          <template #body-actions="{ item }">
+            <div class="flex flex-col gap-1.5">
+              <RevButton
+                v-if="item.model.status === 'not-listed'"
+                variant="primary"
+                size="small"
+                style="cursor: not-allowed;"
+                aria-disabled="true"
+                tabindex="-1"
+                :title="DISABLED_HINT"
+              >
+                Create listing
+              </RevButton>
+              <RevButton
+                v-else-if="!isRowUpdated(item.index) && item.model.status !== 'in-target'"
+                variant="primary"
+                size="small"
+                :loading="isRowLoading(item.index)"
+                @click="onUpdatePrice(item.index)"
+              >
+                Update price
+              </RevButton>
+              <RevButton
+                v-if="!isRowLoading(item.index) && item.model.status !== 'not-listed'"
+                variant="secondary"
+                size="small"
+              >
+                View listing
+              </RevButton>
+            </div>
+          </template>
+        </RevTable>
       </div>
-    </Transition>
-  </BmShell>
+    </RevDrawer>
+  </BoShell>
 </template>
-
-<style scoped>
-.drawer-fade-enter-active,
-.drawer-fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.drawer-fade-enter-from,
-.drawer-fade-leave-to {
-  opacity: 0;
-}
-
-.drawer-slide-enter-active {
-  transition: transform 0.25s ease;
-}
-.drawer-slide-leave-active {
-  transition: transform 0.2s ease;
-}
-.drawer-slide-enter-from,
-.drawer-slide-leave-to {
-  transform: translateX(100%);
-}
-</style>
